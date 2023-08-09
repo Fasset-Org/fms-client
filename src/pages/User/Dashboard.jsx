@@ -34,9 +34,14 @@ const Dashboard = () => {
     }
   ];
 
+
   return (
     <Stack>
-      <BreadCrumbsHeader />
+      <BreadCrumbsHeader
+        title="Welcome back Tiyisela Themba Makamu"
+        menus={["Dashboard"]}
+        href="/dashboard"
+      />
       <Grid container spacing={2} mt={0}>
         {menuList.map((menuItem, i) => {
           return (
