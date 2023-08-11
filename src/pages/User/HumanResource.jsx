@@ -1,28 +1,60 @@
-import { Box, Paper, Stack, Tab, Tabs } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import React from "react";
-import { useLocation } from "react-router-dom";
 import BreadCrumbsHeader from "../../components/BreadCrumbsHeader";
+import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import DashboardCard from "../../components/DashboardCard";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 const HumanResource = () => {
-  let { pathname } = useLocation();
-  pathname = pathname.slice(1);
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const navigate = useNavigate();
+  const [open] = useOutletContext();
+  const menuList = [
+    {
+      title: "Current Positions",
+      icon: ArrowCircleDownIcon,
+      url: "/userManagement/users"
+    },
+    {
+      title: "Previous Positions",
+      icon: ArrowCircleUpIcon,
+      url: "/userManagement/departments"
+    },
+    {
+      title: "Applications",
+      icon: SettingsApplicationsIcon,
+      url: "/userManagement/modules"
+    }
+  ];
   return (
-    <Stack spacing={2}>
+    <Stack>
       <BreadCrumbsHeader
         title="Welcome back Tiyisela Themba Makamu"
         menus={[
-          "Dashboard",
-          pathname.charAt(0).toUpperCase() + pathname.slice(1)
+          { name: "Dashboard", url: "/dashboard" },
+          { name: "Human Resource", url: "/humanResource" }
         ]}
-        href="/scm"
+        sx={{ mb: 2 }}
       />
 
-      <Box sx={{ bgcolor: "background.paper" }}>
+      <Stack sx={{ width: "100%" }} justifyContent="center" alignItems="center">
+        <Grid container spacing={2}>
+          {menuList.map((menu, i) => {
+            return (
+              <Grid item xs={12} md={open ? 4 : 3} key={i}>
+                <DashboardCard
+                  title={menu.title}
+                  Icon={menu.icon}
+                  onClick={() => navigate(menu.url)}
+                />
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Stack>
+
+      {/* <Box sx={{ bgcolor: "background.paper" }}>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -36,7 +68,7 @@ const HumanResource = () => {
           <Tab label="Previous Positions" />
           <Tab label="Applications" />
         </Tabs>
-      </Box>
+      </Box> */}
     </Stack>
   );
 };
