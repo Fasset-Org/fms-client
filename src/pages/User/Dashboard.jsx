@@ -13,7 +13,7 @@ const Dashboard = () => {
   const [open] = useOutletContext();
   const menuList = [
     {
-      title: "Website Management",
+      title: "CSE",
       icon: LanguageIcon,
       url: "/websiteManagement"
     },
@@ -34,13 +34,11 @@ const Dashboard = () => {
     }
   ];
 
-
   return (
     <Stack>
       <BreadCrumbsHeader
         title="Welcome back Tiyisela Themba Makamu"
-        menus={["Dashboard"]}
-        href="/dashboard"
+        menus={[{ name: "Dashboard", url: "/dashboard" }]}
       />
       <Grid container spacing={2} mt={0}>
         {menuList.map((menuItem, i) => {
