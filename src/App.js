@@ -9,6 +9,11 @@ import ITUserManagement from "./pages/User/ITUserManagement";
 import WebsiteManagement from "./pages/User/WebsiteManagement";
 import HumanResource from "./pages/User/HumanResource";
 import SupplyChain from "./pages/User/SupplyChain";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import Users from "./pages/User/Users";
+import Departments from "./pages/User/Departments";
+import Modules from "./pages/User/Modules";
 
 function App() {
   const queryClient = new QueryClient();
@@ -21,12 +26,20 @@ function App() {
             <Route path="/" element={<Navigation />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/userManagement" element={<ITUserManagement />} />
-              <Route path="/websiteManagement" element={<WebsiteManagement />} />
-              <Route path='/humanResource' element={<HumanResource />} />
+              <Route path="/userManagement/users" element={<Users />} />
+              <Route path="/userManagement/departments" element={<Departments />} />
+              <Route path="/userManagement/modules" element={<Modules />} />
+              <Route
+                path="/websiteManagement"
+                element={<WebsiteManagement />}
+              />
+              <Route path="/humanResource" element={<HumanResource />} />
               <Route path="/scm" element={<SupplyChain />} />
             </Route>
             {/* Auth Routes */}
             <Route path="/login" element={<LoginUser />} />
+            <Route path="/forgotPassword" element={<ForgotPassword />} />
+            <Route path="/resetPassword" element={<ResetPassword />} />
           </Routes>
         </Router>
       </ThemeProvider>
