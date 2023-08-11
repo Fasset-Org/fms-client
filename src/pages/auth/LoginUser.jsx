@@ -13,8 +13,10 @@ import whiteLogo from "../../assets/images/blue_bg_text_logo.png";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../../components/FormComponents/TextFieldWrapper";
+import { useNavigate } from "react-router-dom";
 
 const LoginUser = () => {
+  const navigate = useNavigate();
   return (
     <Stack>
       {/* {isLoading && <LinearProgress />} */}
@@ -43,8 +45,8 @@ const LoginUser = () => {
             )} */}
 
           <Typography fontSize={20}>Welcome back</Typography>
-          <Typography fontWeight="bolder" sx={{ color: "lightgray" }}>
-            Sign in to continue to FMS
+          <Typography fontWeight="bolder" sx={{ color: "primary.main" }}>
+            Sign in to continue to CMS
           </Typography>
 
           <Formik
@@ -76,6 +78,9 @@ const LoginUser = () => {
                       <Stack direction="row" justifyContent="space-between">
                         <InputLabel>Password</InputLabel>
                         <Typography
+                          onClick={() => {
+                            navigate("/forgotPassword");
+                          }}
                           sx={{
                             fontWeight: "bolder",
                             color: "primary.main",
