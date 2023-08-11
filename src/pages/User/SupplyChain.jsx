@@ -1,28 +1,59 @@
-import { Box, Paper, Stack, Tab, Tabs } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import React from "react";
-import { useLocation } from "react-router-dom";
 import BreadCrumbsHeader from "../../components/BreadCrumbsHeader";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import DashboardCard from "../../components/DashboardCard";
+import TaskIcon from "@mui/icons-material/Task";
+import FileOpenIcon from "@mui/icons-material/FileOpen";
+import WebAssetOffIcon from "@mui/icons-material/WebAssetOff";
 
 const SupplyChain = () => {
-  let { pathname } = useLocation();
-  pathname = pathname.slice(1);
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const navigate = useNavigate();
+  const [open] = useOutletContext();
+  const menuList = [
+    {
+      title: "Current Positions",
+      icon: TaskIcon,
+      url: "/userManagement/users"
+    },
+    {
+      title: "Previous Positions",
+      icon: FileOpenIcon,
+      url: "/userManagement/departments"
+    },
+    {
+      title: "Applications",
+      icon: WebAssetOffIcon,
+      url: "/userManagement/modules"
+    }
+  ];
   return (
     <Stack spacing={2}>
       <BreadCrumbsHeader
         title="Welcome back Tiyisela Themba Makamu"
         menus={[
-          "Dashboard",
-          pathname.charAt(0).toUpperCase() + pathname.slice(1)
+          { name: "Dashboard", url: "/dashboard" },
+          { name: "Supply Chain", url: "/scm" }
         ]}
-        href="/scm"
       />
 
-      <Box sx={{ bgcolor: "background.paper" }}>
+      <Stack sx={{ width: "100%" }} justifyContent="center" alignItems="center">
+        <Grid container spacing={2}>
+          {menuList.map((menu, i) => {
+            return (
+              <Grid item xs={12} md={open ? 4 : 3} key={i}>
+                <DashboardCard
+                  title={menu.title}
+                  Icon={menu.icon}
+                  onClick={() => navigate(menu.url)}
+                />
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Stack>
+
+      {/* <Box sx={{ bgcolor: "background.paper" }}>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -36,7 +67,7 @@ const SupplyChain = () => {
           <Tab label="Previous Tenders" />
           <Tab label="Cancelled Tenders" />
         </Tabs>
-      </Box>
+      </Box> */}
     </Stack>
   );
 };
