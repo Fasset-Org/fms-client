@@ -104,7 +104,7 @@ export default function Navigation() {
       url: "/dashboard"
     },
     {
-      title: "Website Management",
+      title: "CSE",
       icon: LanguageIcon,
       url: "/websiteManagement"
     },
@@ -216,7 +216,10 @@ export default function Navigation() {
               <LightModeIcon fontSize="medium" sx={{ color: "#FFFFFF" }} />
 
               <Badge badgeContent={4} color="error">
-                <NotificationsIcon fontSize="medium" sx={{ color: "#FFFFFF" }} />
+                <NotificationsIcon
+                  fontSize="medium"
+                  sx={{ color: "#FFFFFF" }}
+                />
               </Badge>
 
               <Avatar>T</Avatar>
@@ -268,7 +271,10 @@ export default function Navigation() {
                       justifyContent: "center"
                     }}
                   >
-                    <menuItem.icon sx={{ color: "#FFFFFF" }} fontSize="medium" />
+                    <menuItem.icon
+                      sx={{ color: "#FFFFFF" }}
+                      fontSize="medium"
+                    />
                   </ListItemIcon>
                   <ListItemText
                     primary={menuItem.title}
@@ -280,7 +286,7 @@ export default function Navigation() {
           })}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, px: { md: 3, xl: 30 } }} p={3}>
         <DrawerHeader />
         <Outlet context={[open]} />
       </Box>
