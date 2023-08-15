@@ -11,7 +11,8 @@ const DashboardCard = ({ title, Icon, ...otherProps }) => {
       sx={{
         cursor: "pointer",
         border: 2,
-        borderColor: "#5D6D7E",
+        // borderColor: "#5D6D7E",
+        borderColor: 'primary.main',
         // backgroundColor: "#374370",
         borderRadius: 4
       }}
