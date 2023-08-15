@@ -5,12 +5,23 @@ import { useTheme } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
+// import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Grid, InputLabel, Slide, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  InputLabel,
+  Slide,
+  useMediaQuery
+} from "@mui/material";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
+import * as Yup from "yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import AdminQuery from "../../stateQueries/Admin";
+import AlertPopup from "../AlertPopup";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -49,6 +60,18 @@ const AddEditDepartment = () => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const queryClient = useQueryClient();
+  const adminQuery = useMutation({
+    mutationFn: async (formData) => {
+      return await AdminQuery.addDepartment(formData);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("departments");
+    },
+    onError: (err) => {
+      console.log(err);
+    }
+  });
 
   const handleClose = () => {
     setOpen(false);
@@ -56,6 +79,9 @@ const AddEditDepartment = () => {
 
   return (
     <>
+      {adminQuery?.isSuccess && (
+        <AlertPopup open={true} message={adminQuery?.data?.message} />
+      )}
       <Button variant="contained" onClick={() => setOpen(true)}>
         Add Department
       </Button>
@@ -76,7 +102,17 @@ const AddEditDepartment = () => {
         <DialogContent dividers>
           <Formik
             initialValues={{
-              email: ""
+              departmentName: "",
+              departmentDesc: ""
+            }}
+            validationSchema={Yup.object().shape({
+              departmentName: Yup.string().required("Department name required"),
+              departmentDesc: Yup.string().required(
+                "Department description required"
+              )
+            })}
+            onSubmit={(values) => {
+              adminQuery.mutate(values);
             }}
           >
             {() => {
@@ -85,7 +121,34 @@ const AddEditDepartment = () => {
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
                       <InputLabel sx={{ mb: 1 }}>Department Name</InputLabel>
-                      <TextFieldWrapper name="department" label="Department Name" />
+                      <TextFieldWrapper
+                        name="departmentName"
+                        label="Department Name"
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <InputLabel sx={{ mb: 1 }}>
+                        Department Description
+                      </InputLabel>
+                      <TextFieldWrapper
+                        name="departmentDesc"
+                        label="Department Description"
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Box textAlign="end">
+                        <Button
+                          variant="contained"
+                          type="submit"
+                          sx={{ width: 180 }}
+                        >
+                          {adminQuery.isLoading ? (
+                            <CircularProgress color="secondary" />
+                          ) : (
+                            "Submit"
+                          )}
+                        </Button>
+                      </Box>
                     </Grid>
                   </Grid>
                 </Form>
@@ -93,11 +156,11 @@ const AddEditDepartment = () => {
             }}
           </Formik>
         </DialogContent>
-        <DialogActions>
+        {/* <DialogActions>
           <Button variant="contained" onClick={handleClose}>
             Close
           </Button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
     </>
   );
