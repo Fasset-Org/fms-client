@@ -1,14 +1,10 @@
-import {
-  Route,
-  BrowserRouter as Router,
-  Routes
-} from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Navigation from "./components/Navigation/Navigation";
 import Dashboard from "./pages/User/Dashboard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoginUser from "./pages/auth/LoginUser";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { themeLight } from "./fassetTheme";
+import { themeDark, themeLight } from "./fassetTheme";
 import ITUserManagement from "./pages/User/ITUserManagement";
 import WebsiteManagement from "./pages/User/WebsiteManagement";
 import HumanResource from "./pages/User/HumanResource";
@@ -20,21 +16,26 @@ import Departments from "./pages/User/Departments";
 import Modules from "./pages/User/Modules";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import PrivateRoute from "./components/PrivateRoute";
+import { useState } from "react";
 
 function App() {
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
       <CssBaseline />
-      <ThemeProvider theme={themeLight}>
+      <ThemeProvider theme={theme === "light" ? themeLight : themeDark}>
         <Router>
           <Routes>
             <Route path="/" element={<PrivateRoute />}>
-              <Route path="/" element={<Navigation />}>
-                <Route
-                  path="/"
-                  element={<Dashboard />}
-                />
+              <Route
+                path="/"
+                element={
+                  <Navigation currentTheme={theme} setTheme={setTheme} />
+                }
+              >
+                <Route path="/" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/userManagement" element={<ITUserManagement />} />
                 <Route path="/userManagement/users" element={<Users />} />
