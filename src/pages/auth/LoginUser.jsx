@@ -1,10 +1,13 @@
 import {
+  Alert,
   Button,
   Card,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   Grid,
   InputLabel,
+  LinearProgress,
   Stack,
   Typography
 } from "@mui/material";
@@ -13,10 +16,44 @@ import whiteLogo from "../../assets/images/blue_bg_text_logo.png";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../../components/FormComponents/TextFieldWrapper";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import AuthQuery from "../../stateQueries/Auth";
 
 const LoginUser = () => {
   const navigate = useNavigate();
+  const {data, isLoading} = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: async () => {
+      return await AuthQuery.isUserLoggedIn()
+    }
+  })
+
+  const authQuery = useMutation({
+    mutationFn: (formData) => {
+      return AuthQuery.loginUser(formData);
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("authToken", data?.user?.token);
+      localStorage.setItem("refreshToken", data?.user?.refreshToken);
+      setTimeout(() => {
+        window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/`;
+      }, 1000);
+    },
+    onError: (err) => {
+      console.log(err);
+    }
+  });
+
+  if(isLoading){
+    return <LinearProgress />
+  }
+
+  if(data){
+    return <Navigate to='/' />
+  }
+
+
   return (
     <Stack>
       {/* {isLoading && <LinearProgress />} */}
@@ -38,11 +75,17 @@ const LoginUser = () => {
           alignItems="center"
           sx={{ position: "relative", bottom: 100 }}
         >
-          {/* {error?.response?.status === 404 && (
-              <Alert color="error" sx={{ width: "100%" }}>
-                {error.response.data.message}
-              </Alert>
-            )} */}
+          {authQuery.error && (
+            <Alert color="error" sx={{ width: "100%" }}>
+              {authQuery?.error?.response?.data?.message ||
+                authQuery?.error?.message}
+            </Alert>
+          )}
+          {authQuery.isSuccess && (
+            <Alert color="success" sx={{ width: "100%" }}>
+              {authQuery?.data?.message}
+            </Alert>
+          )}
 
           <Typography fontSize={20}>Welcome back</Typography>
           <Typography fontWeight="bolder" sx={{ color: "primary.main" }}>
@@ -59,7 +102,7 @@ const LoginUser = () => {
               password: Yup.string().required("Please provide password")
             })}
             onSubmit={(values) => {
-              console.log(values);
+              authQuery.mutate(values);
             }}
           >
             {() => {
@@ -110,7 +153,11 @@ const LoginUser = () => {
                         type="submit"
                         // onClick={(e) => navigate("/fms/dashboard")}
                       >
-                        Login
+                        {authQuery?.isLoading && authQuery.isLoading ? (
+                          <CircularProgress color="secondary" />
+                        ) : (
+                          "Login"
+                        )}
                       </Button>
                     </Grid>
                   </Grid>
