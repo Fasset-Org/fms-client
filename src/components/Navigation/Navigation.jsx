@@ -19,10 +19,11 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import WorkIcon from "@mui/icons-material/Work";
 import LanguageIcon from "@mui/icons-material/Language";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
-import { Avatar, Badge, Stack } from "@mui/material";
+import { Avatar, Badge, CssBaseline, Stack } from "@mui/material";
 import logo from "../../assets/images/blue_bg_only_logo.png";
 import { Outlet, useNavigate } from "react-router-dom";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import NightlightIcon from "@mui/icons-material/Nightlight";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useQuery } from "@tanstack/react-query";
 import AuthQuery from "../../stateQueries/Auth";
@@ -94,7 +95,7 @@ const Drawer = styled(MuiDrawer, {
   })
 }));
 
-export default function Navigation() {
+export default function Navigation({ currentTheme, setTheme }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -104,8 +105,6 @@ export default function Navigation() {
       return await AuthQuery.isUserLoggedIn();
     }
   });
-
-  console.log(data);
 
   const menuList = [
     {
@@ -153,10 +152,15 @@ export default function Navigation() {
 
   return (
     <Box sx={{ display: "flex" }}>
+      <CssBaseline />
       <AppBar
         position="fixed"
         open={open}
-        sx={{ backgroundColor: "primary.main", height: 64 }}
+        sx={{
+          backgroundColor: currentTheme === "light" && "primary.main",
+          height: 64,
+          borderRadius: 0
+        }}
       >
         <Stack height="100%" width="100%" borderColor="white" direction="row">
           {!open && (
@@ -231,7 +235,21 @@ export default function Navigation() {
               spacing={3}
               pr={2}
             >
-              <LightModeIcon fontSize="medium" sx={{ color: "#FFFFFF" }} />
+              {currentTheme === "light" ? (
+                <NightlightIcon
+                  onClick={() => {
+                    localStorage.setItem("theme", "dark");
+                    setTheme("dark");
+                  }}
+                />
+              ) : (
+                <LightModeIcon
+                  onClick={() => {
+                    localStorage.setItem("theme", "light");
+                    setTheme("light");
+                  }}
+                />
+              )}
 
               <Badge badgeContent={4} color="error">
                 <NotificationsIcon
@@ -250,8 +268,9 @@ export default function Navigation() {
         open={open}
         PaperProps={{
           sx: {
-            backgroundColor: "primary.main",
-            color: "#FFFFFF"
+            backgroundColor: currentTheme === "light" && "primary.main",
+            color: "#FFFFFF",
+            borderRadius: 0
           }
         }}
       >
