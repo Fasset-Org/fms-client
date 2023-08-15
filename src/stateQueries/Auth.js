@@ -1,13 +1,17 @@
 import axios from "axios";
-const REACT_APP_API_URL = "http://localhost:5000/api/dev";
+import axiosInstance from "./AxiosInstance";
 
 const AuthQuery = {
   loginUser: async (formData) => {
-    const { data } = await axios.post(
-      `${REACT_APP_API_URL}/auth/login`,
+    const resp = await axios.post(
+      `${process.env.REACT_APP_API_URL}/auth/login`,
       formData
     );
-    return await data;
+    return await resp?.data;
+  },
+  isUserLoggedIn: async (formData) => {
+    const resp = await axiosInstance.get('/auth/isUserLoggedIn');
+    return resp?.data;
   }
 };
 
