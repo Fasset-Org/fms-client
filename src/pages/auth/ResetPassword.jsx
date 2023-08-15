@@ -40,9 +40,9 @@ const ResetPassword = () => {
               </Alert>
             )} */}
 
-          <Typography fontSize={20}>Welcome back</Typography>
+          <Typography fontSize={20}>Welcome</Typography>
           <Typography fontWeight="bolder" sx={{ color: "primary.main" }}>
-            Sign in to continue to CMS
+            Reset Password to Sign in to CMS
           </Typography>
 
           <Formik
