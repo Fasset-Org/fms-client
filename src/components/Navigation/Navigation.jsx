@@ -24,6 +24,8 @@ import logo from "../../assets/images/blue_bg_only_logo.png";
 import { Outlet, useNavigate } from "react-router-dom";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import { useQuery } from "@tanstack/react-query";
+import AuthQuery from "../../stateQueries/Auth";
 
 const drawerWidth = 240;
 
@@ -96,6 +98,14 @@ export default function Navigation() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const { data } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: async () => {
+      return await AuthQuery.isUserLoggedIn();
+    }
+  });
+
+  console.log(data);
 
   const menuList = [
     {
@@ -106,22 +116,30 @@ export default function Navigation() {
     {
       title: "CSE",
       icon: LanguageIcon,
-      url: "/websiteManagement"
+      url: "/websiteManagement",
+      userType: "admin",
+      department: "cse"
     },
     {
       title: "Supply Chain",
       icon: ProductionQuantityLimitsIcon,
-      url: "/scm"
+      url: "/scm",
+      userType: "admin",
+      department: "scm"
     },
     {
       title: "Human Resource",
       icon: WorkIcon,
-      url: "/humanResource"
+      url: "/humanResource",
+      userType: "admin",
+      department: "humanResource"
     },
     {
       title: "IT User Management",
       icon: ManageAccountsIcon,
-      url: "/userManagement"
+      url: "/userManagement",
+      userType: "super",
+      department: "IT"
     }
   ];
 
@@ -251,37 +269,44 @@ export default function Navigation() {
         <List>
           {menuList.map((menuItem, i) => {
             return (
-              <ListItem
-                key={i}
-                disablePadding
-                sx={{ display: "block" }}
-                onClick={() => navigate(menuItem.url)}
-              >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center"
-                    }}
+              <>
+                {(data?.user?.userType === "super" ||
+                  (data?.user?.userType === "admin" &&
+                    data?.user?.department?.departmentName ===
+                      menuItem.department)) && (
+                  <ListItem
+                    key={i}
+                    disablePadding
+                    sx={{ display: "block" }}
+                    onClick={() => navigate(menuItem.url)}
                   >
-                    <menuItem.icon
-                      sx={{ color: "#FFFFFF" }}
-                      fontSize="medium"
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={menuItem.title}
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
+                    <ListItemButton
+                      sx={{
+                        minHeight: 48,
+                        justifyContent: open ? "initial" : "center",
+                        px: 2.5
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 3 : "auto",
+                          justifyContent: "center"
+                        }}
+                      >
+                        <menuItem.icon
+                          sx={{ color: "#FFFFFF" }}
+                          fontSize="medium"
+                        />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={menuItem.title}
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                )}
+              </>
             );
           })}
         </List>
