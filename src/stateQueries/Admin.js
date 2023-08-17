@@ -10,6 +10,18 @@ const AdminQuery = {
     const resp = await axiosInstance.get("/admin/departments");
 
     return resp?.data;
+  },
+
+  addModule: async (formData) => {
+    const resp = await axiosInstance.post("/admin/module", formData);
+
+    return resp?.data;
+  },
+
+  getAllModules: async () => {
+    const resp = await axiosInstance.get("/admin/modules");
+
+    return resp?.data;
   }
 };
 
