@@ -7,7 +7,7 @@ import {
   Typography
 } from "@mui/material";
 import React from "react";
-import whiteLogo from "../../assets/images/blue_bg_text_logo.png";
+import whiteLogo from "../../assets/images/whiteLogo-bgwhite.png";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../../components/FormComponents/TextFieldWrapper";
@@ -22,7 +22,7 @@ const ResetPassword = () => {
         alignItems="center"
         padding={2}
       >
-        <img src={whiteLogo} alt="" height="50%" width="12%" />
+        <img src={whiteLogo} alt="" height="50%" width="11%" />
       </Stack>
       <Stack justifyContent="center" alignItems="center">
         <Card
