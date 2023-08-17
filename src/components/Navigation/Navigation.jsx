@@ -200,7 +200,7 @@ export default function Navigation({ currentTheme, setTheme }) {
           >
             <Stack direction="row" alignItems="center" width="100%">
               <IconButton onClick={() => navigate("/home")}>
-                <Avatar src={logo} sx={{ padding: 0.4 }} font />
+                <Avatar src={logo} />
               </IconButton>
               <Stack width="100%">
                 <Typography
