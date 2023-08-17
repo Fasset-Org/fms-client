@@ -67,6 +67,7 @@ const AddEditDepartment = () => {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries("departments");
+      setOpen(false)
     },
     onError: (err) => {
       console.log(err);
