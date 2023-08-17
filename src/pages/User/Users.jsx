@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import React from "react";
-import AddEditUserModal from "../../components/Modals/AddEditUserModal";
+import AddEditUserModal from "../../components/Modals/AddEditModuleModal";
 
 const Users = () => {
   return (
