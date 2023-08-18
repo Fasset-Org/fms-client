@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Alert, LinearProgress, Snackbar } from "@mui/material";
-import { Navigate, Outlet } from "react-router-dom";
 import AuthQuery from "../stateQueries/Auth";
+import { Outlet } from "react-router-dom";
 
 const PrivateRoute = () => {
   const [open, setOpen] = React.useState(true);
@@ -18,8 +18,8 @@ const PrivateRoute = () => {
   const { data, isSuccess, isLoading, error } = useQuery({
     queryKey: ["userInfo"],
     queryFn: async () => {
-      return await AuthQuery.isUserLoggedIn()
-    },
+      return await AuthQuery.isUserLoggedIn();
+    }
     // staleTime: 1000 * 60 * 60 * 24
   });
 
@@ -49,14 +49,11 @@ const PrivateRoute = () => {
   }
 
   if (error?.response?.status === 401) {
-    return <Navigate to="/login" />;
+    window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/login`;
   }
 
-  return isSuccess && data ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/login" />
-  );
+  if (isSuccess && data) return <Outlet />;
+  else window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/login`;
 };
 
 export default PrivateRoute;
