@@ -24,7 +24,7 @@ function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        retry: 3
+        retry: 1
       }
     }
   });
@@ -61,7 +61,10 @@ function App() {
             {/* Auth Routes */}
             <Route path="/login" element={<LoginUser />} />
             <Route path="/forgotPassword" element={<ForgotPassword />} />
-            <Route path="/resetPassword" element={<ResetPassword />} />
+            <Route
+              path="/resetPassword/:resetToken"
+              element={<ResetPassword />}
+            />
           </Routes>
         </Router>
       </ThemeProvider>
