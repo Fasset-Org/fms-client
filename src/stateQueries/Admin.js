@@ -25,8 +25,13 @@ const AdminQuery = {
   },
 
   addUser: async (formData) => {
-    console.log(formData)
+    console.log(formData);
     const resp = await axiosInstance.post("/auth/addUser", formData);
+
+    return resp?.data;
+  },
+  getAllUsers: async () => {
+    const resp = await axiosInstance.get("/admin/users");
 
     return resp?.data;
   }
