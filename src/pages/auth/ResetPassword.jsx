@@ -2,6 +2,7 @@ import {
   Alert,
   Button,
   Card,
+  CircularProgress,
   Grid,
   InputLabel,
   LinearProgress,
@@ -13,14 +14,16 @@ import whiteLogo from "../../assets/images/whiteLogo-bgwhite.png";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../../components/FormComponents/TextFieldWrapper";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import AuthQuery from "../../stateQueries/Auth";
+import AlertPopup from "../../components/AlertPopup";
 
 const ResetPassword = () => {
   let { resetToken } = useParams();
+  const navigate = useNavigate();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation({
+  const { mutate, isLoading, isError } = useMutation({
     mutationFn: async (formData) => {
       return await AuthQuery.verifyResetToken(formData);
     },
@@ -31,6 +34,17 @@ const ResetPassword = () => {
     onError: (err) => {
       console.log(err);
       resetToken = null;
+    }
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: async (formData) => {
+      return AuthQuery.resetUserPassword(formData);
+    },
+    onSuccess: (data) => {
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
     }
   });
 
@@ -77,11 +91,23 @@ const ResetPassword = () => {
             alignItems="center"
             sx={{ position: "relative", bottom: 100 }}
           >
-            {/* {error?.response?.status === 404 && (
-              <Alert color="error" sx={{ width: "100%" }}>
-                {error.response.data.message}
-              </Alert>
-            )} */}
+            {resetPasswordMutation.isSuccess && (
+              <AlertPopup
+                open={true}
+                message={resetPasswordMutation.data?.message}
+              />
+            )}
+
+            {resetPasswordMutation.isError && (
+              <AlertPopup
+                open={true}
+                message={
+                  resetPasswordMutation.error?.response?.data?.message ||
+                  "Server Error"
+                }
+                severity="error"
+              />
+            )}
 
             <Typography fontSize={20}>Welcome</Typography>
             <Typography fontWeight="bolder" sx={{ color: "primary.main" }}>
@@ -90,15 +116,18 @@ const ResetPassword = () => {
 
             <Formik
               initialValues={{
-                email: "",
-                password: ""
+                password: "",
+                confirmPassword: "",
+                resetToken: resetToken
               }}
               validationSchema={Yup.object().shape({
-                email: Yup.string().required("Please provide email"),
-                password: Yup.string().required("Please provide password")
+                password: Yup.string().required("Password required"),
+                confirmPassword: Yup.string()
+                  .required("Comfirm paswword required")
+                  .oneOf([Yup.ref("password")], "Passwords does not match")
               })}
               onSubmit={(values) => {
-                console.log(values);
+                resetPasswordMutation.mutate(values);
               }}
             >
               {() => {
@@ -108,7 +137,7 @@ const ResetPassword = () => {
                       <Grid item xs={12} md={12}>
                         <InputLabel>New Password</InputLabel>
                         <TextFieldWrapper
-                          name="email"
+                          name="password"
                           label="New Password"
                           type="password"
                           sx={{ mt: 2 }}
@@ -119,7 +148,7 @@ const ResetPassword = () => {
                           <InputLabel>Confirm Password</InputLabel>
                         </Stack>
                         <TextFieldWrapper
-                          name="password"
+                          name="confirmPassword"
                           label="Confirm Password"
                           sx={{ mt: 2 }}
                           type="password"
@@ -133,7 +162,11 @@ const ResetPassword = () => {
                           type="submit"
                           // onClick={(e) => navigate("/fms/dashboard")}
                         >
-                          Reset Password
+                          {resetPasswordMutation.isLoading ? (
+                            <CircularProgress color="secondary" />
+                          ) : (
+                            "Reset Password"
+                          )}
                         </Button>
                       </Grid>
                     </Grid>
