@@ -7,7 +7,6 @@ import {
   FormControlLabel,
   Grid,
   InputLabel,
-  LinearProgress,
   Stack,
   Typography
 } from "@mui/material";
@@ -22,12 +21,12 @@ import AuthQuery from "../../stateQueries/Auth";
 
 const LoginUser = () => {
   const navigate = useNavigate();
-  const {data, isLoading} = useQuery({
-    queryKey: ['userInfo'],
+  const { data } = useQuery({
+    queryKey: ["userInfo"],
     queryFn: async () => {
-      return await AuthQuery.isUserLoggedIn()
+      return await AuthQuery.isUserLoggedIn();
     }
-  })
+  });
 
   const authQuery = useMutation({
     mutationFn: (formData) => {
@@ -45,14 +44,9 @@ const LoginUser = () => {
     }
   });
 
-  if(isLoading){
-    return <LinearProgress />
+  if (data) {
+    return <Navigate to="/" />;
   }
-
-  if(data){
-    return <Navigate to='/' />
-  }
-
 
   return (
     <Stack>
