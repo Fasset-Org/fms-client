@@ -8,7 +8,6 @@ import { themeDark, themeLight } from "./fassetTheme";
 import ITUserManagement from "./pages/User/ITUserManagement";
 import WebsiteManagement from "./pages/User/WebsiteManagement";
 import HumanResource from "./pages/User/HumanResource";
-import SupplyChain from "./pages/User/SupplyChain";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Users from "./pages/User/Users";
@@ -17,6 +16,10 @@ import Modules from "./pages/User/Modules";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import PrivateRoute from "./components/PrivateRoute";
 import { useState } from "react";
+import SupplyChain from "./pages/User/SupplyChain/SupplyChain";
+import CurrentTenders from "./pages/User/SupplyChain/CurrentTenders";
+import PreviousTenders from "./pages/User/SupplyChain/PreviousTenders";
+import CancelledTenders from "./pages/User/SupplyChain/CancelledTenders";
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -55,7 +58,20 @@ function App() {
                   element={<WebsiteManagement />}
                 />
                 <Route path="/humanResource" element={<HumanResource />} />
+                {/* Supply Chain Routes */}
                 <Route path="/scm" element={<SupplyChain />} />
+                <Route
+                  path="/scm/currentTenders"
+                  element={<CurrentTenders />}
+                />
+                <Route
+                  path="/scm/previousTenders"
+                  element={<PreviousTenders />}
+                />
+                <Route
+                  path="/scm/cancelledTenders"
+                  element={<CancelledTenders />}
+                />
               </Route>
             </Route>
             {/* Auth Routes */}
