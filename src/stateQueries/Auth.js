@@ -15,9 +15,17 @@ const AuthQuery = {
   },
 
   verifyResetToken: async (formData) => {
-    console.log(formData)
+    console.log(formData);
     const resp = await axios.post(
       `${process.env.REACT_APP_API_URL}/auth/verifyResetToken`,
+      formData
+    );
+
+    return resp?.data;
+  },
+  resetUserPassword: async (formData) => {
+    const resp = await axiosInstance.post(
+      `/auth/resetPassword/${formData.resetToken}`,
       formData
     );
 
