@@ -82,18 +82,6 @@ const AddEditUserModal = () => {
   ];
 
   const queryClient = useQueryClient();
-  const adminQuery = useMutation({
-    mutationFn: async (formData) => {
-      return await AdminQuery.addModule(formData);
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries("departments");
-      setOpen(false);
-    },
-    onError: (err) => {
-      console.log(err);
-    }
-  });
 
   const { data: userInfo } = useQuery({
     queryKey: ["userInfo"],
@@ -145,7 +133,8 @@ const AddEditUserModal = () => {
       return await AdminQuery.addUser(formData);
     },
     onSuccess: (data) => {
-      console.log(data);
+      queryClient.invalidateQueries("users");
+      setOpen(false);
     },
     onError: (err) => {
       console.log(err);
@@ -160,15 +149,19 @@ const AddEditUserModal = () => {
     return <LinearProgress />;
   }
 
-  console.log(userInfo);
-
   return (
     <>
       <Button variant="contained" onClick={() => setOpen(true)}>
         Add User
       </Button>
-      {adminQuery?.isSuccess && (
-        <AlertPopup open={true} message={adminQuery?.data?.message} />
+      {addUserQuery?.isSuccess && (
+        <AlertPopup open={true} message={addUserQuery?.data?.message} />
+      )}
+      {addUserQuery?.isError && (
+        <AlertPopup
+          open={true}
+          message={addUserQuery.error?.response?.data?.message}
+        />
       )}
       <Dialog
         onClose={handleClose}
@@ -255,7 +248,7 @@ const AddEditUserModal = () => {
                           type="submit"
                           sx={{ width: 180 }}
                         >
-                          {adminQuery.isLoading ? (
+                          {addUserQuery.isLoading ? (
                             <CircularProgress color="secondary" />
                           ) : (
                             "Submit"
