@@ -35,9 +35,10 @@ const LoginUser = () => {
     onSuccess: (data) => {
       localStorage.setItem("authToken", data?.user?.token);
       localStorage.setItem("refreshToken", data?.user?.refreshToken);
-      setTimeout(() => {
-        window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/`;
-      }, 1000);
+      window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/`;
+      // setTimeout(() => {
+      //   window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/`;
+      // }, 1000);
     },
     onError: (err) => {
       console.log(err);
