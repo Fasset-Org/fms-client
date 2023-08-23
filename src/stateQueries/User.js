@@ -1,7 +1,14 @@
-
+import axiosInstance from "./AxiosInstance";
 
 const UserQuery = {
-  
-}
+  SCMQuery: {
+    addTender: async (formData) => {
+      const resp = await axiosInstance.post("/scm/tender", formData);
 
-export default UserQuery
+      return resp?.data;
+    }
+  },
+  HumanResourceQuery: {}
+};
+
+export default UserQuery;
