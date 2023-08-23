@@ -29,7 +29,10 @@ const DateSelectWrapper = ({ name, ...otherProps }) => {
           variant="inline"
           inputFormat="DD/MM/YYYY"
           {...configTextfield}
-          onChange={(date) => setFieldValue(name, date)}
+          onChange={(date) => {
+            // console.log(date)
+            setFieldValue(name, date)
+          }}
           inputVariant="outlined"
           fullWidth
           renderInput={(params) => <TextField {...params} />}
