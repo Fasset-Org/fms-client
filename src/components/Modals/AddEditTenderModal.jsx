@@ -10,6 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
+  CircularProgress,
   Grid,
   Slide,
   Stack,
@@ -27,6 +28,8 @@ import dayjs from "dayjs";
 import AddBidModal from "./AddBidModal";
 import { useMutation } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
+import EditIcon from "@mui/icons-material/Edit";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -61,17 +64,17 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddEditTenderModal = () => {
+const AddEditTenderModal = ({ tender }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const addTenderQuery = useMutation({
+  const addTenderMutation = useMutation({
     mutationFn: async (formData) => {
       return UserQuery.SCMQuery.addTender(formData);
     },
     onSuccess: (data) => {
-      console.log(data);
+      setOpen(false);
     },
     onError: (err) => {
       console.log(err);
@@ -84,9 +87,28 @@ const AddEditTenderModal = () => {
 
   return (
     <>
-      <Button variant="contained" onClick={() => setOpen(true)}>
-        Add Tender
-      </Button>
+      {!tender ? (
+        <Button variant="contained" onClick={() => setOpen(true)}>
+          Add Tender
+        </Button>
+      ) : (
+        <IconButton color="secondary" onClick={() => setOpen(true)}>
+          <EditIcon />
+        </IconButton>
+      )}
+
+      {addTenderMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            addTenderMutation.error?.response?.data?.message || "Server Error"
+          }
+        />
+      )}
+      {addTenderMutation.isSuccess && (
+        <AlertPopup open={true} message={addTenderMutation.data?.message} />
+      )}
 
       <Dialog
         onClose={handleClose}
@@ -100,24 +122,26 @@ const AddEditTenderModal = () => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Add Tender
+          {tender ? `Edit ${tender.tenderName} Tender` : "Add Tender"}
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Formik
             initialValues={{
-              tenderName: "",
-              tenderReference: "",
+              tenderName: tender?.tenderName || "",
+              tenderReference: tender?.tenderReference || "",
               invitationMessage:
+                tender?.invitationMessage ||
                 "Fasset is a statutory body established through the Skills Development Act No 97 of 1998, as amended. The goal of the Act in respect of the Fasset Seta is ‘To facilitate the achievement of world-class finance and accounting skills’ in the sub-sectors that fall with the sector scope of Fasset i.e., Finance and Accounting Services.",
-              bidMessage: "",
-              queryEmail: "mathapelo.makomene@fasset.org.za",
-              closingDate: dayjs(new Date()),
-              meetinngId: "",
-              meetingLink: "",
-              meetigPasscode: "",
-              meetingDate: dayjs(new Date()),
-              tenderDocument: null,
-              bidders: []
+              bidMessage: tender?.bidMessage || "",
+              queryEmail:
+                tender?.queryEmail || "mathapelo.makomene@fasset.org.za",
+              closingDate: (tender?.closingDate && dayjs(tender?.closingDate)) || "",
+              meetinngId: tender?.meetinngId || "",
+              meetingLink: tender?.meetingLink || "",
+              meetigPasscode: tender?.meetigPasscode || "",
+              meetingDate: dayjs(tender?.meetingDate) || dayjs(new Date()),
+              tenderDocument: tender?.tenderDocument || null,
+              bidders: tender?.bidders || []
             }}
             validationSchema={Yup.object().shape({
               tenderName: Yup.string().required("Tender name required"),
@@ -127,20 +151,41 @@ const AddEditTenderModal = () => {
               invitationMessage: Yup.string().required(
                 "Invitation message required"
               ),
+              // meetingLink: Yup.string().test(
+              //   "meetingLink",
+              //   "Please provide valid url",
+              //   function (meetingLink) {
+              //     if (meetingLink === "") {
+              //       return true;
+              //     }
+              //     const rgx =
+              //       /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
+              //     if (rgx.test(meetingLink)) {
+              //       return true;
+              //     }
+              //     return false;
+              //   }
+              // ),
               bidMessage: Yup.string().required("Bid message required"),
               queryEmail: Yup.string().required("Email for queries required"),
               closingDate: Yup.string().required("Closing date required"),
               tenderDocument: Yup.string().required("Tender document required")
             })}
             onSubmit={(values) => {
-              addTenderQuery.mutate(values);
+              const formData = new FormData();
+              for (const [key, value] of Object.entries(values)) {
+                if (key === "bidders")
+                  formData.append(key, JSON.stringify(value));
+                else formData.append(key, value);
+              }
+
+              addTenderMutation.mutate(formData);
             }}
             enableReinitialize={true}
           >
             {({ values, errors, setFieldValue }) => {
-              console.log(errors);
               return (
-                <Form>
+                <Form encType="multipart/form-data">
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
                       <TextFieldWrapper name="tenderName" label="Tender Name" />
@@ -177,7 +222,7 @@ const AddEditTenderModal = () => {
                     </Grid>
                     <Grid item xs={12} md={12}>
                       <TextFieldWrapper
-                        name="meeitngLink"
+                        name="meetingLink"
                         label="Meeting Link"
                       />
                     </Grid>
@@ -268,15 +313,15 @@ const AddEditTenderModal = () => {
 
                                 <IconButton
                                   onClick={() => {
-                                    setFieldValue(
-                                      "bidders",
-                                      values.bidders.filter((option, idx) => {
-                                        return (
-                                          bidder.bidderName !==
-                                          option.bidderName
-                                        );
-                                      })
-                                    );
+                                    let newBidders = [];
+                                    values.bidders.forEach((option, idx) => {
+                                      if (bidder.bidderName !== option.bidderName) {
+                                        newBidders.push(option);
+                                      }
+                                    });
+
+                                    console.log(newBidders);
+                                    setFieldValue("bidders", newBidders);
                                   }}
                                 >
                                   <CloseIcon />
@@ -289,13 +334,27 @@ const AddEditTenderModal = () => {
                     )}
                     <Grid item xs={12} md={12}>
                       <Box textAlign="end">
-                        <Button
-                          variant="contained"
-                          type="submit"
-                          sx={{ width: 180 }}
-                        >
-                          Submit
-                        </Button>
+                        {!tender ? (
+                          <Button
+                            variant="contained"
+                            type="submit"
+                            sx={{ width: 180 }}
+                          >
+                            {addTenderMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Submit"
+                            )}
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            type="submit"
+                            sx={{ width: 180 }}
+                          >
+                            Save
+                          </Button>
+                        )}
                       </Box>
                     </Grid>
                   </Grid>
