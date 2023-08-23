@@ -20,16 +20,14 @@ const DateTimePickerWrapper = ({ name, ...otherProps }) => {
     }
   };
 
-  if (meta.touched && meta.error) {
-    configDateTimePicker.error = true;
-    configDateTimePicker.helperText = meta.error;
-  }
+
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer components={["DateTimePicker"]}>
         <DateTimePicker
           {...configDateTimePicker}
+          
           onChange={(date) => setFieldValue(name, date)}
         />
       </DemoContainer>
