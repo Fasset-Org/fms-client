@@ -8,15 +8,24 @@ const UserQuery = {
       return resp?.data;
     },
     getAllCurrentTenders: async () => {
-      const resp = await axiosInstance.get('/scm/currentTenders');
+      const resp = await axiosInstance.get("/scm/currentTenders");
 
-      return resp?.data
+      return resp?.data;
     },
     getAllPreviousTenders: async () => {
-      const resp = await axiosInstance.get('/scm/previousTenders');
+      const resp = await axiosInstance.get("/scm/previousTenders");
 
-      return resp?.data
+      return resp?.data;
     },
+
+    editTender: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/scm/tender/${formData.tenderId}`,
+        formData
+      );
+
+      return resp?.data;
+    }
   },
   HumanResourceQuery: {}
 };
