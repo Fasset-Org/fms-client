@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import AdminQuery from "../../stateQueries/Admin";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import AddEditModuleModal from "../../components/Modals/AddEditModuleModal";
+import BreadCrumbsHeader from "../../components/BreadCrumbsHeader";
 
 const Modules = () => {
   const { data, isLoading } = useQuery({
@@ -44,6 +45,15 @@ const Modules = () => {
   }
   return (
     <Stack justifyContent="center" alignItems="center" spacing={2}>
+      <BreadCrumbsHeader
+        title="Welcome back Tiyisela Themba Makamu"
+        menus={[
+          { name: "Dashboard", url: "/dashboard" },
+          { name: "User Management", url: "/userManagement" },
+          { name: "Modules", url: "/modules" }
+        ]}
+        sx={{ mb: 2, width: "100%" }}
+      />
       <AddEditModuleModal />
       <Box sx={{ height: 350, width: "100%" }}>
         {data && data?.modules && (
