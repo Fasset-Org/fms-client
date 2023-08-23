@@ -75,11 +75,14 @@ function App() {
               </Route>
             </Route>
             {/* Auth Routes */}
-            <Route path="/login" element={<LoginUser />} />
-            <Route path="/forgotPassword" element={<ForgotPassword />} />
+            <Route path="/login" element={<LoginUser currentTheme={theme} />} />
+            <Route
+              path="/forgotPassword"
+              element={<ForgotPassword currentTheme={theme} />}
+            />
             <Route
               path="/resetPassword/:resetToken"
-              element={<ResetPassword />}
+              element={<ResetPassword currentTheme={theme} />}
             />
           </Routes>
         </Router>
