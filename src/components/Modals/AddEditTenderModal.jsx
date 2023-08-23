@@ -139,7 +139,7 @@ const AddEditTenderModal = ({ tender }) => {
               meetinngId: tender?.meetinngId || "",
               meetingLink: tender?.meetingLink || "",
               meetigPasscode: tender?.meetigPasscode || "",
-              meetingDate: dayjs(tender?.meetingDate) || dayjs(new Date()),
+              meetingDate:  (tender?.meetingDate && dayjs(tender?.meetingDate)) || dayjs(new Date()),
               tenderDocument: tender?.tenderDocument || null,
               bidders: tender?.bidders || []
             }}
