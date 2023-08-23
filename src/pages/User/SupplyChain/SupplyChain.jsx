@@ -1,8 +1,8 @@
 import { Grid, Stack } from "@mui/material";
 import React from "react";
-import BreadCrumbsHeader from "../../components/BreadCrumbsHeader";
+import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import DashboardCard from "../../components/DashboardCard";
+import DashboardCard from "../../../components/DashboardCard";
 import TaskIcon from "@mui/icons-material/Task";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 import WebAssetOffIcon from "@mui/icons-material/WebAssetOff";
@@ -12,19 +12,19 @@ const SupplyChain = () => {
   const [open] = useOutletContext();
   const menuList = [
     {
-      title: "Current Positions",
+      title: "Current Tenders",
       icon: TaskIcon,
-      url: "/userManagement/users"
+      url: "/scm/currentTenders"
     },
     {
-      title: "Previous Positions",
+      title: "Previous Tenders",
       icon: FileOpenIcon,
-      url: "/userManagement/departments"
+      url: "/scm/previousTenders"
     },
     {
-      title: "Applications",
+      title: "Cancelled Tenders",
       icon: WebAssetOffIcon,
-      url: "/userManagement/modules"
+      url: "/scm/cancelledTenders"
     }
   ];
   return (

@@ -137,7 +137,7 @@ export default function Navigation({ currentTheme, setTheme }) {
       title: "IT User Management",
       icon: ManageAccountsIcon,
       url: "/userManagement",
-      userType: "super",
+      userType: "Super",
       department: "IT"
     }
   ];
@@ -289,7 +289,7 @@ export default function Navigation({ currentTheme, setTheme }) {
           {menuList.map((menuItem, i) => {
             return (
               <>
-                {(data?.user?.userType === "super" ||
+                {(data?.user?.userType === "Super" ||
                   (data?.user?.userType === "admin" &&
                     data?.user?.department?.departmentName ===
                       menuItem.department)) && (

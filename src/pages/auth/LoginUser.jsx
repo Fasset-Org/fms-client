@@ -7,12 +7,11 @@ import {
   FormControlLabel,
   Grid,
   InputLabel,
-  LinearProgress,
   Stack,
   Typography
 } from "@mui/material";
 import React from "react";
-import whiteLogo from "../../assets/images/blue_bg_text_logo.png";
+import whiteLogo from "../../assets/images/whiteLogo-bgwhite.png";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../../components/FormComponents/TextFieldWrapper";
@@ -22,12 +21,12 @@ import AuthQuery from "../../stateQueries/Auth";
 
 const LoginUser = () => {
   const navigate = useNavigate();
-  const {data, isLoading} = useQuery({
-    queryKey: ['userInfo'],
+  const { data } = useQuery({
+    queryKey: ["userInfo"],
     queryFn: async () => {
-      return await AuthQuery.isUserLoggedIn()
+      return await AuthQuery.isUserLoggedIn();
     }
-  })
+  });
 
   const authQuery = useMutation({
     mutationFn: (formData) => {
@@ -36,23 +35,19 @@ const LoginUser = () => {
     onSuccess: (data) => {
       localStorage.setItem("authToken", data?.user?.token);
       localStorage.setItem("refreshToken", data?.user?.refreshToken);
-      setTimeout(() => {
-        window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/`;
-      }, 1000);
+      window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/`;
+      // setTimeout(() => {
+      //   window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/`;
+      // }, 1000);
     },
     onError: (err) => {
       console.log(err);
     }
   });
 
-  if(isLoading){
-    return <LinearProgress />
+  if (data) {
+    return <Navigate to="/" />;
   }
-
-  if(data){
-    return <Navigate to='/' />
-  }
-
 
   return (
     <Stack>
@@ -63,7 +58,7 @@ const LoginUser = () => {
         alignItems="center"
         padding={2}
       >
-        <img src={whiteLogo} alt="" height="50%" width="12%" />
+        <img src={whiteLogo} alt="" height="50%" width="11%" />
       </Stack>
       <Stack justifyContent="center" alignItems="center">
         <Card
