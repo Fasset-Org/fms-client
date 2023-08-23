@@ -18,6 +18,7 @@ import AddEditDepartment from "../../components/Modals/AddEditDepartment";
 import { useQuery } from "@tanstack/react-query";
 import AdminQuery from "../../stateQueries/Admin";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
+import BreadCrumbsHeader from "../../components/BreadCrumbsHeader";
 
 const Departments = () => {
   const { data, isLoading } = useQuery({
@@ -45,6 +46,15 @@ const Departments = () => {
 
   return (
     <Stack justifyContent="center" alignItems="center" spacing={2}>
+      <BreadCrumbsHeader
+        title="Welcome back Tiyisela Themba Makamu"
+        menus={[
+          { name: "Dashboard", url: "/dashboard" },
+          { name: "User Management", url: "/userManagement" },
+          { name: "Departments", url: "/departments" }
+        ]}
+        sx={{ mb: 2, width: "100%" }}
+      />
       <AddEditDepartment />
       <Box sx={{ height: 350, width: "100%" }}>
         {data && data?.departments && (
