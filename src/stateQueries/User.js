@@ -6,7 +6,17 @@ const UserQuery = {
       const resp = await axiosInstance.post("/scm/tender", formData);
 
       return resp?.data;
-    }
+    },
+    getAllCurrentTenders: async () => {
+      const resp = await axiosInstance.get('/scm/currentTenders');
+
+      return resp?.data
+    },
+    getAllPreviousTenders: async () => {
+      const resp = await axiosInstance.get('/scm/previousTenders');
+
+      return resp?.data
+    },
   },
   HumanResourceQuery: {}
 };
