@@ -45,8 +45,6 @@ const CurrentTenders = () => {
     return <LinearProgress />;
   }
 
-  console.log(data)
-
   return (
     <Stack justifyContent="center" alignItems="center" spacing={2}>
       <BreadCrumbsHeader
