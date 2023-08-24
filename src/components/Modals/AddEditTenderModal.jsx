@@ -26,7 +26,7 @@ import TextAreaFieldWrapper from "../FormComponents/TextAreaFieldWrapper";
 import DateTimePickerWrapper from "../FormComponents/DateTimePickerWrapper";
 import dayjs from "dayjs";
 import AddBidModal from "./AddBidModal";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
 import EditIcon from "@mui/icons-material/Edit";
@@ -69,11 +69,30 @@ const AddEditTenderModal = ({ tender }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+  const tenderDefaultMessage =
+    "Fasset is a statutory body established through the Skills Development Act No 97 of 1998, as amended. The goal of the Act in respect of the Fasset Seta is ‘To facilitate the achievement of world-class finance and accounting skills’ in the sub-sectors that fall with the sector scope of Fasset i.e., Finance and Accounting Services.";
+
+  const queryClient = useQueryClient();
+
   const addTenderMutation = useMutation({
     mutationFn: async (formData) => {
       return UserQuery.SCMQuery.addTender(formData);
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries("currentTenders");
+      setOpen(false);
+    },
+    onError: (err) => {
+      console.log(err);
+    }
+  });
+
+  const editTenderMutation = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.SCMQuery.editTender(formData);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("currentTenders");
       setOpen(false);
     },
     onError: (err) => {
@@ -106,8 +125,21 @@ const AddEditTenderModal = ({ tender }) => {
           }
         />
       )}
+      {/* Edit Tender Popups */}
       {addTenderMutation.isSuccess && (
         <AlertPopup open={true} message={addTenderMutation.data?.message} />
+      )}
+      {editTenderMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            editTenderMutation.error?.response?.data?.message || "Server Error"
+          }
+        />
+      )}
+      {editTenderMutation.isSuccess && (
+        <AlertPopup open={true} message={editTenderMutation.data?.message} />
       )}
 
       <Dialog
@@ -127,19 +159,22 @@ const AddEditTenderModal = ({ tender }) => {
         <DialogContent dividers>
           <Formik
             initialValues={{
+              tenderId: tender?.id,
               tenderName: tender?.tenderName || "",
               tenderReference: tender?.tenderReference || "",
               invitationMessage:
-                tender?.invitationMessage ||
-                "Fasset is a statutory body established through the Skills Development Act No 97 of 1998, as amended. The goal of the Act in respect of the Fasset Seta is ‘To facilitate the achievement of world-class finance and accounting skills’ in the sub-sectors that fall with the sector scope of Fasset i.e., Finance and Accounting Services.",
+                tender?.invitationMessage || tenderDefaultMessage,
               bidMessage: tender?.bidMessage || "",
               queryEmail:
                 tender?.queryEmail || "mathapelo.makomene@fasset.org.za",
-              closingDate: (tender?.closingDate && dayjs(tender?.closingDate)) || "",
+              closingDate:
+                (tender?.closingDate && dayjs(tender?.closingDate)) || "",
               meetinngId: tender?.meetinngId || "",
               meetingLink: tender?.meetingLink || "",
               meetigPasscode: tender?.meetigPasscode || "",
-              meetingDate:  (tender?.meetingDate && dayjs(tender?.meetingDate)) || dayjs(new Date()),
+              meetingDate:
+                (tender?.meetingDate && dayjs(tender?.meetingDate)) ||
+                dayjs(new Date()),
               tenderDocument: tender?.tenderDocument || null,
               bidders: tender?.bidders || []
             }}
@@ -151,21 +186,7 @@ const AddEditTenderModal = ({ tender }) => {
               invitationMessage: Yup.string().required(
                 "Invitation message required"
               ),
-              // meetingLink: Yup.string().test(
-              //   "meetingLink",
-              //   "Please provide valid url",
-              //   function (meetingLink) {
-              //     if (meetingLink === "") {
-              //       return true;
-              //     }
-              //     const rgx =
-              //       /^((ftp|http|https):\/\/)?(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
-              //     if (rgx.test(meetingLink)) {
-              //       return true;
-              //     }
-              //     return false;
-              //   }
-              // ),
+
               bidMessage: Yup.string().required("Bid message required"),
               queryEmail: Yup.string().required("Email for queries required"),
               closingDate: Yup.string().required("Closing date required"),
@@ -179,7 +200,11 @@ const AddEditTenderModal = ({ tender }) => {
                 else formData.append(key, value);
               }
 
-              addTenderMutation.mutate(formData);
+              if (tender) {
+                editTenderMutation.mutate(formData);
+              } else {
+                addTenderMutation.mutate(formData);
+              }
             }}
             enableReinitialize={true}
           >
@@ -315,7 +340,9 @@ const AddEditTenderModal = ({ tender }) => {
                                   onClick={() => {
                                     let newBidders = [];
                                     values.bidders.forEach((option, idx) => {
-                                      if (bidder.bidderName !== option.bidderName) {
+                                      if (
+                                        bidder.bidderName !== option.bidderName
+                                      ) {
                                         newBidders.push(option);
                                       }
                                     });
@@ -352,7 +379,11 @@ const AddEditTenderModal = ({ tender }) => {
                             type="submit"
                             sx={{ width: 180 }}
                           >
-                            Save
+                            {editTenderMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Save"
+                            )}
                           </Button>
                         )}
                       </Box>
