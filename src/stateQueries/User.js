@@ -20,7 +20,7 @@ const UserQuery = {
 
     editTender: async (formData) => {
       const resp = await axiosInstance.put(
-        `/scm/tender/${formData.tenderId}`,
+        `/scm/tender`,
         formData
       );
 
