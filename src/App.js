@@ -7,7 +7,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { themeDark, themeLight } from "./fassetTheme";
 import ITUserManagement from "./pages/User/ITUserManagement";
 import WebsiteManagement from "./pages/User/WebsiteManagement";
-import HumanResource from "./pages/User/HumanResource";
+import HumanResource from "./pages/User/HumanResource/HumanResource";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Users from "./pages/User/Users";
@@ -20,6 +20,10 @@ import SupplyChain from "./pages/User/SupplyChain/SupplyChain";
 import CurrentTenders from "./pages/User/SupplyChain/CurrentTenders";
 import PreviousTenders from "./pages/User/SupplyChain/PreviousTenders";
 import CancelledTenders from "./pages/User/SupplyChain/CancelledTenders";
+import CurrentPositions from "./pages/User/HumanResource/CurrentPositions";
+import PreviousPositions from "./pages/User/HumanResource/PreviousPositions";
+import JobApplications from "./pages/User/HumanResource/JobApplications";
+import AddEditPosition from "./pages/User/HumanResource/AddEditPosition";
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -57,7 +61,24 @@ function App() {
                   path="/websiteManagement"
                   element={<WebsiteManagement />}
                 />
+                {/* Human Resource Routes */}
                 <Route path="/humanResource" element={<HumanResource />} />
+                <Route
+                  path="/humanResource/currentPositions"
+                  element={<CurrentPositions />}
+                />
+                <Route
+                  path="/humanResource/previousPositions"
+                  element={<PreviousPositions />}
+                />
+                <Route
+                  path="/humanResource/jobApplications"
+                  element={<JobApplications />}
+                />
+                <Route
+                  path="/humanResource/addEditPositiosn"
+                  element={<AddEditPosition />}
+                />
                 {/* Supply Chain Routes */}
                 <Route path="/scm" element={<SupplyChain />} />
                 <Route
