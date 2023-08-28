@@ -1,6 +1,5 @@
 import {
   Chip,
-  IconButton,
   LinearProgress,
   Paper,
   Stack,
@@ -11,15 +10,16 @@ import {
   TableFooter,
   TableHead,
   TablePagination,
-  TableRow
+  TableRow,
+  Typography
 } from "@mui/material";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import UserQuery from "../../../stateQueries/User";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
+import AddEditTenderModal from "../../../components/Modals/AddEditTenderModal";
+import { DeleteConfirmModal } from "../../../components/Modals/DeleteComfirmModal";
 
 const PreviousTenders = () => {
   const [page, setPage] = React.useState(0);
@@ -56,6 +56,9 @@ const PreviousTenders = () => {
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
+      <Typography sx={{ color: "error.main" }}>
+        To submit tender as new one, change the closing date when editing
+      </Typography>
       {data?.previousTenders?.length > 0 && (
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
@@ -101,12 +104,8 @@ const PreviousTenders = () => {
                         spacing={2}
                         justifyContent="center"
                       >
-                        <IconButton color="secondary">
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton color="error">
-                          <DeleteForeverIcon />
-                        </IconButton>
+                        <AddEditTenderModal tender={tender} />
+                        <DeleteConfirmModal />
                       </Stack>
                     </TableCell>
                   </TableRow>
