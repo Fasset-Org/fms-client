@@ -9,7 +9,7 @@ import {
   IconButton,
   Typography
 } from "@mui/material";
-import LogoutTwoToneIcon from "@mui/icons-material/LogoutTwoTone";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Tooltip from "@mui/material/Tooltip";
 
 /**
@@ -35,7 +35,7 @@ export const DeleteConfirmModal = () => {
           aria-label="logout"
           onClick={handleClickOpen}
         >
-          <LogoutTwoToneIcon />
+          <DeleteForeverIcon />
         </IconButton>
       </Tooltip>
       <Dialog
@@ -47,7 +47,7 @@ export const DeleteConfirmModal = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Logout</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete</DialogTitle>
         <DialogContent>
           <Typography
             variant="h6"
@@ -56,13 +56,16 @@ export const DeleteConfirmModal = () => {
               color: "text.primary"
             }}
           >
-            Are you sure you want to logout?
+            Are you sure you want to delete?
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}> Cancel</Button>
+          <Button onClick={handleClose} variant="outlined"> Cancel</Button>
+          <Button color="warning" variant="outlined" onClick={() => {}} autoFocus>
+            Mark As Past
+          </Button>
           <Button color="error" variant="outlined" onClick={() => {}} autoFocus>
-            Logout
+            Mark As Cancelled
           </Button>
         </DialogActions>
       </Dialog>
