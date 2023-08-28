@@ -1,6 +1,5 @@
 import {
   Chip,
-  IconButton,
   LinearProgress,
   Paper,
   Stack,
@@ -18,8 +17,8 @@ import AddEditTenderModal from "../../../components/Modals/AddEditTenderModal";
 import { useQuery } from "@tanstack/react-query";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import UserQuery from "../../../stateQueries/User";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
+import { DeleteConfirmModal } from "../../../components/Modals/DeleteComfirmModal";
 
 const CurrentTenders = () => {
   const [page, setPage] = React.useState(0);
@@ -105,9 +104,7 @@ const CurrentTenders = () => {
                         justifyContent="center"
                       >
                         <AddEditTenderModal tender={tender} />
-                        <IconButton color="error">
-                          <DeleteForeverIcon />
-                        </IconButton>
+                        <DeleteConfirmModal />
                       </Stack>
                     </TableCell>
                   </TableRow>
