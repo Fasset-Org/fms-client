@@ -19,15 +19,18 @@ const UserQuery = {
     },
 
     editTender: async (formData) => {
-      const resp = await axiosInstance.put(
-        `/scm/tender`,
-        formData
-      );
+      const resp = await axiosInstance.put(`/scm/tender`, formData);
 
       return resp?.data;
     }
   },
-  HumanResourceQuery: {}
+  HumanResourceQuery: {
+    addQualification: async (formData) => {
+      const resp = await axiosInstance.post("humanResource/qualification", formData);
+
+      return resp?.data;
+    }
+  }
 };
 
 export default UserQuery;
