@@ -1,5 +1,5 @@
-import { Grid, Stack, Typography } from "@mui/material";
-import React from "react";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import React, { useState } from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../../../components/FormComponents/TextFieldWrapper";
@@ -7,8 +7,11 @@ import TextAreaFieldWrapper from "../../../components/FormComponents/TextAreaFie
 import { useQuery } from "@tanstack/react-query";
 import AdminQuery from "../../../stateQueries/Admin";
 import SelectFieldWrapper from "../../../components/FormComponents/SelectFieldWrapper";
+import AddPositionQuestion from "../../../components/Modals/AddPositionQuestion";
+import AddQualificationModal from "../../../components/Modals/AddQualificationModal";
 
 const AddEditPosition = () => {
+  const [isQualificationRequired, setIsQualificationRequired] = useState(false);
   let departments = [];
   const departmentQuery = useQuery({
     queryKey: ["departments"],
@@ -51,7 +54,8 @@ const AddEditPosition = () => {
               departmentId: ""
             }}
           >
-            {() => {
+            {({ values }) => {
+              console.log(values);
               return (
                 <Form>
                   <Grid container spacing={2}>
@@ -87,15 +91,46 @@ const AddEditPosition = () => {
                     </Grid>
                     <Grid item xs={12} md={12}>
                       <TextFieldWrapper
-                        name="qualificationName"
-                        label="Qualification"
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                      <TextFieldWrapper
                         name="remuneration"
                         label="Remuneration Package"
                       />
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        <Box>
+                          <Button
+                            variant={isQualificationRequired && "contained"}
+                            sx={{ mr: 2 }}
+                            onClick={() => setIsQualificationRequired(true)}
+                          >
+                            Yes
+                          </Button>
+                          <Button
+                            variant={!isQualificationRequired && "contained"}
+                            onClick={() => setIsQualificationRequired(false)}
+                          >
+                            No
+                          </Button>
+                        </Box>
+                        {isQualificationRequired && <AddQualificationModal />}
+                      </Stack>
+                    </Grid>
+                    {isQualificationRequired && (
+                      <Grid item xs={12} md={12}>
+                        <TextFieldWrapper
+                          name="qualificationName"
+                          label="Qualification"
+                        />
+                      </Grid>
+                    )}
+                    <Grid item xs={12} md={12}>
+                      <Box textAlign="end">
+                        <AddPositionQuestion />
+                      </Box>
                     </Grid>
                   </Grid>
                 </Form>
