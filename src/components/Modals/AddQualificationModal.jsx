@@ -18,7 +18,7 @@ import {
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
 
@@ -60,12 +60,14 @@ const AddQualificationModal = ({ setFieldValue, bidders }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+  const queryClient = useQueryClient();
+
   const { mutate, isLoading, isError, isSuccess, data } = useMutation({
     mutationFn: async (formData) => {
       return await UserQuery.HumanResourceQuery.addQualification(formData);
     },
     onSuccess: (data) => {
-      console.log(data);
+      queryClient.invalidateQueries("qualifications");
     },
     onError: (err) => {
       console.log(err);
@@ -79,7 +81,7 @@ const AddQualificationModal = ({ setFieldValue, bidders }) => {
   return (
     <>
       <Button variant="outlined" color="warning" onClick={() => setOpen(true)}>
-        Add New Qualification
+        Add
       </Button>
 
       {isError && (
