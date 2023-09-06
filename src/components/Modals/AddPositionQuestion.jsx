@@ -8,10 +8,20 @@ import DialogContent from "@mui/material/DialogContent";
 // import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Grid, InputLabel, Slide, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  InputLabel,
+  Slide,
+  useMediaQuery
+} from "@mui/material";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
+import { useMutation } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -50,6 +60,12 @@ const AddPositionQuestion = ({ setFieldValue, bidders }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const addPositionQuestionMutation = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.HumanResourceQuery.addPositionQuestion(formData);
+    },
+    onSuccess: (data) => {}
+  });
 
   const handleClose = () => {
     setOpen(false);
@@ -64,6 +80,23 @@ const AddPositionQuestion = ({ setFieldValue, bidders }) => {
       >
         Add Position Question
       </Button>
+
+      {addPositionQuestionMutation.isError && (
+        <AlertPopup
+          open={true}
+          message={
+            addPositionQuestionMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+          severity="error"
+        />
+      )}
+      {addPositionQuestionMutation.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={addPositionQuestionMutation.data?.message}
+        />
+      )}
 
       <Dialog
         onClose={handleClose}
@@ -82,16 +115,15 @@ const AddPositionQuestion = ({ setFieldValue, bidders }) => {
         <DialogContent dividers>
           <Formik
             initialValues={{
-              bidderName: "",
-              bbeeLevel: ""
+              question: "",
+              expectedAnswer: ""
             }}
             validationSchema={Yup.object().shape({
-              bidderName: Yup.string().required("Bidder name required"),
-              bbeeLevel: Yup.string().required("B-BBEE Level required")
+              question: Yup.string().required("Question required"),
+              expectedAnswer: Yup.string().required("Expected answer required")
             })}
             onSubmit={(values) => {
-              setFieldValue("bidders", [...bidders, values]);
-              setOpen(false);
+              addPositionQuestionMutation.mutate(values);
             }}
             enableReinitialize={true}
           >
@@ -100,14 +132,23 @@ const AddPositionQuestion = ({ setFieldValue, bidders }) => {
                 <Form>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
-                      <TextFieldWrapper name="bidderName" label="Question?" />
+                      <TextFieldWrapper name="question" label="Question?" />
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <InputLabel sx={{ fontSize: 12, color: 'warning.main', fontWeight: 'bolder' }}>
-                        NB: Providing an answer will automatically check that with
-                        what candidate entered
+                      <InputLabel
+                        sx={{
+                          fontSize: 12,
+                          color: "warning.main",
+                          fontWeight: "bolder"
+                        }}
+                      >
+                        NB: Providing an answer will automatically check that
+                        with what candidate entered
                       </InputLabel>
-                      <TextFieldWrapper name="bbeeLevel" label="Answer?" />
+                      <TextFieldWrapper
+                        name="expectedAnswer"
+                        label="Expected Answer?"
+                      />
                     </Grid>
 
                     <Grid item xs={12} md={12}>
@@ -117,7 +158,11 @@ const AddPositionQuestion = ({ setFieldValue, bidders }) => {
                           type="submit"
                           color="secondary"
                         >
-                          Save
+                          {addPositionQuestionMutation.isLoading ? (
+                            <CircularProgress />
+                          ) : (
+                            "Submit"
+                          )}
                         </Button>
                       </Box>
                     </Grid>
