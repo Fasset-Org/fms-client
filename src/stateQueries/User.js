@@ -26,7 +26,45 @@ const UserQuery = {
   },
   HumanResourceQuery: {
     addQualification: async (formData) => {
-      const resp = await axiosInstance.post("humanResource/qualification", formData);
+      const resp = await axiosInstance.post(
+        "humanResource/qualification",
+        formData
+      );
+
+      return resp?.data;
+    },
+
+    getAllQualification: async () => {
+      const resp = await axiosInstance.get("/humanResource/qualifications");
+
+      return resp?.data;
+    },
+
+    addPosition: async (formData) => {
+      const resp = await axiosInstance.post(
+        "/humanResource/position",
+        formData
+      );
+
+      return resp?.data;
+    },
+    editPosition: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/humanResource/position/${formData.positionId}`
+      );
+
+      return resp?.data;
+    },
+    getPositionById: async (id) => {
+      const resp = await axiosInstance.get(`/humanResource/position/${id}`);
+
+      return resp?.data;
+    },
+    addPositionQuestion: async (formData) => {
+      const resp = await axiosInstance.post(
+        "/humanResource/positionQuestion",
+        formData
+      );
 
       return resp?.data;
     }
