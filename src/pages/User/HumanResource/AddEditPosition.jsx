@@ -15,7 +15,6 @@ import TextAreaFieldWrapper from "../../../components/FormComponents/TextAreaFie
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AdminQuery from "../../../stateQueries/Admin";
 import SelectFieldWrapper from "../../../components/FormComponents/SelectFieldWrapper";
-import AddPositionQuestion from "../../../components/Modals/AddPositionQuestion";
 import AddQualificationModal from "../../../components/Modals/AddQualificationModal";
 import UserQuery from "../../../stateQueries/User";
 import Checkbox from "@mui/material/Checkbox";
@@ -24,13 +23,17 @@ import Autocomplete from "@mui/material/Autocomplete";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import * as Yup from "yup";
+import AlertPopup from "../../../components/AlertPopup";
+import { useNavigate } from "react-router-dom";
 
 const AddEditPosition = () => {
-  const [isQualificationRequired, setIsQualificationRequired] = useState(false);
   let departments = [];
   let qualifications = [];
+  const [isQualificationRequired, setIsQualificationRequired] = useState(true);
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -45,9 +48,6 @@ const AddEditPosition = () => {
     queryKey: ["qualifications"],
     queryFn: async () => {
       return await UserQuery.HumanResourceQuery.getAllQualification();
-    },
-    onSuccess: (data) => {
-      // queryClient.invalidateQueries("qualifications");
     }
   });
 
@@ -56,7 +56,10 @@ const AddEditPosition = () => {
       return await UserQuery.HumanResourceQuery.addPosition(formData);
     },
     onSuccess: (data) => {
-      queryClient.setQueriesData(["position"], data?.position);
+      queryClient.invalidateQueries("positions");
+      setTimeout(() => {
+        navigate("/humanResource/currentPositions");
+      }, 1000);
     }
   });
 
@@ -89,10 +92,23 @@ const AddEditPosition = () => {
         menus={[
           { name: "Dashboard", url: "/dashboard" },
           { name: "Human Resource", url: "/humanResource" },
-          { name: "Add/Edit Position", url: "/addEditPositiosn" }
+          { name: "Add Position", url: "/addPositiosn" }
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
+      {addPositionMutation.isError && (
+        <AlertPopup
+          open={true}
+          message={
+            addPositionMutation.error?.response?.data?.message || "Server Error"
+          }
+          severity="error"
+        />
+      )}
+      {addPositionMutation.isSuccess && (
+        <AlertPopup open={true} message={addPositionMutation.data?.message} />
+      )}
+
       <Stack px={20}>
         <Stack spacing={2} padding={2} border={1}>
           <Typography fontSize={20} fontWeight="bolder" textAlign="center">
@@ -132,9 +148,9 @@ const AddEditPosition = () => {
 
               addPositionMutation.mutate(formData);
             }}
+            enableReinitialize
           >
             {({ values, setFieldValue }) => {
-              // console.log(values);
               return (
                 <Form>
                   <Grid container spacing={2}>
@@ -167,7 +183,7 @@ const AddEditPosition = () => {
                       />
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <InputLabel sx={{ color: "warning.main", fontSize: 12 }}>
+                      <InputLabel sx={{ color: "warning.main", fontSize: 12, mb: 1 }}>
                         If you don't have an email, please ask IT department to
                         create one for you before uploading the position.
                       </InputLabel>
@@ -241,12 +257,11 @@ const AddEditPosition = () => {
 
                     {isQualificationRequired && (
                       <Grid item xs={12} md={12}>
-                        {qualifications.length > 0 ? (
+                        {qualifications?.length > 0 ? (
                           <Autocomplete
                             multiple
-                            id="checkboxes-tags-demo"
                             options={
-                              qualifications.length > 0 && qualifications
+                              qualifications?.length > 0 && qualifications
                             }
                             onChange={(e, value) => {
                               setFieldValue("qualifications", value);
@@ -294,11 +309,6 @@ const AddEditPosition = () => {
                         >
                           Submit
                         </Button>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                      <Box textAlign="end">
-                        <AddPositionQuestion />
                       </Box>
                     </Grid>
                   </Grid>
