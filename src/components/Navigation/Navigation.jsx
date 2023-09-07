@@ -294,7 +294,7 @@ export default function Navigation({ currentTheme, setTheme }) {
                     data?.user?.department?.departmentName ===
                       menuItem.department)) && (
                   <ListItem
-                    key={menuItem}
+                    key={i}
                     disablePadding
                     sx={{ display: "block" }}
                     onClick={() => navigate(menuItem.url)}
