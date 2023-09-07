@@ -60,6 +60,12 @@ const UserQuery = {
 
       return resp?.data;
     },
+
+    getAllPositions: async () => {
+      const resp = await axiosInstance.get("/humanResource/positions");
+
+      return resp?.data;
+    },
     addPositionQuestion: async (formData) => {
       const resp = await axiosInstance.post(
         "/humanResource/positionQuestion",
