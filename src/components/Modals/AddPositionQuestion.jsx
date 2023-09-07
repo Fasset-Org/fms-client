@@ -56,7 +56,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddPositionQuestion = ({ setFieldValue, bidders }) => {
+const AddPositionQuestion = ({ positionId }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -115,10 +115,12 @@ const AddPositionQuestion = ({ setFieldValue, bidders }) => {
         <DialogContent dividers>
           <Formik
             initialValues={{
+              positionId: positionId || "",
               question: "",
               expectedAnswer: ""
             }}
             validationSchema={Yup.object().shape({
+              positionId: Yup.string().required("Position id required"),
               question: Yup.string().required("Question required"),
               expectedAnswer: Yup.string().required("Expected answer required")
             })}
@@ -139,7 +141,8 @@ const AddPositionQuestion = ({ setFieldValue, bidders }) => {
                         sx={{
                           fontSize: 12,
                           color: "warning.main",
-                          fontWeight: "bolder"
+                          fontWeight: "bolder",
+                          mb: 1
                         }}
                       >
                         NB: Providing an answer will automatically check that
