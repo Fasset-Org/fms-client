@@ -24,6 +24,7 @@ import CurrentPositions from "./pages/User/HumanResource/CurrentPositions";
 import PreviousPositions from "./pages/User/HumanResource/PreviousPositions";
 import JobApplications from "./pages/User/HumanResource/JobApplications";
 import AddEditPosition from "./pages/User/HumanResource/AddEditPosition";
+import EditPosition from "./pages/User/HumanResource/EditPosition";
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -76,8 +77,12 @@ function App() {
                   element={<JobApplications />}
                 />
                 <Route
-                  path="/humanResource/addEditPositiosn"
+                  path="/humanResource/addPositiosn"
                   element={<AddEditPosition />}
+                />
+                <Route
+                  path="/humanResource/editPosition/:positionId"
+                  element={<EditPosition />}
                 />
                 {/* Supply Chain Routes */}
                 <Route path="/scm" element={<SupplyChain />} />
