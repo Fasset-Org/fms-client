@@ -1,7 +1,9 @@
 import {
+  AccordionDetails,
   Alert,
   Box,
   Button,
+  CircularProgress,
   Grid,
   InputLabel,
   Stack,
@@ -28,10 +30,45 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import * as Yup from "yup";
 import AlertPopup from "../../../components/AlertPopup";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import DateTimePickerWrapper from "../../../components/FormComponents/DateTimePickerWrapper";
+import { DeleteQuestionModal } from "../../../components/Modals/DeleteQuestionModal";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import dayjs from "dayjs";
 
 const ListItem = styled("li")(({ theme }) => ({
   margin: theme.spacing(0.5)
+}));
+
+const Accordion = styled((props) => (
+  <MuiAccordion disableGutters elevation={0} {...props} />
+))(({ theme }) => ({
+  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: 5,
+  "&:before": {
+    display: "none"
+  }
+}));
+
+const AccordionSummary = styled((props) => (
+  <MuiAccordionSummary
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+    {...props}
+  />
+))(({ theme }) => ({
+  backgroundColor:
+    theme.palette.mode === "dark"
+      ? "rgba(255, 255, 255, .05)"
+      : "rgba(0, 0, 0, .03)",
+  flexDirection: "row-reverse",
+  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+    transform: "rotate(90deg)"
+  },
+  "& .MuiAccordionSummary-content": {
+    marginLeft: theme.spacing(1)
+  }
 }));
 
 const EditPosition = () => {
@@ -41,8 +78,11 @@ const EditPosition = () => {
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   const { positionId } = useParams();
+  const [expanded, setExpanded] = React.useState(null);
 
-  const navigate = useNavigate();
+  const handleChange = (panel) => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
+  };
 
   const queryClient = useQueryClient();
 
@@ -83,15 +123,12 @@ const EditPosition = () => {
     }
   });
 
-  const addPositionMutation = useMutation({
+  const editPositionMutation = useMutation({
     mutationFn: async (formData) => {
-      return await UserQuery.HumanResourceQuery.addPosition(formData);
+      return await UserQuery.HumanResourceQuery.editPosition(formData);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries("positions");
-      setTimeout(() => {
-        navigate("/humanResource/currentPositions");
-      }, 1000);
+      queryClient.invalidateQueries("position");
     }
   });
 
@@ -124,31 +161,38 @@ const EditPosition = () => {
         menus={[
           { name: "Dashboard", url: "/dashboard" },
           { name: "Human Resource", url: "/humanResource" },
-          { name: "Add/Edit Position", url: "/addEditPositiosn" }
+          { name: "Edit Position", url: "/editPositiosn" }
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
-      {addPositionMutation.isError && (
+      {editPositionMutation.isError && (
         <AlertPopup
           open={true}
           message={
-            addPositionMutation.error?.response?.data?.message || "Server Error"
+            editPositionMutation.error?.response?.data?.message ||
+            "Server Error"
           }
           severity="error"
         />
       )}
-      {addPositionMutation.isSuccess && (
-        <AlertPopup open={true} message={addPositionMutation.data?.message} />
+      {editPositionMutation.isSuccess && (
+        <AlertPopup open={true} message={editPositionMutation.data?.message} />
       )}
 
-      <Stack px={20}>
-        <Stack spacing={2} padding={2} border={1}>
+      <Stack px={{ md: 20, xs: 0 }}>
+        <Stack
+          spacing={2}
+          padding={2}
+          sx={{ borderRadius: 2 }}
+          component={Paper}
+        >
           <Typography fontSize={20} fontWeight="bolder" textAlign="center">
             Add Position
           </Typography>
 
           <Formik
             initialValues={{
+              positionId: positionId || "",
               jobTitle: position?.jobTitle || "",
               purposeOfJob: position?.purposeOfJob || "",
               departmentId: position?.departmentId || "",
@@ -156,6 +200,7 @@ const EditPosition = () => {
               remuneration: position?.remuneration || "",
               applicationsEmail: position?.applicationsEmail || "",
               jobSpecDocumentName: position?.jobSpecDocumentName || "",
+              closingDate: dayjs(position?.closingDate) || "",
               qualifications: (userQualifications && userQualifications) || []
             }}
             validationSchema={Yup.object().shape({
@@ -168,7 +213,8 @@ const EditPosition = () => {
                 .required("Email required"),
               jobSpecDocumentName: Yup.string().required(
                 "Please upload the job description document"
-              )
+              ),
+              closingDate: Yup.string().required("Closing date required")
             })}
             onSubmit={(values) => {
               const formData = new FormData();
@@ -178,7 +224,7 @@ const EditPosition = () => {
                 else formData.append(key, value);
               }
 
-              addPositionMutation.mutate(formData);
+              editPositionMutation.mutate(formData);
             }}
             enableReinitialize
           >
@@ -227,6 +273,14 @@ const EditPosition = () => {
                         type="email"
                       />
                     </Grid>
+
+                    <Grid item xs={12} md={12}>
+                      <DateTimePickerWrapper
+                        name="closingDate"
+                        label="Closing Date"
+                      />
+                    </Grid>
+
                     <Grid item xs={12} md={12}>
                       <Field name="jobSpecDocumentName">
                         {({ field, form, meta }) => (
@@ -286,14 +340,13 @@ const EditPosition = () => {
 
                     {isQualificationRequired && (
                       <Grid item xs={12} md={12}>
-                        {qualifications?.length > 0 ? (
+                        {qualifications?.length &&
+                        qualifications?.length > 0 ? (
                           <Autocomplete
                             multiple
-                            options={
-                              qualifications?.length > 0 && qualifications
-                            }
+                            options={qualifications && qualifications}
                             defaultValue={
-                              values.qualifications.length > 0
+                              values.qualifications
                                 ? values.qualifications
                                 : null
                             }
@@ -363,9 +416,65 @@ const EditPosition = () => {
                     )}
 
                     <Grid item xs={12} md={12}>
-                      <Box textAlign="end">
-                        <AddPositionQuestion positionId={position?.id} />
-                      </Box>
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        mb={2}
+                        alignItems="center"
+                      >
+                        <InputLabel sx={{ fontWeight: "bolder" }}>
+                          Additional Questions
+                        </InputLabel>
+
+                        <Box textAlign="end">
+                          <AddPositionQuestion positionId={position?.id} />
+                        </Box>
+                      </Stack>
+
+                      {position?.PositionQuestions?.length > 0 ? (
+                        <Paper sx={{ padding: 2 }}>
+                          <Stack spacing={2}>
+                            {position?.PositionQuestions?.map((question, i) => {
+                              return (
+                                <Accordion
+                                  expanded={expanded === i}
+                                  onChange={handleChange(i)}
+                                  TransitionProps={{ unmountOnExit: true }}
+                                  key={i}
+                                >
+                                  <AccordionSummary
+                                    aria-controls="panel1d-content"
+                                    id="panel1d-header"
+                                  >
+                                    <Stack
+                                      direction="row"
+                                      justifyContent="space-between"
+                                      width="100%"
+                                      alignItems="center"
+                                    >
+                                      <Typography>
+                                        {question.question}
+                                      </Typography>
+                                      <DeleteQuestionModal id={question.id} />
+                                    </Stack>
+                                  </AccordionSummary>
+                                  <AccordionDetails>
+                                    <Typography>
+                                      {`Expected Answer : ${
+                                        question.expectedAnswer
+                                          ? question.expectedAnswer
+                                          : "No Provided"
+                                      }`}
+                                    </Typography>
+                                  </AccordionDetails>
+                                </Accordion>
+                              );
+                            })}
+                          </Stack>
+                        </Paper>
+                      ) : (
+                        <Typography>No Additional Questions</Typography>
+                      )}
                     </Grid>
 
                     <Grid item xs={12} md={12}>
@@ -375,7 +484,11 @@ const EditPosition = () => {
                           variant="contained"
                           sx={{ width: 217 }}
                         >
-                          Update
+                          {editPositionMutation.isLoading ? (
+                            <CircularProgress color="secondary" />
+                          ) : (
+                            "Update"
+                          )}
                         </Button>
                       </Box>
                     </Grid>
