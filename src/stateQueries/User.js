@@ -50,7 +50,8 @@ const UserQuery = {
     },
     editPosition: async (formData) => {
       const resp = await axiosInstance.put(
-        `/humanResource/position/${formData.positionId}`
+        `/humanResource/position/${formData.get("positionId")}`,
+        formData
       );
 
       return resp?.data;
@@ -61,8 +62,19 @@ const UserQuery = {
       return resp?.data;
     },
 
+    deletePositionById: async (id) => {
+      const resp = await axiosInstance.delete(`/humanResource/position/${id}`);
+
+      return resp?.data;
+    },
+
     getAllPositions: async () => {
       const resp = await axiosInstance.get("/humanResource/positions");
+
+      return resp?.data;
+    },
+    getAllPreviousPositions: async () => {
+      const resp = await axiosInstance.get("/humanResource/previousPositions");
 
       return resp?.data;
     },
@@ -70,6 +82,13 @@ const UserQuery = {
       const resp = await axiosInstance.post(
         "/humanResource/positionQuestion",
         formData
+      );
+
+      return resp?.data;
+    },
+    deletePositionQuestion: async (id) => {
+      const resp = await axiosInstance.delete(
+        `/humanResource/positionQuestion/${id}`
       );
 
       return resp?.data;
