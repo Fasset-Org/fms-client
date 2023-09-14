@@ -30,6 +30,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
 import EditIcon from "@mui/icons-material/Edit";
+import DateSelectWrapper from "../FormComponents/DateSelectWrapper";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -173,8 +174,9 @@ const AddEditTenderModal = ({ tender }) => {
               meetingLink: tender?.meetingLink || "",
               meetigPasscode: tender?.meetigPasscode || "",
               meetingDate:
-                (tender?.meetingDate && dayjs(tender?.meetingDate)) ||
-                dayjs(new Date()),
+                (tender?.meetingDate && dayjs(tender?.meetingDate)) || "",
+              // tenderEndDate:
+              //   (tender?.tenderEndDate && dayjs(tender?.tenderEndDate)) || dayjs(new Date()),
               tenderDocument: tender?.tenderDocument || null,
               bidders: tender?.bidders || []
             }}
@@ -243,6 +245,12 @@ const AddEditTenderModal = ({ tender }) => {
                       <DateTimePickerWrapper
                         name="closingDate"
                         label="Closing Date"
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <DateSelectWrapper
+                        name="tenderEndDate"
+                        label="Tender End Date"
                       />
                     </Grid>
                     <Grid item xs={12} md={12}>
