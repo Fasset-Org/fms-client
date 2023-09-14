@@ -4,6 +4,7 @@ import {
   Button,
   Grid,
   InputLabel,
+  Paper,
   Stack,
   Typography
 } from "@mui/material";
@@ -25,6 +26,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import * as Yup from "yup";
 import AlertPopup from "../../../components/AlertPopup";
 import { useNavigate } from "react-router-dom";
+import DateTimePickerWrapper from "../../../components/FormComponents/DateTimePickerWrapper";
 
 const AddEditPosition = () => {
   let departments = [];
@@ -58,7 +60,7 @@ const AddEditPosition = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries("positions");
       setTimeout(() => {
-        navigate("/humanResource/currentPositions");
+        navigate("/humanResource/openPositions");
       }, 1000);
     }
   });
@@ -109,8 +111,13 @@ const AddEditPosition = () => {
         <AlertPopup open={true} message={addPositionMutation.data?.message} />
       )}
 
-      <Stack px={20}>
-        <Stack spacing={2} padding={2} border={1}>
+      <Stack px={{ md: 20, xs: 0 }}>
+        <Stack
+          spacing={2}
+          padding={2}
+          sx={{ borderRadius: 2 }}
+          component={Paper}
+        >
           <Typography fontSize={20} fontWeight="bolder" textAlign="center">
             Add Position
           </Typography>
@@ -123,7 +130,9 @@ const AddEditPosition = () => {
               reportingTo: "",
               remuneration: "",
               applicationsEmail: "",
+              emailForQueries: "",
               jobSpecDocumentName: "",
+              closingDate: "",
               qualifications: []
             }}
             validationSchema={Yup.object().shape({
@@ -134,9 +143,13 @@ const AddEditPosition = () => {
               applicationsEmail: Yup.string()
                 .email("Invalid email format")
                 .required("Email required"),
+              emailForQueries: Yup.string()
+                .email("Invalid email format")
+                .required("Email required"),
               jobSpecDocumentName: Yup.string().required(
                 "Please upload the job description document"
-              )
+              ),
+              closingDate: Yup.string().required("Closing date required")
             })}
             onSubmit={(values) => {
               const formData = new FormData();
@@ -183,14 +196,27 @@ const AddEditPosition = () => {
                       />
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <InputLabel sx={{ color: "warning.main", fontSize: 12, mb: 1 }}>
+                      <InputLabel
+                        sx={{ color: "warning.main", fontSize: 12, mb: 1 }}
+                      >
                         If you don't have an email, please ask IT department to
                         create one for you before uploading the position.
                       </InputLabel>
                       <TextFieldWrapper
+                        name="emailForQueries"
+                        label="Email For Queries"
+                        type="email"
+                      />
+                      <TextFieldWrapper
                         name="applicationsEmail"
                         label="Email To Receive Applications"
                         type="email"
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <DateTimePickerWrapper
+                        name="closingDate"
+                        label="Closing Date"
                       />
                     </Grid>
                     <Grid item xs={12} md={12}>
