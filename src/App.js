@@ -65,7 +65,7 @@ function App() {
                 {/* Human Resource Routes */}
                 <Route path="/humanResource" element={<HumanResource />} />
                 <Route
-                  path="/humanResource/currentPositions"
+                  path="/humanResource/openPositions"
                   element={<CurrentPositions />}
                 />
                 <Route
@@ -82,6 +82,10 @@ function App() {
                 />
                 <Route
                   path="/humanResource/editPosition/:positionId"
+                  element={<EditPosition />}
+                />
+                <Route
+                  path="/humanResource/editPreviousPosition/:positionId"
                   element={<EditPosition />}
                 />
                 {/* Supply Chain Routes */}
