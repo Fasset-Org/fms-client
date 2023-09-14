@@ -12,9 +12,9 @@ const HumanResource = () => {
   const [open] = useOutletContext();
   const menuList = [
     {
-      title: "Current Positions",
+      title: "Open Positions",
       icon: ArrowCircleDownIcon,
-      url: "/humanResource/currentPositions"
+      url: "/humanResource/openPositions"
     },
     {
       title: "Previous Positions",
