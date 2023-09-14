@@ -19,7 +19,7 @@ import {
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
 
@@ -59,12 +59,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const AddPositionQuestion = ({ positionId }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
+  const queryClient = useQueryClient();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const addPositionQuestionMutation = useMutation({
     mutationFn: async (formData) => {
       return await UserQuery.HumanResourceQuery.addPositionQuestion(formData);
     },
-    onSuccess: (data) => {}
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("position");
+    }
   });
 
   const handleClose = () => {
@@ -124,8 +127,11 @@ const AddPositionQuestion = ({ positionId }) => {
               question: Yup.string().required("Question required"),
               expectedAnswer: Yup.string().required("Expected answer required")
             })}
-            onSubmit={(values) => {
+            onSubmit={(values, { resetForm }) => {
               addPositionQuestionMutation.mutate(values);
+              if (addPositionQuestionMutation.isSuccess) {
+                resetForm();
+              }
             }}
             enableReinitialize={true}
           >
