@@ -12,20 +12,20 @@ import {
   TableFooter,
   TableHead,
   TablePagination,
-  TableRow
+  TableRow,
+  Typography
 } from "@mui/material";
 import React from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import UserQuery from "../../../stateQueries/User";
-import { DeleteConfirmModal } from "../../../components/Modals/DeleteComfirmModal";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import EditIcon from "@mui/icons-material/Edit";
+import { DeletePositionModal } from "../../../components/Modals/DeletePositionModal";
 
 const CurrentPositions = () => {
   const navigate = useNavigate();
-  
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -57,7 +57,7 @@ const CurrentPositions = () => {
         menus={[
           { name: "Dashboard", url: "/dashboard" },
           { name: "Human Resource", url: "/humanResource" },
-          { name: "Current Positions", url: "/currentPositions" }
+          { name: "Open Positions", url: "/openPositions" }
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
@@ -68,7 +68,7 @@ const CurrentPositions = () => {
         Add Position
       </Button>
 
-      {data?.positions?.length > 0 && (
+      {data?.positions?.length > 0 ? (
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead sx={{ backgroundColor: "background.paper" }}>
@@ -107,10 +107,20 @@ const CurrentPositions = () => {
                       {position.reportingTo}
                     </TableCell>
                     <TableCell align="center" component="th" scope="row">
-                      {position.closingDate}
+                      {`${new Date(position.closingDate).toDateString()} @ ${
+                        new Date(position.closingDate).getHours() > 11
+                          ? new Date(position.closingDate).getHours() +
+                            ":" +
+                            new Date(position.closingDate).getMinutes() +
+                            "PM"
+                          : new Date(position.closingDate).getHours() +
+                            ":" +
+                            new Date(position.closingDate).getMinutes() +
+                            "AM"
+                      }`}
                     </TableCell>
                     <TableCell align="center" component="th" scope="row">
-                      <Chip color="success" label="opened" />
+                      <Chip color="success" label="open" />
                     </TableCell>
 
                     <TableCell align="center">
@@ -130,7 +140,7 @@ const CurrentPositions = () => {
                         >
                           <EditIcon />
                         </IconButton>
-                        <DeleteConfirmModal />
+                        <DeletePositionModal id={position.id} />
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -159,6 +169,24 @@ const CurrentPositions = () => {
             </TableFooter>
           </Table>
         </TableContainer>
+      ) : (
+        <Stack width="100%">
+          <Stack
+            sx={{
+              height: 60,
+              border: 1,
+              borderColor: "primary.main",
+              padding: 2,
+              borderRadius: 2
+            }}
+            component={Paper}
+            justifyContent="center"
+          >
+            <Typography fontWeight="bolder">
+              No Open Positions Available
+            </Typography>
+          </Stack>
+        </Stack>
       )}
     </Stack>
   );
