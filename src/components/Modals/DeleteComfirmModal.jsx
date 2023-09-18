@@ -11,12 +11,17 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Tooltip from "@mui/material/Tooltip";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
 
 /**
  * Renders a sign-out button
  */
-export const DeleteConfirmModal = () => {
+export const DeleteConfirmModal = ({ id, status }) => {
   const [open, setOpen] = React.useState(false);
+
+  const queryClient = useQueryClient();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -26,18 +31,92 @@ export const DeleteConfirmModal = () => {
     setOpen(false);
   };
 
+  const markTenderAsPastQuery = useMutation({
+    mutationFn: async (id) => {
+      return await UserQuery.SCMQuery.markTenderAsPast(id);
+    },
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("tenders");
+      }, 3000);
+      handleClose();
+    }
+  });
+
+  const markAsCancelledQuery = useMutation({
+    mutationFn: async (id) => {
+      return await UserQuery.SCMQuery.markTenderAsCancelled(id);
+    },
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("tenders");
+      }, 3000);
+      handleClose();
+    }
+  });
+
+  const markTenderAsActiveQuery = useMutation({
+    mutationFn: async (id) => {
+      return await UserQuery.SCMQuery.markTenderAsActive(id);
+    },
+    onSuccess: (data) => {
+      handleClose();
+
+      setTimeout(() => {
+        queryClient.invalidateQueries("tenders");
+      }, 3000);
+    }
+  });
+
   return (
     <div>
-      <Tooltip title="Logout">
-        <IconButton
-          color="error"
-          size="large"
-          aria-label="logout"
-          onClick={handleClickOpen}
-        >
+      <Tooltip title="Delete">
+        <IconButton color="error" size="large" onClick={handleClickOpen}>
           <DeleteForeverIcon />
         </IconButton>
       </Tooltip>
+      {markTenderAsPastQuery.isError && (
+        <AlertPopup
+          open={true}
+          message={
+            markTenderAsPastQuery.error?.response?.data?.message ||
+            "Server Error"
+          }
+          severity="error"
+        />
+      )}
+      {markTenderAsPastQuery.isSuccess && (
+        <AlertPopup open={true} message={markTenderAsPastQuery.data?.message} />
+      )}
+      {markAsCancelledQuery.isError && (
+        <AlertPopup
+          open={true}
+          message={
+            markAsCancelledQuery.error?.response?.data?.message ||
+            "Server Error"
+          }
+          severity="error"
+        />
+      )}
+      {markAsCancelledQuery?.isSuccess && (
+        <AlertPopup open={true} message={markAsCancelledQuery.data?.message} />
+      )}
+      {markTenderAsActiveQuery?.isError && (
+        <AlertPopup
+          open={true}
+          message={
+            markTenderAsActiveQuery.error?.response?.data?.message ||
+            "Server Error"
+          }
+          severity="error"
+        />
+      )}
+      {markTenderAsActiveQuery?.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={markTenderAsActiveQuery.data?.message}
+        />
+      )}
       <Dialog
         sx={{ border: "3px solid #F44336 " }}
         open={open}
@@ -60,13 +139,75 @@ export const DeleteConfirmModal = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} variant="outlined"> Cancel</Button>
-          <Button color="warning" variant="outlined" onClick={() => {}} autoFocus>
-            Mark As Past
+          <Button onClick={handleClose} variant="outlined">
+            Cancel
           </Button>
-          <Button color="error" variant="outlined" onClick={() => {}} autoFocus>
-            Mark As Cancelled
-          </Button>
+          {status === "active" && (
+            <>
+              <Button
+                color="warning"
+                variant="outlined"
+                onClick={() => {
+                  markTenderAsPastQuery.mutate(id);
+                }}
+              >
+                Mark As Past
+              </Button>
+              <Button
+                color="error"
+                variant="outlined"
+                onClick={() => {
+                  markAsCancelledQuery.mutate(id);
+                }}
+              >
+                Mark As Cancelled
+              </Button>
+            </>
+          )}
+          {status === "inactive" && (
+            <>
+              <Button
+                color="success"
+                variant="outlined"
+                onClick={() => {
+                  markTenderAsActiveQuery.mutate(id);
+                }}
+              >
+                Mark As Active
+              </Button>
+              <Button
+                color="error"
+                variant="outlined"
+                onClick={() => {
+                  markAsCancelledQuery.mutate(id);
+                }}
+              >
+                Mark As Cancelled
+              </Button>
+            </>
+          )}
+          {status === "cancelled" && (
+            <>
+              <Button
+                color="success"
+                variant="outlined"
+                onClick={() => {
+                  markTenderAsActiveQuery.mutate(id);
+                }}
+              >
+                Mark As active
+              </Button>
+              <Button
+                color="warning"
+                variant="outlined"
+                onClick={() => {
+                  markTenderAsPastQuery.mutate(id);
+                }}
+              >
+                Mark As Past
+              </Button>
+            </>
+          )}
         </DialogActions>
       </Dialog>
     </div>
