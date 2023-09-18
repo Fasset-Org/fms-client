@@ -27,7 +27,7 @@ const DateSelectWrapper = ({ name, ...otherProps }) => {
         <DatePicker
           name={name}
           variant="inline"
-          // inputFormat="DD/MM/YYYY"
+          inputFormat="DD/MM/YYYY"
           {...configTextfield}
           onChange={(date) => {
             // console.log(date)
