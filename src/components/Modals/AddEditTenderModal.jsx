@@ -8,10 +8,12 @@ import DialogContent from "@mui/material/DialogContent";
 // import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import {
   Box,
   CircularProgress,
   Grid,
+  InputLabel,
   Slide,
   Stack,
   TextField,
@@ -31,6 +33,7 @@ import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
 import EditIcon from "@mui/icons-material/Edit";
 import DateSelectWrapper from "../FormComponents/DateSelectWrapper";
+import AddAwardedTender from "./AddAwardedTenderModal";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -163,20 +166,20 @@ const AddEditTenderModal = ({ tender }) => {
               tenderId: tender?.id,
               tenderName: tender?.tenderName || "",
               tenderReference: tender?.tenderReference || "",
-              invitationMessage:
-                tender?.invitationMessage || tenderDefaultMessage,
-              bidMessage: tender?.bidMessage || "",
-              queryEmail:
-                tender?.queryEmail || "mathapelo.makomene@fasset.org.za",
+              bidMessage: tender?.bidMessage || tenderDefaultMessage,
+              invitationMessage: tender?.invitationMessage || "",
+              queryEmail: tender?.queryEmail || "",
               closingDate:
                 (tender?.closingDate && dayjs(tender?.closingDate)) || "",
               meetinngId: tender?.meetinngId || "",
               meetingLink: tender?.meetingLink || "",
-              meetigPasscode: tender?.meetigPasscode || "",
+
+              meetingPasscode: tender?.meetingPasscode || "",
               meetingDate:
-                (tender?.meetingDate && dayjs(tender?.meetingDate)) || "",
-              // tenderEndDate:
-              //   (tender?.tenderEndDate && dayjs(tender?.tenderEndDate)) || dayjs(new Date()),
+                (tender?.meetingDate && dayjs(tender?.meetingDate)) || dayjs(),
+              tenderEndDate:
+                (tender?.tenderEndDate && dayjs(tender?.tenderEndDate)) ||
+                dayjs(),
               tenderDocument: tender?.tenderDocument || null,
               bidders: tender?.bidders || []
             }}
@@ -211,6 +214,11 @@ const AddEditTenderModal = ({ tender }) => {
             enableReinitialize={true}
           >
             {({ values, errors, setFieldValue }) => {
+              const winner = values.bidders.find(
+                (bidder) =>
+                  bidder.hasOwnProperty("winner") && bidder.winner === true
+              );
+
               return (
                 <Form encType="multipart/form-data">
                   <Grid container spacing={2}>
@@ -248,6 +256,13 @@ const AddEditTenderModal = ({ tender }) => {
                       />
                     </Grid>
                     <Grid item xs={12} md={12}>
+                      <InputLabel
+                        sx={{ color: "warning.main", fontSize: 12, mb: 1 }}
+                      >
+                        Please edit tender date once you have it, as it will be
+                        used to automatically move tender to previous tenders
+                        after the tender has ended
+                      </InputLabel>
                       <DateSelectWrapper
                         name="tenderEndDate"
                         label="Tender End Date"
@@ -260,7 +275,7 @@ const AddEditTenderModal = ({ tender }) => {
                       />
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <TextFieldWrapper name="meeitngId" label="Meeting ID" />
+                      <TextFieldWrapper name="meetinngId" label="Meeting ID" />
                     </Grid>
                     <Grid item xs={12} md={12}>
                       <TextFieldWrapper
@@ -269,6 +284,9 @@ const AddEditTenderModal = ({ tender }) => {
                       />
                     </Grid>
                     <Grid item xs={12} md={12}>
+                      <InputLabel sx={{ color: "warning.main", fontSize: 12 }}>
+                        Please edit meeting date once you edit meeting link
+                      </InputLabel>
                       <DateTimePickerWrapper
                         name="meetingDate"
                         label="Meeting Date"
@@ -299,16 +317,31 @@ const AddEditTenderModal = ({ tender }) => {
                       </Field>
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <Stack direction="row" justifyContent="end">
+                      <Stack direction="row" justifyContent="end" spacing={2}>
                         <AddBidModal
                           setFieldValue={setFieldValue}
                           bidders={values.bidders}
                         />
+                        {!winner && (
+                          <AddAwardedTender
+                            setFieldValue={setFieldValue}
+                            bidders={values.bidders}
+                          />
+                        )}
                       </Stack>
                     </Grid>
                     {values.bidders.length > 0 && (
                       <Grid item sx={12} md={12}>
                         <Stack spacing={2}>
+                          <Typography
+                            textAlign="center"
+                            sx={{
+                              color: "primary.main",
+                              fontSize: 20
+                            }}
+                          >
+                            Bidders
+                          </Typography>
                           <Stack direction="row" justifyContent="space-between">
                             <Typography fontSize={15} fontWeight="bolder">
                               Bidder Name
@@ -359,7 +392,7 @@ const AddEditTenderModal = ({ tender }) => {
                                     setFieldValue("bidders", newBidders);
                                   }}
                                 >
-                                  <CloseIcon />
+                                  <DeleteForeverIcon color="error" />
                                 </IconButton>
                               </Stack>
                             );
@@ -367,6 +400,77 @@ const AddEditTenderModal = ({ tender }) => {
                         </Stack>
                       </Grid>
                     )}
+
+                    {winner && (
+                      <Grid item sx={12} md={12}>
+                        <Stack spacing={2}>
+                          <Typography
+                            textAlign="center"
+                            sx={{
+                              color: "primary.main",
+                              fontSize: 20
+                            }}
+                          >
+                            Awarded Bidder
+                          </Typography>
+                          <Stack direction="row" justifyContent="space-between">
+                            <Typography fontSize={15} fontWeight="bolder">
+                              Bidder Name
+                            </Typography>
+                            <Typography fontSize={15} fontWeight="bolder">
+                              B-BBEE Level
+                            </Typography>
+                            <Box></Box>
+                          </Stack>
+
+                          <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            alignItems="center"
+                          >
+                            <TextField
+                              hiddenLabel
+                              id="filled-hidden-label-small"
+                              defaultValue={winner.bidderName}
+                              variant="filled"
+                              inputProps={{ readOnly: true }}
+                              color="secondary"
+                            />
+                            <TextField
+                              hiddenLabel
+                              id="filled-hidden-label-small"
+                              defaultValue={winner.bbeeLevel}
+                              variant="filled"
+                              inputProps={{ readOnly: true }}
+                              color="secondary"
+                            />
+
+                            <IconButton onClick={() => {}}>
+                              <DeleteForeverIcon
+                                color="error"
+                                onClick={() => {
+                                  setFieldValue(
+                                    "bidders",
+                                    values.bidders.map((bidder) => {
+                                      if (
+                                        bidder.bidderName === winner.bidderName
+                                      ) {
+                                        return {
+                                          ...bidder,
+                                          winner: false
+                                        };
+                                      }
+                                      return bidder;
+                                    })
+                                  );
+                                }}
+                              />
+                            </IconButton>
+                          </Stack>
+                        </Stack>
+                      </Grid>
+                    )}
+
                     <Grid item xs={12} md={12}>
                       <Box textAlign="end">
                         {!tender ? (
