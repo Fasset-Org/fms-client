@@ -105,7 +105,7 @@ const PreviousTenders = () => {
                         justifyContent="center"
                       >
                         <AddEditTenderModal tender={tender} />
-                        <DeleteConfirmModal />
+                        <DeleteConfirmModal id={tender.id} status={tender.tenderStatus} />
                       </Stack>
                     </TableCell>
                   </TableRow>
