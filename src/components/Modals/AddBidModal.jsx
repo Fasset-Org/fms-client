@@ -12,6 +12,7 @@ import { Box, Grid, Slide, useMediaQuery } from "@mui/material";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
+import dayjs from "dayjs";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -90,7 +91,10 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
               bbeeLevel: Yup.string().required("B-BBEE Level required")
             })}
             onSubmit={(values) => {
-              setFieldValue("bidders", [...bidders, values]);
+              setFieldValue("bidders", [
+                ...bidders,
+                { ...values, datePosted: dayjs() }
+              ]);
               setOpen(false);
             }}
             enableReinitialize={true}
