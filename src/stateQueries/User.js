@@ -17,9 +17,30 @@ const UserQuery = {
 
       return resp?.data;
     },
+    getAllCancelledTenders: async () => {
+      const resp = await axiosInstance.get("/scm/cancelledTenders");
+
+      return resp?.data;
+    },
 
     editTender: async (formData) => {
       const resp = await axiosInstance.put(`/scm/tender`, formData);
+
+      return resp?.data;
+    },
+
+    markTenderAsPast: async (id) => {
+      const resp = await axiosInstance.put(`/scm/markTenderAsPast/${id}`);
+
+      return resp?.data;
+    },
+    markTenderAsCancelled: async (id) => {
+      const resp = await axiosInstance.put(`/scm/markTenderAsCancelled/${id}`);
+
+      return resp?.data;
+    },
+    markTenderAsActive: async (id) => {
+      const resp = await axiosInstance.put(`/scm/markTenderAsActive/${id}`);
 
       return resp?.data;
     }
