@@ -207,6 +207,9 @@ const AddEditPosition = () => {
                         label="Email For Queries"
                         type="email"
                       />
+                    </Grid>
+
+                    <Grid item xs={12} md={12}>
                       <TextFieldWrapper
                         name="applicationsEmail"
                         label="Email To Receive Applications"
