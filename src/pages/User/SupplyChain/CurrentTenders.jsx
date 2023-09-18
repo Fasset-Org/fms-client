@@ -57,7 +57,7 @@ const CurrentTenders = () => {
       />
       <AddEditTenderModal />
 
-      {data?.currentTenders.length > 0 && (
+      {data?.currentTenders?.length > 0 && (
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead sx={{ backgroundColor: "background.paper" }}>
@@ -104,7 +104,10 @@ const CurrentTenders = () => {
                         justifyContent="center"
                       >
                         <AddEditTenderModal tender={tender} />
-                        <DeleteConfirmModal />
+                        <DeleteConfirmModal
+                          id={tender.id}
+                          status={tender.tenderStatus}
+                        />
                       </Stack>
                     </TableCell>
                   </TableRow>
