@@ -114,6 +114,11 @@ const UserQuery = {
 
       return resp?.data;
     }
+  },
+  getPositionApplications: async (id) => {
+    const resp = await axiosInstance.get(`/humanResource/jobApplication/${id}`);
+
+    return resp?.data;
   }
 };
 
