@@ -73,7 +73,7 @@ function App() {
                   element={<PreviousPositions />}
                 />
                 <Route
-                  path="/humanResource/jobApplications"
+                  path="/humanResource/jobApplications/:positionId"
                   element={<JobApplications />}
                 />
                 <Route
