@@ -8,11 +8,19 @@ import DialogContent from "@mui/material/DialogContent";
 // import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Grid, Slide, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  Slide,
+  useMediaQuery
+} from "@mui/material";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
-import dayjs from "dayjs";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -47,10 +55,24 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddBidModal = ({ setFieldValue, bidders }) => {
+const AddQualificationModal = ({ setFieldValue, bidders }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isLoading, isError, isSuccess, data } = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.HumanResourceQuery.addQualification(formData);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("qualifications");
+    },
+    onError: (err) => {
+      console.log(err);
+    }
+  });
 
   const handleClose = () => {
     setOpen(false);
@@ -58,13 +80,18 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
 
   return (
     <>
-      <Button
-        variant="outlined"
-        color="secondary"
-        onClick={() => setOpen(true)}
-      >
-        Add Bidder
+      <Button variant="outlined" color="warning" onClick={() => setOpen(true)}>
+        Add
       </Button>
+
+      {isError && (
+        <AlertPopup
+          open={true}
+          message={data?.message || "Server Error"}
+          severity="error"
+        />
+      )}
+      {isSuccess && <AlertPopup open={true} message={data?.message} />}
 
       <Dialog
         onClose={handleClose}
@@ -78,24 +105,24 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Add Bidder
+          Add New Qualification
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Formik
             initialValues={{
-              bidderName: "",
-              bbeeLevel: ""
+              qualificationName: "",
+              qualificationLevel: ""
             }}
             validationSchema={Yup.object().shape({
-              bidderName: Yup.string().required("Bidder name required"),
-              bbeeLevel: Yup.string().required("B-BBEE Level required")
+              qualificationName: Yup.string().required(
+                "Qualification name required"
+              ),
+              qualificationLevel: Yup.string().required(
+                "Qualification level required"
+              )
             })}
             onSubmit={(values) => {
-              setFieldValue("bidders", [
-                ...bidders,
-                { ...values, datePosted: dayjs() }
-              ]);
-              setOpen(false);
+              mutate(values);
             }}
             enableReinitialize={true}
           >
@@ -104,10 +131,16 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
                 <Form>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
-                      <TextFieldWrapper name="bidderName" label="Bidder Name" />
+                      <TextFieldWrapper
+                        name="qualificationName"
+                        label="Qualification Name"
+                      />
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <TextFieldWrapper name="bbeeLevel" label="B-BBEE Level" />
+                      <TextFieldWrapper
+                        name="qualificationLevel"
+                        label="Qualification Level"
+                      />
                     </Grid>
 
                     <Grid item xs={12} md={12}>
@@ -117,7 +150,11 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
                           type="submit"
                           color="secondary"
                         >
-                          Save
+                          {isLoading ? (
+                            <CircularProgress color="primary" />
+                          ) : (
+                            "Save"
+                          )}
                         </Button>
                       </Box>
                     </Grid>
@@ -137,4 +174,4 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
   );
 };
 
-export default AddBidModal;
+export default AddQualificationModal;

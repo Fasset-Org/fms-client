@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import whiteLogo from "../../assets/images/whiteLogo-bgwhite.png";
+import blueLogo from "../../assets/images/blueLogo-transparentBg.png";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../../components/FormComponents/TextFieldWrapper";
@@ -19,7 +20,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import AuthQuery from "../../stateQueries/Auth";
 
-const LoginUser = () => {
+const LoginUser = ({ currentTheme }) => {
   const navigate = useNavigate();
   const { data } = useQuery({
     queryKey: ["userInfo"],
@@ -54,11 +55,16 @@ const LoginUser = () => {
       {/* {isLoading && <LinearProgress />} */}
       <Stack
         height={300}
-        sx={{ backgroundColor: "primary.main" }}
+        sx={{ backgroundColor: currentTheme === "light" && "primary.main" }}
         alignItems="center"
         padding={2}
       >
-        <img src={whiteLogo} alt="" height="50%" width="11%" />
+        <img
+          src={currentTheme === "light" ? whiteLogo : blueLogo}
+          alt=""
+          height="50%"
+          width="11%"
+        />
       </Stack>
       <Stack justifyContent="center" alignItems="center">
         <Card

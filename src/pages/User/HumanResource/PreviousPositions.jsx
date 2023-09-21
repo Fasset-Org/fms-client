@@ -1,5 +1,6 @@
 import {
-  Button,
+  Chip,
+  IconButton,
   LinearProgress,
   Paper,
   Stack,
@@ -10,22 +11,20 @@ import {
   TableFooter,
   TableHead,
   TablePagination,
-  TableRow
+  TableRow,
+  Typography
 } from "@mui/material";
 import React from "react";
-import AddEditUserModal from "../../components/Modals/AddEditUserModal";
+import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import { useQuery } from "@tanstack/react-query";
-import AdminQuery from "../../stateQueries/Admin";
+import UserQuery from "../../../stateQueries/User";
+import { useNavigate } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
-import BreadCrumbsHeader from "../../components/BreadCrumbsHeader";
+import { DeletePositionModal } from "../../../components/Modals/DeletePositionModal";
 
-const Users = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: async () => {
-      return await AdminQuery.getAllUsers();
-    }
-  });
+const PreviousPositions = () => {
+  const navigate = useNavigate();
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -39,6 +38,15 @@ const Users = () => {
     setPage(0);
   };
 
+  const { data, isLoading } = useQuery({
+    queryKey: ["previousPositions"],
+    queryFn: async () => {
+      return await UserQuery.HumanResourceQuery.getAllPreviousPositions();
+    }
+  });
+
+  console.log(data);
+
   if (isLoading) {
     return <LinearProgress />;
   }
@@ -49,28 +57,30 @@ const Users = () => {
         title="Welcome back Tiyisela Themba Makamu"
         menus={[
           { name: "Dashboard", url: "/dashboard" },
-          { name: "User Management", url: "/userManagement" },
-          { name: "Users", url: "/users" }
+          { name: "Human Resource", url: "/humanResource" },
+          { name: "Previous Positions", url: "/previousPositions" }
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
-      <AddEditUserModal />
-      {data && data?.users && (
+      {data?.positions?.length > 0 ? (
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead sx={{ backgroundColor: "background.paper" }}>
               <TableRow>
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Email
+                  Job Title
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  UserName
+                  Department
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  FullName
+                  Line Manager
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  UserType
+                  Closing Date
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                  Status
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
                   Action
@@ -78,20 +88,33 @@ const Users = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data?.users.map((user) => {
+              {data?.positions?.map((position) => {
                 return (
                   <TableRow>
                     <TableCell align="center" component="th" scope="row">
-                      {user.email}
+                      {position.jobTitle}
                     </TableCell>
                     <TableCell align="center" component="th" scope="row">
-                      {user.userName}
+                      {position.Department?.departmentName}
                     </TableCell>
                     <TableCell align="center" component="th" scope="row">
-                      {user.fullName}
+                      {position.reportingTo}
                     </TableCell>
                     <TableCell align="center" component="th" scope="row">
-                      {user.userType}
+                      {`${new Date(position.closingDate).toDateString()} @ ${
+                        new Date(position.closingDate).getHours() > 11
+                          ? new Date(position.closingDate).getHours() +
+                            ":" +
+                            new Date(position.closingDate).getMinutes() +
+                            "PM"
+                          : new Date(position.closingDate).getHours() +
+                            ":" +
+                            new Date(position.closingDate).getMinutes() +
+                            "AM"
+                      }`}
+                    </TableCell>
+                    <TableCell align="center" component="th" scope="row">
+                      <Chip color="error" label="closed" />
                     </TableCell>
 
                     <TableCell align="center">
@@ -101,8 +124,17 @@ const Users = () => {
                         // border={1}
                         justifyContent="center"
                       >
-                        {/* <Button variant="outlined">View</Button> */}
-                        <Button variant="contained">Edit</Button>
+                        <IconButton
+                          color="secondary"
+                          onClick={() =>
+                            navigate(
+                              `/humanResource/editPreviousPosition/${position.id}`
+                            )
+                          }
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <DeletePositionModal id={position.id} />
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -131,9 +163,27 @@ const Users = () => {
             </TableFooter>
           </Table>
         </TableContainer>
+      ) : (
+        <Stack width="100%">
+          <Stack
+            sx={{
+              height: 60,
+              border: 1,
+              borderColor: "primary.main",
+              padding: 2,
+              borderRadius: 2
+            }}
+            component={Paper}
+            justifyContent="center"
+          >
+            <Typography fontWeight="bolder">
+              No Closed Positions Available
+            </Typography>
+          </Stack>
+        </Stack>
       )}
     </Stack>
   );
 };
 
-export default Users;
+export default PreviousPositions;

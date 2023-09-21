@@ -1,10 +1,9 @@
 import { Grid, Stack } from "@mui/material";
 import React from "react";
-import BreadCrumbsHeader from "../../components/BreadCrumbsHeader";
+import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
-import DashboardCard from "../../components/DashboardCard";
+import DashboardCard from "../../../components/DashboardCard";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
 const HumanResource = () => {
@@ -12,20 +11,15 @@ const HumanResource = () => {
   const [open] = useOutletContext();
   const menuList = [
     {
-      title: "Current Positions",
+      title: "Open Positions",
       icon: ArrowCircleDownIcon,
-      url: "/userManagement/users"
+      url: "/humanResource/openPositions"
     },
     {
       title: "Previous Positions",
       icon: ArrowCircleUpIcon,
-      url: "/userManagement/departments"
+      url: "/humanResource/previousPositions"
     },
-    {
-      title: "Applications",
-      icon: SettingsApplicationsIcon,
-      url: "/userManagement/modules"
-    }
   ];
   return (
     <Stack>

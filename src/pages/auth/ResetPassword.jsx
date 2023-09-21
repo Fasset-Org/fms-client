@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import React, { useEffect } from "react";
 import whiteLogo from "../../assets/images/whiteLogo-bgwhite.png";
+import blueLogo from "../../assets/images/blueLogo-transparentBg.png";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../../components/FormComponents/TextFieldWrapper";
@@ -19,7 +20,7 @@ import { useMutation } from "@tanstack/react-query";
 import AuthQuery from "../../stateQueries/Auth";
 import AlertPopup from "../../components/AlertPopup";
 
-const ResetPassword = () => {
+const ResetPassword = ({ currentTheme }) => {
   let { resetToken } = useParams();
   const navigate = useNavigate();
 
@@ -75,11 +76,16 @@ const ResetPassword = () => {
         {/* {isLoading && <LinearProgress />} */}
         <Stack
           height={300}
-          sx={{ backgroundColor: "primary.main" }}
+          sx={{ backgroundColor: currentTheme === "light" && "primary.main" }}
           alignItems="center"
           padding={2}
         >
-          <img src={whiteLogo} alt="" height="50%" width="11%" />
+          <img
+            src={currentTheme === "light" ? whiteLogo : blueLogo}
+            alt=""
+            height="50%"
+            width="11%"
+          />
         </Stack>
         <Stack justifyContent="center" alignItems="center">
           <Card

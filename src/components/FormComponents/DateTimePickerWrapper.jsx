@@ -4,14 +4,11 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { FormHelperText } from "@mui/material";
 
 const DateTimePickerWrapper = ({ name, ...otherProps }) => {
   const [field, meta] = useField(name);
   const { setFieldValue } = useFormikContext();
-
-  const handleChange = (date) => {
-    setFieldValue(name, date);
-  };
 
   const configDateTimePicker = {
     ...field,
@@ -20,20 +17,23 @@ const DateTimePickerWrapper = ({ name, ...otherProps }) => {
     fullWidth: true,
     InputLabelProps: {
       shrink: true
-    },
-    onChange: handleChange
+    }
   };
 
-  if (meta && meta.touched && meta.error) {
-    configDateTimePicker.error = true;
-    configDateTimePicker.helperText = meta.error;
-  }
+
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer components={["DateTimePicker"]}>
-        <DateTimePicker {...configDateTimePicker} />
+        <DateTimePicker
+          {...configDateTimePicker}
+          
+          onChange={(date) => setFieldValue(name, date)}
+        />
       </DemoContainer>
+      {meta?.touched && meta?.error && (
+        <FormHelperText error>{meta?.error}</FormHelperText>
+      )}
     </LocalizationProvider>
   );
 };

@@ -15,7 +15,6 @@ const AuthQuery = {
   },
 
   verifyResetToken: async (formData) => {
-    console.log(formData);
     const resp = await axios.post(
       `${process.env.REACT_APP_API_URL}/auth/verifyResetToken`,
       formData

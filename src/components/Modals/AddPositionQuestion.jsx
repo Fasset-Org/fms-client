@@ -8,11 +8,20 @@ import DialogContent from "@mui/material/DialogContent";
 // import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Grid, Slide, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  InputLabel,
+  Slide,
+  useMediaQuery
+} from "@mui/material";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
-import dayjs from "dayjs";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -47,10 +56,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddBidModal = ({ setFieldValue, bidders }) => {
+const AddPositionQuestion = ({ positionId }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
+  const queryClient = useQueryClient();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const addPositionQuestionMutation = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.HumanResourceQuery.addPositionQuestion(formData);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("position");
+    }
+  });
 
   const handleClose = () => {
     setOpen(false);
@@ -63,8 +81,25 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
         color="secondary"
         onClick={() => setOpen(true)}
       >
-        Add Bidder
+        Add Position Question
       </Button>
+
+      {addPositionQuestionMutation.isError && (
+        <AlertPopup
+          open={true}
+          message={
+            addPositionQuestionMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+          severity="error"
+        />
+      )}
+      {addPositionQuestionMutation.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={addPositionQuestionMutation.data?.message}
+        />
+      )}
 
       <Dialog
         onClose={handleClose}
@@ -78,24 +113,25 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Add Bidder
+          Add Position Question
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Formik
             initialValues={{
-              bidderName: "",
-              bbeeLevel: ""
+              positionId: positionId || "",
+              question: "",
+              expectedAnswer: ""
             }}
             validationSchema={Yup.object().shape({
-              bidderName: Yup.string().required("Bidder name required"),
-              bbeeLevel: Yup.string().required("B-BBEE Level required")
+              positionId: Yup.string().required("Position id required"),
+              question: Yup.string().required("Question required"),
+              expectedAnswer: Yup.string().required("Expected answer required")
             })}
-            onSubmit={(values) => {
-              setFieldValue("bidders", [
-                ...bidders,
-                { ...values, datePosted: dayjs() }
-              ]);
-              setOpen(false);
+            onSubmit={(values, { resetForm }) => {
+              addPositionQuestionMutation.mutate(values);
+              if (addPositionQuestionMutation.isSuccess) {
+                resetForm();
+              }
             }}
             enableReinitialize={true}
           >
@@ -104,10 +140,24 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
                 <Form>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
-                      <TextFieldWrapper name="bidderName" label="Bidder Name" />
+                      <TextFieldWrapper name="question" label="Question?" />
                     </Grid>
                     <Grid item xs={12} md={12}>
-                      <TextFieldWrapper name="bbeeLevel" label="B-BBEE Level" />
+                      <InputLabel
+                        sx={{
+                          fontSize: 12,
+                          color: "warning.main",
+                          fontWeight: "bolder",
+                          mb: 1
+                        }}
+                      >
+                        NB: Providing an answer will automatically check that
+                        with what candidate entered
+                      </InputLabel>
+                      <TextFieldWrapper
+                        name="expectedAnswer"
+                        label="Expected Answer?"
+                      />
                     </Grid>
 
                     <Grid item xs={12} md={12}>
@@ -117,7 +167,11 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
                           type="submit"
                           color="secondary"
                         >
-                          Save
+                          {addPositionQuestionMutation.isLoading ? (
+                            <CircularProgress />
+                          ) : (
+                            "Submit"
+                          )}
                         </Button>
                       </Box>
                     </Grid>
@@ -137,4 +191,4 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
   );
 };
 
-export default AddBidModal;
+export default AddPositionQuestion;

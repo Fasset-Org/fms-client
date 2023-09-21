@@ -1,9 +1,9 @@
 import React from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/en-gb";
-import { DatePicker, LocalizationProvider } from "@mui/lab";
 import { FormControl, TextField } from "@mui/material";
 import { useField, useFormikContext } from "formik";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 const DateSelectWrapper = ({ name, ...otherProps }) => {
   const [field, mata] = useField(name);
@@ -29,7 +29,10 @@ const DateSelectWrapper = ({ name, ...otherProps }) => {
           variant="inline"
           inputFormat="DD/MM/YYYY"
           {...configTextfield}
-          onChange={(date) => setFieldValue(name, date)}
+          onChange={(date) => {
+            // console.log(date)
+            setFieldValue(name, date)
+          }}
           inputVariant="outlined"
           fullWidth
           renderInput={(params) => <TextField {...params} />}

@@ -10,8 +10,8 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, Grid, Slide, useMediaQuery } from "@mui/material";
 import { Form, Formik } from "formik";
-import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
+import SelectFieldWrapper from "../FormComponents/SelectFieldWrapper";
 import dayjs from "dayjs";
 
 function BootstrapDialogTitle(props) {
@@ -47,7 +47,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddBidModal = ({ setFieldValue, bidders }) => {
+const AddAwardedTender = ({ setFieldValue, bidders }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -56,6 +56,17 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
     setOpen(false);
   };
 
+  let tenderBidders = [];
+
+  if (bidders?.length > 0) {
+    tenderBidders = bidders?.map((bidder) => {
+      return {
+        value: bidder?.bidderName,
+        label: bidder?.bidderName
+      };
+    });
+  }
+
   return (
     <>
       <Button
@@ -63,7 +74,7 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
         color="secondary"
         onClick={() => setOpen(true)}
       >
-        Add Bidder
+        Add Awarded Tender
       </Button>
 
       <Dialog
@@ -78,36 +89,44 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Add Bidder
+          Add Awarded Tender
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Formik
             initialValues={{
-              bidderName: "",
-              bbeeLevel: ""
+              bidderName: ""
             }}
             validationSchema={Yup.object().shape({
-              bidderName: Yup.string().required("Bidder name required"),
-              bbeeLevel: Yup.string().required("B-BBEE Level required")
+              bidderName: Yup.string().required("Awarded bidder required")
             })}
             onSubmit={(values) => {
-              setFieldValue("bidders", [
-                ...bidders,
-                { ...values, datePosted: dayjs() }
-              ]);
+              setFieldValue(
+                "bidders",
+                bidders.map((bidder) => {
+                  if (bidder.bidderName === values.bidderName) {
+                    return {
+                      ...bidder,
+                      winner: true,
+                      datePosted: dayjs()
+                    };
+                  }
+                  return bidder;
+                })
+              );
               setOpen(false);
             }}
             enableReinitialize={true}
           >
-            {(formik) => {
+            {({values}) => {
               return (
                 <Form>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
-                      <TextFieldWrapper name="bidderName" label="Bidder Name" />
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                      <TextFieldWrapper name="bbeeLevel" label="B-BBEE Level" />
+                      <SelectFieldWrapper
+                        name="bidderName"
+                        label="Awarded To"
+                        options={tenderBidders}
+                      />
                     </Grid>
 
                     <Grid item xs={12} md={12}>
@@ -137,4 +156,4 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
   );
 };
 
-export default AddBidModal;
+export default AddAwardedTender;
