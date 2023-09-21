@@ -141,6 +141,17 @@ const CurrentPositions = () => {
                           <EditIcon />
                         </IconButton>
                         <DeletePositionModal id={position.id} />
+                        <Button
+                          variant="outlined"
+                          sx={{ fontSize: 12 }}
+                          onClick={() => {
+                            navigate(
+                              `/humanResource/jobApplications/${position.id}`
+                            );
+                          }}
+                        >
+                          View Applications
+                        </Button>
                       </Stack>
                     </TableCell>
                   </TableRow>
