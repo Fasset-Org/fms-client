@@ -1,12 +1,9 @@
 import axios from "axios";
 import axiosInstance from "./AxiosInstance";
-
+axios.defaults.baseURL = "http://102.37.217.58:5000/api/dev";
 const AuthQuery = {
   loginUser: async (formData) => {
-    const resp = await axios.post(
-      `${process.env.REACT_APP_API_URL}/auth/login`,
-      formData
-    );
+    const resp = await axios.post(`/auth/login`, formData);
     return await resp?.data;
   },
   isUserLoggedIn: async (formData) => {
@@ -15,10 +12,7 @@ const AuthQuery = {
   },
 
   verifyResetToken: async (formData) => {
-    const resp = await axios.post(
-      `${process.env.REACT_APP_API_URL}/auth/verifyResetToken`,
-      formData
-    );
+    const resp = await axios.post(`/auth/verifyResetToken`, formData);
 
     return resp?.data;
   },
