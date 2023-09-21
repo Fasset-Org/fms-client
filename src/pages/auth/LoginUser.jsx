@@ -37,9 +37,6 @@ const LoginUser = ({ currentTheme }) => {
       localStorage.setItem("authToken", data?.user?.token);
       localStorage.setItem("refreshToken", data?.user?.refreshToken);
       window.location.href = `https://fasset-cms.azurewebsites.net/`;
-      // setTimeout(() => {
-      //   window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/`;
-      // }, 1000);
     },
     onError: (err) => {
       console.log(err);
