@@ -3,7 +3,6 @@ import React from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import DashboardCard from "../../../components/DashboardCard";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
@@ -21,11 +20,6 @@ const HumanResource = () => {
       icon: ArrowCircleUpIcon,
       url: "/humanResource/previousPositions"
     },
-    {
-      title: "Applications",
-      icon: SettingsApplicationsIcon,
-      url: "/humanResource/jobApplications"
-    }
   ];
   return (
     <Stack>
