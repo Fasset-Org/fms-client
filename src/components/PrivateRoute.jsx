@@ -49,11 +49,11 @@ const PrivateRoute = () => {
   }
 
   if (error?.response?.status === 401) {
-    window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/login`;
+    window.location.href = `https://fasset-cms.azurewebsites.net/login`;
   }
 
   if (isSuccess && data) return <Outlet />;
-  else window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/login`;
+  else window.location.href = `https://fasset-cms.azurewebsites.net/login`;
 };
 
 export default PrivateRoute;
