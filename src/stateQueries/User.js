@@ -113,12 +113,50 @@ const UserQuery = {
       );
 
       return resp?.data;
-    }
-  },
-  getPositionApplications: async (id) => {
-    const resp = await axiosInstance.get(`/humanResource/jobApplication/${id}`);
+    },
 
-    return resp?.data;
+    getPositionApplications: async (id) => {
+      const resp = await axiosInstance.get(
+        `/humanResource/jobApplication/${id}`
+      );
+
+      return resp?.data;
+    },
+    getApplicationById: async (positionId, id) => {
+      const resp = await axiosInstance.get(
+        `/humanResource/jobApplication/${positionId}/${id}`
+      );
+
+      return resp?.data;
+    },
+    shortlistApplication: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/humanResource/jobApplication/${formData.positionId}/${formData.id}`
+      );
+
+      return resp?.data;
+    },
+    unSelectApplication: async (id) => {
+      const resp = await axiosInstance.put(
+        `/humanResource/unselectApplication/${id}`
+      );
+
+      return resp?.data;
+    },
+    rejectApplication: async (id) => {
+      const resp = await axiosInstance.put(
+        `/humanResource/rejectJobApplication/${id}`
+      );
+
+      return resp?.data;
+    },
+    rejectAllApplications: async (id) => {
+      const resp = await axiosInstance.put(
+        `/humanResource/rejectAllApplications/${id}`
+      );
+
+      return resp?.data;
+    }
   }
 };
 
