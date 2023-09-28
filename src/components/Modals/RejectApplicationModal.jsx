@@ -7,7 +7,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField
+  Typography
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
@@ -16,18 +16,28 @@ import AlertPopup from "../AlertPopup";
 /**
  * Renders a sign-out button
  */
-export const RejectApplicationModal = ({ id }) => {
+export const RejectApplicationModal = ({ application, width }) => {
   const [open, setOpen] = React.useState(false);
   const queryClient = useQueryClient();
   const { data, mutate, isLoading, isError, isSuccess, error } = useMutation({
     mutationFn: async (id) => {
-      return await UserQuery.HumanResourceQuery.deletePositionQuestion(id);
+      return await UserQuery.HumanResourceQuery.rejectApplication(id);
     },
     onSuccess: (data) => {
       setOpen(false);
-      setTimeout(() => {
-        queryClient.invalidateQueries(["position"]);
-      }, 1000);
+      queryClient.invalidateQueries(["applications"]);
+      queryClient.invalidateQueries(["application"]);
+    }
+  });
+
+  const unSelectApplicationQuery = useMutation({
+    mutationFn: async (id) => {
+      return await UserQuery.HumanResourceQuery.unSelectApplication(id);
+    },
+    onSuccess: (data) => {
+      setOpen(false);
+      queryClient.invalidateQueries(["applications"]);
+      queryClient.invalidateQueries(["application"]);
     }
   });
 
@@ -40,9 +50,14 @@ export const RejectApplicationModal = ({ id }) => {
   };
 
   return (
-    <>
-      <Button sx={{ fontSize: 12 }} color="error" onClick={handleClickOpen}>
-        Reject
+    <div>
+      <Button
+        variant="outlined"
+        sx={{ fontSize: 10, width: width ? width : 70 }}
+        color="error"
+        onClick={handleClickOpen}
+      >
+        {application.status === "rejected" ? "Unreject" : "Reject"}
       </Button>
 
       {isError && (
@@ -54,6 +69,23 @@ export const RejectApplicationModal = ({ id }) => {
       )}
       {isSuccess && <AlertPopup open={true} message={data?.message} />}
 
+      {unSelectApplicationQuery.isError && (
+        <AlertPopup
+          open={true}
+          message={
+            unSelectApplicationQuery.error?.response?.data?.message ||
+            "Server Error"
+          }
+          severity="error"
+        />
+      )}
+      {unSelectApplicationQuery.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={unSelectApplicationQuery.data?.message}
+        />
+      )}
+
       <Dialog
         sx={{ border: "3px solid #F44336 " }}
         open={open}
@@ -63,9 +95,21 @@ export const RejectApplicationModal = ({ id }) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Reject</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {application.status === "rejected" ? "Unreject" : "Reject"}
+        </DialogTitle>
         <DialogContent>
-          <TextField multiline rows={3} fullWidth label="Reject Reason..." />
+          <Typography>
+            Are you sure you want to{" "}
+            {application.status === "rejected" ? "unreject" : "reject"}&nbsp;
+            <Typography
+              component="span"
+              sx={{ color: "warning.main", fontWeight: "bolder" }}
+            >
+              {application.fullname}'s
+            </Typography>
+            &nbsp; application?
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} variant="outlined">
@@ -76,14 +120,28 @@ export const RejectApplicationModal = ({ id }) => {
             color="error"
             variant="outlined"
             onClick={() => {
-              mutate(id);
+              if (application.status === "rejected") {
+                unSelectApplicationQuery.mutate(application.id);
+              } else {
+                mutate(application.id);
+              }
             }}
             autoFocus
           >
-            {isLoading ? <CircularProgress color="warning" /> : "Reject"}
+            {application.status === "rejected" ? (
+              <>
+                {unSelectApplicationQuery.isLoading ? (
+                  <CircularProgress color="warning" />
+                ) : (
+                  "Unreject"
+                )}
+              </>
+            ) : (
+              <>{isLoading ? <CircularProgress color="warning" /> : "Reject"}</>
+            )}
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 };
