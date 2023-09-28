@@ -130,17 +130,6 @@ const CurrentPositions = () => {
                         // border={1}
                         justifyContent="center"
                       >
-                        <IconButton
-                          color="secondary"
-                          onClick={() =>
-                            navigate(
-                              `/humanResource/editPosition/${position.id}`
-                            )
-                          }
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <DeletePositionModal id={position.id} />
                         <Button
                           variant="outlined"
                           sx={{ fontSize: 12 }}
@@ -152,6 +141,17 @@ const CurrentPositions = () => {
                         >
                           View Applications
                         </Button>
+                        <IconButton
+                          color="secondary"
+                          onClick={() =>
+                            navigate(
+                              `/humanResource/editPosition/${position.id}`
+                            )
+                          }
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <DeletePositionModal id={position.id} />
                       </Stack>
                     </TableCell>
                   </TableRow>
