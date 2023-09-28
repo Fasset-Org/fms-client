@@ -25,6 +25,14 @@ import PreviousPositions from "./pages/User/HumanResource/PreviousPositions";
 import JobApplications from "./pages/User/HumanResource/JobApplications";
 import AddEditPosition from "./pages/User/HumanResource/AddEditPosition";
 import EditPosition from "./pages/User/HumanResource/EditPosition";
+import ViewApplication from "./pages/User/HumanResource/ViewApplication";
+import Banners from "./pages/User/CSE/Banners";
+import Board from "./pages/User/CSE/Board";
+import Committees from "./pages/User/CSE/Committees";
+import Downloads from "./pages/User/CSE/Downloads";
+import NoticeBoard from "./pages/User/CSE/NoticeBoard";
+import AnnualReports from "./pages/User/CSE/AnnualReports";
+import ResearchReports from "./pages/User/CSE/ResearchReports";
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -62,6 +70,34 @@ function App() {
                   path="/websiteManagement"
                   element={<WebsiteManagement />}
                 />
+                <Route
+                  path="/cse/banners"
+                  element={<Banners />}
+                />
+                <Route
+                  path="/cse/board"
+                  element={<Board />}
+                />
+                <Route
+                  path="/cse/committees"
+                  element={<Committees />}
+                />
+                <Route
+                  path="/cse/downloads"
+                  element={<Downloads />}
+                />
+                <Route
+                  path="/cse/noticeBoard"
+                  element={<NoticeBoard />}
+                />
+                <Route
+                  path="/cse/annualReports"
+                  element={<AnnualReports />}
+                />
+                <Route
+                  path="/cse/researchReports"
+                  element={<ResearchReports />}
+                />
                 {/* Human Resource Routes */}
                 <Route path="/humanResource" element={<HumanResource />} />
                 <Route
@@ -75,6 +111,10 @@ function App() {
                 <Route
                   path="/humanResource/jobApplications/:positionId"
                   element={<JobApplications />}
+                />
+                <Route
+                  path="/humanResource/jobApplications/:positionId/viewApplication/:applicationId"
+                  element={<ViewApplication />}
                 />
                 <Route
                   path="/humanResource/addPositiosn"
