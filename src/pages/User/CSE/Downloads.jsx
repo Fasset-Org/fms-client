@@ -1,11 +1,12 @@
-import { Button, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import React from "react";
+import AddEditDownloadsModal from "../../../components/Modals/AddDownloadsModal";
 
 const Downloads = () => {
   return (
     <Stack spacing={2}>
-      <Stack justifyContent='center' alignItems='center'>
-        <Button variant="contained">Add Document Pile</Button>
+      <Stack justifyContent="center" alignItems="center">
+        <AddEditDownloadsModal />
       </Stack>
       {/* <TableContainer component={Paper} sx={{ borderRadius: 0 }}>
                 <Table aria-label="simple table">
