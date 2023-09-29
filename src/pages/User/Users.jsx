@@ -1,5 +1,4 @@
 import {
-  Button,
   LinearProgress,
   Paper,
   Stack,
@@ -102,7 +101,8 @@ const Users = () => {
                         justifyContent="center"
                       >
                         {/* <Button variant="outlined">View</Button> */}
-                        <Button variant="contained">Edit</Button>
+                        {/* <Button variant="contained">Edit</Button> */}
+                        <AddEditUserModal user={user} />
                       </Stack>
                     </TableCell>
                   </TableRow>
