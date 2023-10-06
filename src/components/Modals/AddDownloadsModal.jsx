@@ -9,14 +9,15 @@ import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {
-  Box,
   CircularProgress,
   Grid,
   InputLabel,
   Slide,
+  Stack,
+  TextField,
   useMediaQuery
 } from "@mui/material";
-import { Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -56,7 +57,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddEditDownloadsModal = () => {
+const AddEditDownloadsModal = ({ downloadsTitle }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -84,7 +85,7 @@ const AddEditDownloadsModal = () => {
         <AlertPopup open={true} message={adminQuery?.data?.message} />
       )}
       <Button variant="contained" onClick={() => setOpen(true)}>
-        Add Downloads
+        Add Downloads Title
       </Button>
       <Dialog
         onClose={handleClose}
@@ -98,19 +99,19 @@ const AddEditDownloadsModal = () => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Add Downloads
+          Add Downloads Title
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Formik
             initialValues={{
-              departmentName: "",
-              departmentDesc: ""
+              title: "",
+              documentName: "",
+              documentFile: ""
             }}
             validationSchema={Yup.object().shape({
-              departmentName: Yup.string().required("Department name required"),
-              departmentDesc: Yup.string().required(
-                "Department description required"
-              )
+              title: Yup.string().required("Downloads title required"),
+              documentName: Yup.string().required("Document name required"),
+              documentFile: Yup.string().required("Please attach a file")
             })}
             onSubmit={(values) => {
               adminQuery.mutate(values);
@@ -122,22 +123,64 @@ const AddEditDownloadsModal = () => {
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
                       <InputLabel sx={{ mb: 1 }}>Downloads Title</InputLabel>
-                      <TextFieldWrapper
-                        name="downloadsTitle"
-                        label="Downloads Title"
-                      />
+                      <TextFieldWrapper name="title" label="Downloads Title" />
                     </Grid>
+                    {downloadsTitle && (
+                      <>
+                        <Grid item xs={6} md={6}>
+                          <TextFieldWrapper
+                            name="documentName"
+                            label="Document Name"
+                          />
+                        </Grid>
+                        <Grid item xs={4} md={4}>
+                          <Field name="documentFile">
+                            {({ field, form, meta }) => (
+                              <TextField
+                                type="file"
+                                label="File"
+                                InputLabelProps={{
+                                  shrink: true
+                                }}
+                                error={meta.touched && meta.error}
+                                helperText={
+                                  meta.touched && meta.error && meta.error
+                                }
+                                fullWidth
+                                onChange={(event) => {
+                                  form.setFieldValue(
+                                    field.name,
+                                    event.currentTarget.files[0]
+                                  );
+                                }}
+                              />
+                            )}
+                          </Field>
+                        </Grid>
+                        <Grid item xs={2} md={2}>
+                          <Stack
+                            width="100%"
+                            height="100%"
+                            justifyContent="center"
+                            alignItems="center"
+                          >
+                            <Button
+                              variant="contained"
+                              type="submit"
+                              sx={{ width: "100%", height: "80%" }}
+                            >
+                              {adminQuery.isLoading ? (
+                                <CircularProgress color="secondary" />
+                              ) : (
+                                "Save"
+                              )}
+                            </Button>
+                          </Stack>
+                        </Grid>
+                      </>
+                    )}
                     <Grid item xs={12} md={12}>
-                      <InputLabel sx={{ mb: 1 }}>
-                        Department Description
-                      </InputLabel>
-                      <TextFieldWrapper
-                        name="departmentDesc"
-                        label="Department Description"
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                      <Box textAlign="end">
+                      <Stack direction="row" justifyContent="end">
                         <Button
                           variant="contained"
                           type="submit"
@@ -146,10 +189,10 @@ const AddEditDownloadsModal = () => {
                           {adminQuery.isLoading ? (
                             <CircularProgress color="secondary" />
                           ) : (
-                            "Submit"
+                            "Save"
                           )}
                         </Button>
-                      </Box>
+                      </Stack>
                     </Grid>
                   </Grid>
                 </Form>
