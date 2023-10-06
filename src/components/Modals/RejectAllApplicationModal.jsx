@@ -42,7 +42,7 @@ export const RejectAllApplicationModal = ({ position }) => {
     <>
       <Button
         variant="contained"
-        sx={{ fontSize: 11, height: 60, fontWeight: "bolder" }}
+        sx={{ fontSize: 11, height: 50, fontWeight: "bolder" }}
         color="error"
         onClick={handleClickOpen}
       >
