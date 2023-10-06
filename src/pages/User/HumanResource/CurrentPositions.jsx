@@ -12,8 +12,7 @@ import {
   TableFooter,
   TableHead,
   TablePagination,
-  TableRow,
-  Typography
+  TableRow
 } from "@mui/material";
 import React from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
@@ -23,6 +22,7 @@ import UserQuery from "../../../stateQueries/User";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import EditIcon from "@mui/icons-material/Edit";
 import { DeletePositionModal } from "../../../components/Modals/DeletePositionModal";
+import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
 
 const CurrentPositions = () => {
   const navigate = useNavigate();
@@ -68,102 +68,106 @@ const CurrentPositions = () => {
         Add Position
       </Button>
 
-      {data?.positions?.length > 0 ? (
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead sx={{ backgroundColor: "background.paper" }}>
-              <TableRow>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Job Title
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Department
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Line Manager
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Closing Date
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Status
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.positions?.map((position) => {
-                return (
-                  <TableRow>
-                    <TableCell align="center" component="th" scope="row">
-                      {position.jobTitle}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {position.Department?.departmentName}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {position.reportingTo}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {`${new Date(position.closingDate).toDateString()} @ ${
-                        new Date(position.closingDate).getHours() > 11
-                          ? new Date(position.closingDate).getHours() +
-                            ":" +
-                            new Date(position.closingDate).getMinutes() +
-                            "PM"
-                          : new Date(position.closingDate).getHours() +
-                            ":" +
-                            new Date(position.closingDate).getMinutes() +
-                            "AM"
-                      }`}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      <Chip color="success" label="open" />
-                    </TableCell>
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead sx={{ backgroundColor: "background.paper" }}>
+            <TableRow>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Job Title
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Department
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Line Manager
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Closing Date
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Status
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Action
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? data?.positions?.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : data?.positions
+            ).map((position) => {
+              return (
+                <TableRow>
+                  <TableCell align="center" component="th" scope="row">
+                    {position.jobTitle}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {position.Department?.departmentName}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {position.reportingTo}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {`${new Date(position.closingDate).toDateString()} @ ${
+                      new Date(position.closingDate).getHours() > 11
+                        ? new Date(position.closingDate).getHours() +
+                          ":" +
+                          new Date(position.closingDate).getMinutes() +
+                          "PM"
+                        : new Date(position.closingDate).getHours() +
+                          ":" +
+                          new Date(position.closingDate).getMinutes() +
+                          "AM"
+                    }`}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    <Chip color="success" label="open" />
+                  </TableCell>
 
-                    <TableCell align="center">
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                        // border={1}
-                        justifyContent="center"
+                  <TableCell align="center">
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      // border={1}
+                      justifyContent="center"
+                    >
+                      <Button
+                        variant="outlined"
+                        sx={{ fontSize: 10 }}
+                        onClick={() => {
+                          navigate(
+                            `/humanResource/jobApplications/${position.id}`
+                          );
+                        }}
                       >
-                        <Button
-                          variant="outlined"
-                          sx={{ fontSize: 12 }}
-                          onClick={() => {
-                            navigate(
-                              `/humanResource/jobApplications/${position.id}`
-                            );
-                          }}
-                        >
-                          View Applications
-                        </Button>
-                        <IconButton
-                          color="secondary"
-                          onClick={() =>
-                            navigate(
-                              `/humanResource/editPosition/${position.id}`
-                            )
-                          }
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <DeletePositionModal id={position.id} />
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
+                        View Applications
+                      </Button>
+                      <IconButton
+                        color="secondary"
+                        onClick={() =>
+                          navigate(`/humanResource/editPosition/${position.id}`)
+                        }
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <DeletePositionModal id={position.id} />
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+          {data?.positions?.length > 0 && (
             <TableFooter>
               <TableRow>
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   // colSpan={3}
-                  count={data?.departments?.length || 0}
+                  count={data?.positions?.length || 0}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{
@@ -178,27 +182,14 @@ const CurrentPositions = () => {
                 />
               </TableRow>
             </TableFooter>
-          </Table>
-        </TableContainer>
-      ) : (
-        <Stack width="100%">
-          <Stack
-            sx={{
-              height: 60,
-              border: 1,
-              borderColor: "primary.main",
-              padding: 2,
-              borderRadius: 2
-            }}
-            component={Paper}
-            justifyContent="center"
-          >
-            <Typography fontWeight="bolder">
-              No Open Positions Available
-            </Typography>
+          )}
+        </Table>
+        {(!data?.positions || data?.positions?.length === 0) && (
+          <Stack width="100%" padding={2}>
+            <CustomNoRowsOverlay description="No Open Positions Available" />
           </Stack>
-        </Stack>
-      )}
+        )}
+      </TableContainer>
     </Stack>
   );
 };
