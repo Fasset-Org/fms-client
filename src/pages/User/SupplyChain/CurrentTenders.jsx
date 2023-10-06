@@ -19,6 +19,7 @@ import TablePaginationActions from "@mui/material/TablePagination/TablePaginatio
 import UserQuery from "../../../stateQueries/User";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import { DeleteConfirmModal } from "../../../components/Modals/DeleteComfirmModal";
+import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
 
 const CurrentTenders = () => {
   const [page, setPage] = React.useState(0);
@@ -57,7 +58,7 @@ const CurrentTenders = () => {
       />
       <AddEditTenderModal />
 
-      {data?.currentTenders?.length > 0 && (
+      {
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead sx={{ backgroundColor: "background.paper" }}>
@@ -80,7 +81,13 @@ const CurrentTenders = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data?.currentTenders?.map((tender) => {
+              {(rowsPerPage > 0
+                ? data?.currentTenders?.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : data?.currentTenders
+              ).map((tender) => {
                 return (
                   <TableRow>
                     <TableCell align="center" component="th" scope="row">
@@ -114,29 +121,41 @@ const CurrentTenders = () => {
                 );
               })}
             </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                  // colSpan={3}
-                  count={data?.departments?.length || 0}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  SelectProps={{
-                    inputProps: {
-                      "aria-label": "rows per page"
-                    },
-                    native: true
-                  }}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
+            {data?.currentTenders.length > 0 && (
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[
+                      5,
+                      10,
+                      25,
+                      { label: "All", value: -1 }
+                    ]}
+                    // colSpan={3}
+                    count={data?.currentTenders?.length || 0}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    SelectProps={{
+                      inputProps: {
+                        "aria-label": "rows per page"
+                      },
+                      native: true
+                    }}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    ActionsComponent={TablePaginationActions}
+                  />
+                </TableRow>
+              </TableFooter>
+            )}
           </Table>
+          {(!data?.currentTenders || data?.currentTenders?.length === 0) && (
+            <Stack width="100%" padding={2}>
+              <CustomNoRowsOverlay description="No Current Tenders Available" />
+            </Stack>
+          )}
         </TableContainer>
-      )}
+      }
     </Stack>
   );
 };
