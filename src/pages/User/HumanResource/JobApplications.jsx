@@ -117,7 +117,7 @@ const JobApplications = () => {
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
-      <Stack direction="row" width="100%" alignItems="center">
+      <Stack direction="row" width="100%" alignItems="center" spacing={2}>
         <Box width="80%">
           <FormControl fullWidth>
             <InputLabel id="select">Select Filter</InputLabel>
@@ -128,7 +128,6 @@ const JobApplications = () => {
               label="Select Filter"
               value={selectValue}
               onChange={(e) => {
-                console.log(e.target.value);
                 setSelectValue(e.target.value);
                 handleFilter(e.target.value);
               }}
@@ -143,15 +142,15 @@ const JobApplications = () => {
             </Select>
           </FormControl>
         </Box>
-        <Box
-          width="20%"
-          // border={1}
-          height={55}
-          component={Stack}
-          alignItems="end"
+
+        <RejectAllApplicationModal position={applicationData.position} />
+
+        <Button
+          variant="contained"
+          sx={{ fontSize: 11, height: 50, fontWeight: "bolder", width: 180 }}
         >
-          <RejectAllApplicationModal position={applicationData.position} />
-        </Box>
+          Export
+        </Button>
       </Stack>
 
       {applications?.length > 0 ? (
