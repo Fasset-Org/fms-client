@@ -157,6 +157,13 @@ const UserQuery = {
 
       return resp?.data;
     }
+  },
+  CSEQuery: {
+    addDocumentTitle: async (formData) => {
+      const resp = await axiosInstance.post(`/cse/downloadsTitle`, formData);
+
+      return resp?.data;
+    }
   }
 };
 
