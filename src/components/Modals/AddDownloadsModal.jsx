@@ -21,8 +21,8 @@ import { Field, Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import AdminQuery from "../../stateQueries/Admin";
 import AlertPopup from "../AlertPopup";
+import UserQuery from "../../stateQueries/User";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -62,12 +62,12 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const queryClient = useQueryClient();
-  const adminQuery = useMutation({
+  const addDocumentTitleQuery = useMutation({
     mutationFn: async (formData) => {
-      return await AdminQuery.addDepartment(formData);
+      return await UserQuery.CSEQuery.addDocumentTitle(formData);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries("departments");
+      queryClient.invalidateQueries("downloads");
       setOpen(false);
     },
     onError: (err) => {
@@ -80,9 +80,12 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
   };
 
   return (
-    <>
-      {adminQuery?.isSuccess && (
-        <AlertPopup open={true} message={adminQuery?.data?.message} />
+    <div>
+      {addDocumentTitleQuery?.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={addDocumentTitleQuery?.data?.message}
+        />
       )}
       <Button variant="contained" onClick={() => setOpen(true)}>
         Add Downloads Title
@@ -110,11 +113,11 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
             }}
             validationSchema={Yup.object().shape({
               title: Yup.string().required("Downloads title required"),
-              documentName: Yup.string().required("Document name required"),
-              documentFile: Yup.string().required("Please attach a file")
+              documentName: downloadsTitle &&Yup.string().required("Document name required"),
+              documentFile: downloadsTitle && Yup.string().required("Please attach a file")
             })}
             onSubmit={(values) => {
-              adminQuery.mutate(values);
+              addDocumentTitleQuery.mutate(values);
             }}
           >
             {() => {
@@ -169,7 +172,7 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
                               type="submit"
                               sx={{ width: "100%", height: "80%" }}
                             >
-                              {adminQuery.isLoading ? (
+                              {addDocumentTitleQuery.isLoading ? (
                                 <CircularProgress color="secondary" />
                               ) : (
                                 "Save"
@@ -186,7 +189,7 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
                           type="submit"
                           sx={{ width: 180 }}
                         >
-                          {adminQuery.isLoading ? (
+                          {addDocumentTitleQuery.isLoading ? (
                             <CircularProgress color="secondary" />
                           ) : (
                             "Save"
@@ -206,7 +209,7 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 
