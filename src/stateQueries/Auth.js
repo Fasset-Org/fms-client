@@ -1,7 +1,7 @@
 import axios from "axios";
 import axiosInstance from "./AxiosInstance";
-// axios.defaults.baseURL = "http://102.37.217.58:5000/api/dev";
-axios.defaults.baseURL="http://localhost:5000/api/dev"
+axios.defaults.baseURL = "http://102.37.217.58:5000/api/dev";
+// axios.defaults.baseURL="http://localhost:5000/api/dev"
 const AuthQuery = {
   loginUser: async (formData) => {
     const resp = await axios.post(`/auth/login`, formData);
