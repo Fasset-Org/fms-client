@@ -11,8 +11,7 @@ import {
   TableFooter,
   TableHead,
   TablePagination,
-  TableRow,
-  Typography
+  TableRow
 } from "@mui/material";
 import React from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
@@ -22,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { DeletePositionModal } from "../../../components/Modals/DeletePositionModal";
+import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
 
 const PreviousPositions = () => {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ const PreviousPositions = () => {
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
-      {data?.positions?.length > 0 ? (
+      {
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead sx={{ backgroundColor: "background.paper" }}>
@@ -87,8 +87,15 @@ const PreviousPositions = () => {
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {data?.positions?.map((position) => {
+              {(rowsPerPage > 0
+                ? data?.positions?.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : data?.positions
+              ).map((position) => {
                 return (
                   <TableRow>
                     <TableCell align="center" component="th" scope="row">
@@ -141,47 +148,42 @@ const PreviousPositions = () => {
                 );
               })}
             </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                  // colSpan={3}
-                  count={data?.departments?.length || 0}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  SelectProps={{
-                    inputProps: {
-                      "aria-label": "rows per page"
-                    },
-                    native: true
-                  }}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
+
+            {data?.positions?.length > 0 && (
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[
+                      5,
+                      10,
+                      25,
+                      { label: "All", value: -1 }
+                    ]}
+                    // colSpan={3}
+                    count={data?.positions?.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    SelectProps={{
+                      inputProps: {
+                        "aria-label": "rows per page"
+                      },
+                      native: true
+                    }}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    ActionsComponent={TablePaginationActions}
+                  />
+                </TableRow>
+              </TableFooter>
+            )}
           </Table>
+          {(!data?.positions || data?.positions?.length === 0) && (
+            <Stack width="100%" padding={2}>
+              <CustomNoRowsOverlay description="No Previous Positions Available" />
+            </Stack>
+          )}
         </TableContainer>
-      ) : (
-        <Stack width="100%">
-          <Stack
-            sx={{
-              height: 60,
-              border: 1,
-              borderColor: "primary.main",
-              padding: 2,
-              borderRadius: 2
-            }}
-            component={Paper}
-            justifyContent="center"
-          >
-            <Typography fontWeight="bolder">
-              No Closed Positions Available
-            </Typography>
-          </Stack>
-        </Stack>
-      )}
+      }
     </Stack>
   );
 };

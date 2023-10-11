@@ -34,7 +34,7 @@ const WebsiteManagement = () => {
     {
       title: "Downloads",
       icon: DownloadIcon,
-      url: "/cse/banners"
+      url: "/cse/downloads"
     },
     {
       title: "Notice Board",

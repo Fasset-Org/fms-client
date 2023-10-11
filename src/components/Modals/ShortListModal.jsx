@@ -16,12 +16,16 @@ import AlertPopup from "../AlertPopup";
 /**
  * Renders a sign-out button
  */
-export const RejectApplicationModal = ({ application, width }) => {
+export const ShortListModal = ({ application, width }) => {
   const [open, setOpen] = React.useState(false);
+  const formData = {
+    id: application.id,
+    positionId: application.positionId
+  };
   const queryClient = useQueryClient();
   const { data, mutate, isLoading, isError, isSuccess, error } = useMutation({
-    mutationFn: async (id) => {
-      return await UserQuery.HumanResourceQuery.rejectApplication(id);
+    mutationFn: async (formData) => {
+      return await UserQuery.HumanResourceQuery.shortlistApplication(formData);
     },
     onSuccess: (data) => {
       setOpen(false);
@@ -54,10 +58,10 @@ export const RejectApplicationModal = ({ application, width }) => {
       <Button
         variant="outlined"
         sx={{ fontSize: 10, width: width ? width : 70 }}
-        color="error"
+        color="success"
         onClick={handleClickOpen}
       >
-        {application.status === "rejected" ? "Unreject" : "Reject"}
+        {application.status === "shortlisted" ? "Unselect" : "ShortList"}
       </Button>
 
       {isError && (
@@ -96,12 +100,13 @@ export const RejectApplicationModal = ({ application, width }) => {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {application.status === "rejected" ? "Unreject" : "Reject"}
+          {application.status === "shortlisted" ? "Unselect" : "ShortList"}
         </DialogTitle>
         <DialogContent>
           <Typography>
             Are you sure you want to{" "}
-            {application.status === "rejected" ? "unreject" : "reject"}&nbsp;
+            {application.status === "shortlisted" ? "unselect" : "shortList"}
+            &nbsp;
             <Typography
               component="span"
               sx={{ color: "warning.main", fontWeight: "bolder" }}
@@ -117,27 +122,28 @@ export const RejectApplicationModal = ({ application, width }) => {
           </Button>
 
           <Button
-            color="error"
+            color="success"
             variant="outlined"
             onClick={() => {
-              if (application.status === "rejected") {
+              if (application.status === "shortlisted") {
                 unSelectApplicationQuery.mutate(application.id);
               } else {
-                mutate(application.id);
+                mutate(formData);
               }
             }}
-            autoFocus
           >
-            {application.status === "rejected" ? (
+            {application.status === "shortlisted" ? (
               <>
                 {unSelectApplicationQuery.isLoading ? (
                   <CircularProgress color="warning" />
                 ) : (
-                  "Unreject"
+                  "Unselect"
                 )}
               </>
             ) : (
-              <>{isLoading ? <CircularProgress color="warning" /> : "Reject"}</>
+              <>
+                {isLoading ? <CircularProgress color="warning" /> : "ShortList"}
+              </>
             )}
           </Button>
         </DialogActions>

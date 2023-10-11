@@ -59,12 +59,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddEditUserModal = () => {
+const AddEditUserModal = ({user}) => {
   const [open, setOpen] = React.useState(false);
   let departments = [];
-  let modules = [];
+  // let modules = [];
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  console.log(user)
 
   const userTypes = [
     {
@@ -99,12 +101,12 @@ const AddEditUserModal = () => {
     }
   );
 
-  const { data: moduleQuery, isLoading: moduleFetchLoading } = useQuery({
-    queryKey: ["modules"],
-    queryFn: async () => {
-      return await AdminQuery.getAllModules();
-    }
-  });
+  // const { data: moduleQuery, isLoading: moduleFetchLoading } = useQuery({
+  //   queryKey: ["modules"],
+  //   queryFn: async () => {
+  //     return await AdminQuery.getAllModules();
+  //   }
+  // });
 
   if (departmentQuery?.departments) {
     departments = [
@@ -117,16 +119,16 @@ const AddEditUserModal = () => {
     ];
   }
 
-  if (moduleQuery?.modules) {
-    modules = [
-      ...moduleQuery?.modules?.map((module) => {
-        return {
-          value: module.id,
-          label: module.moduleName
-        };
-      })
-    ];
-  }
+  // if (moduleQuery?.modules) {
+  //   modules = [
+  //     ...moduleQuery?.modules?.map((module) => {
+  //       return {
+  //         value: module.id,
+  //         label: module.moduleName
+  //       };
+  //     })
+  //   ];
+  // }
 
   const addUserQuery = useMutation({
     mutationFn: async (formData) => {
@@ -145,14 +147,14 @@ const AddEditUserModal = () => {
     setOpen(false);
   };
 
-  if (departmentFetchLoading || moduleFetchLoading) {
+  if (departmentFetchLoading) {
     return <LinearProgress />;
   }
 
   return (
-    <>
+    <div>
       <Button variant="contained" onClick={() => setOpen(true)}>
-        Add User
+        {user ? "Edit User" : "Add User"}
       </Button>
       {addUserQuery?.isSuccess && (
         <AlertPopup open={true} message={addUserQuery?.data?.message} />
@@ -175,16 +177,16 @@ const AddEditUserModal = () => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Add User
+          {user ? "Edit User" : "Add User"}
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Formik
             initialValues={{
               userId: userInfo?.user?.id,
-              email: "",
+              email: user?.email || "",
               userType: "",
               departmentId: "",
-              moduleId: ""
+              // moduleId: ""
             }}
             validationSchema={Yup.object().shape({
               email: Yup.string()
@@ -202,7 +204,7 @@ const AddEditUserModal = () => {
                 ),
               userType: Yup.string().required("User type required"),
               departmentId: Yup.string().required("Department required"),
-              moduleId: Yup.string().required("Module required")
+              // moduleId: Yup.string().required("Module required")
             })}
             onSubmit={(values) => {
               addUserQuery.mutate(values);
@@ -233,14 +235,14 @@ const AddEditUserModal = () => {
                         options={departments}
                       />
                     </Grid>
-                    <Grid item xs={12} md={12}>
+                    {/* <Grid item xs={12} md={12}>
                       <InputLabel sx={{ mb: 1 }}>Module</InputLabel>
                       <SelectFieldWrapper
                         name="moduleId"
                         label="Module"
                         options={modules}
                       />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} md={12}>
                       <Box textAlign="end">
                         <Button
@@ -268,7 +270,7 @@ const AddEditUserModal = () => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 

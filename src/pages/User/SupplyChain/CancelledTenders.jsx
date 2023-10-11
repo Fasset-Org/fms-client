@@ -19,6 +19,7 @@ import TablePaginationActions from "@mui/material/TablePagination/TablePaginatio
 import UserQuery from "../../../stateQueries/User";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import { DeleteConfirmModal } from "../../../components/Modals/DeleteComfirmModal";
+import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
 
 const PreviousTenders = () => {
   const [page, setPage] = React.useState(0);
@@ -56,69 +57,75 @@ const PreviousTenders = () => {
         sx={{ mb: 2, width: "100%" }}
       />
 
-      {data?.cancelledTenders?.length > 0 && (
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead sx={{ backgroundColor: "background.paper" }}>
-              <TableRow>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Tender Name
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Tender Reference
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Tender Closing Date
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Tender Status
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.cancelledTenders?.map((tender) => {
-                return (
-                  <TableRow>
-                    <TableCell align="center" component="th" scope="row">
-                      {tender.tenderName}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {tender.tenderReference}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {tender.closingDate}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      <Chip color="error" label="cancelled" />
-                    </TableCell>
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead sx={{ backgroundColor: "background.paper" }}>
+            <TableRow>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Tender Name
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Tender Reference
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Tender Closing Date
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Tender Status
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Action
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? data?.cancelledTenders?.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : data?.cancelledTenders
+            ).map((tender) => {
+              return (
+                <TableRow>
+                  <TableCell align="center" component="th" scope="row">
+                    {tender.tenderName}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {tender.tenderReference}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {tender.closingDate}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    <Chip color="error" label="cancelled" />
+                  </TableCell>
 
-                    <TableCell align="center">
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                        // border={1}
-                        justifyContent="center"
-                      >
-                        <AddEditTenderModal tender={tender} />
-                        <DeleteConfirmModal
-                          id={tender.id}
-                          status={tender.tenderStatus}
-                        />
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
+                  <TableCell align="center">
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      // border={1}
+                      justifyContent="center"
+                    >
+                      <AddEditTenderModal tender={tender} />
+                      <DeleteConfirmModal
+                        id={tender.id}
+                        status={tender.tenderStatus}
+                      />
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+          {data?.cancelledTenders?.length > 0 && (
             <TableFooter>
               <TableRow>
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   // colSpan={3}
-                  count={data?.departments?.length || 0}
+                  count={data?.cancelledTenders?.length || 0}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{
@@ -133,9 +140,14 @@ const PreviousTenders = () => {
                 />
               </TableRow>
             </TableFooter>
-          </Table>
-        </TableContainer>
-      )}
+          )}
+        </Table>
+        {(!data?.cancelledTenders || data?.cancelledTenders?.length === 0) && (
+          <Stack width="100%" padding={2}>
+            <CustomNoRowsOverlay description="No Current Previous Available" />
+          </Stack>
+        )}
+      </TableContainer>
     </Stack>
   );
 };

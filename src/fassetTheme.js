@@ -45,6 +45,9 @@ export const themeDark = createTheme({
       paper: "#202020ff",
       default: "#191919ff"
     }
+  },
+  typography: {
+    fontSize: 12
   }
 });
 
@@ -86,6 +89,9 @@ export const themeLight = createTheme({
       paper: "#fbfbfbff",
       default: "#f3f3f3ff"
     }
+  },
+  typography: {
+    fontSize: 12
   }
 });
 

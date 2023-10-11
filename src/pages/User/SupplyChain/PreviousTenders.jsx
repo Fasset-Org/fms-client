@@ -20,6 +20,7 @@ import UserQuery from "../../../stateQueries/User";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import AddEditTenderModal from "../../../components/Modals/AddEditTenderModal";
 import { DeleteConfirmModal } from "../../../components/Modals/DeleteComfirmModal";
+import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
 
 const PreviousTenders = () => {
   const [page, setPage] = React.useState(0);
@@ -59,65 +60,71 @@ const PreviousTenders = () => {
       <Typography sx={{ color: "error.main" }}>
         To submit tender as new one, change the closing date when editing
       </Typography>
-      {data?.previousTenders?.length > 0 && (
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead sx={{ backgroundColor: "background.paper" }}>
-              <TableRow>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Tender Name
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Tender Reference
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Tender Closing Date
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Tender Status
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.previousTenders?.map((tender) => {
-                return (
-                  <TableRow>
-                    <TableCell align="center" component="th" scope="row">
-                      {tender.tenderName}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {tender.tenderReference}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {tender.closingDate}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      <Chip color="warning" label="past" />
-                    </TableCell>
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead sx={{ backgroundColor: "background.paper" }}>
+            <TableRow>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Tender Name
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Tender Reference
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Tender Closing Date
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Tender Status
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Action
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? data?.previousTenders?.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : data?.previousTenders
+            ).map((tender) => {
+              return (
+                <TableRow>
+                  <TableCell align="center" component="th" scope="row">
+                    {tender.tenderName}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {tender.tenderReference}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {tender.closingDate}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    <Chip color="warning" label="past" />
+                  </TableCell>
 
-                    <TableCell align="center">
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                        justifyContent="center"
-                      >
-                        <AddEditTenderModal tender={tender} />
-                        <DeleteConfirmModal id={tender.id} status={tender.tenderStatus} />
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
+                  <TableCell align="center">
+                    <Stack direction="row" spacing={2} justifyContent="center">
+                      <AddEditTenderModal tender={tender} />
+                      <DeleteConfirmModal
+                        id={tender.id}
+                        status={tender.tenderStatus}
+                      />
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+
+          {data?.previousTenders.length > 0 && (
             <TableFooter>
               <TableRow>
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   // colSpan={3}
-                  count={data?.departments?.length || 0}
+                  count={data?.previousTenders?.length || 0}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{
@@ -132,9 +139,14 @@ const PreviousTenders = () => {
                 />
               </TableRow>
             </TableFooter>
-          </Table>
-        </TableContainer>
-      )}
+          )}
+        </Table>
+        {(!data?.previousTenders || data?.previousTenders?.length === 0) && (
+          <Stack width="100%" padding={2}>
+            <CustomNoRowsOverlay description="No Current Previous Available" />
+          </Stack>
+        )}
+      </TableContainer>
     </Stack>
   );
 };

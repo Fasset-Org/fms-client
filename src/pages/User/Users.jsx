@@ -1,5 +1,4 @@
 import {
-  Button,
   LinearProgress,
   Paper,
   Stack,
@@ -18,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import AdminQuery from "../../stateQueries/Admin";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import BreadCrumbsHeader from "../../components/BreadCrumbsHeader";
+import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay";
 
 const Users = () => {
   const { data, isLoading } = useQuery({
@@ -55,66 +55,74 @@ const Users = () => {
         sx={{ mb: 2, width: "100%" }}
       />
       <AddEditUserModal />
-      {data && data?.users && (
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead sx={{ backgroundColor: "background.paper" }}>
-              <TableRow>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Email
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  UserName
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  FullName
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  UserType
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.users.map((user) => {
-                return (
-                  <TableRow>
-                    <TableCell align="center" component="th" scope="row">
-                      {user.email}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {user.userName}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {user.fullName}
-                    </TableCell>
-                    <TableCell align="center" component="th" scope="row">
-                      {user.userType}
-                    </TableCell>
 
-                    <TableCell align="center">
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                        // border={1}
-                        justifyContent="center"
-                      >
-                        {/* <Button variant="outlined">View</Button> */}
-                        <Button variant="contained">Edit</Button>
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead sx={{ backgroundColor: "background.paper" }}>
+            <TableRow>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Email
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                UserName
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                FullName
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                UserType
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Action
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? data?.users?.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : data?.users
+            )?.map((user) => {
+              return (
+                <TableRow>
+                  <TableCell align="center" component="th" scope="row">
+                    {user.email}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {user.userName}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {user.fullName}
+                  </TableCell>
+                  <TableCell align="center" component="th" scope="row">
+                    {user.userType}
+                  </TableCell>
+
+                  <TableCell align="center">
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      // border={1}
+                      justifyContent="center"
+                    >
+                      {/* <Button variant="outlined">View</Button> */}
+                      {/* <Button variant="contained">Edit</Button> */}
+                      <AddEditUserModal user={user} />
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+          {data?.users?.length > 0 && (
             <TableFooter>
               <TableRow>
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   // colSpan={3}
-                  count={data?.departments?.length || 0}
+                  count={data?.users?.length || 0}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{
@@ -129,11 +137,75 @@ const Users = () => {
                 />
               </TableRow>
             </TableFooter>
-          </Table>
-        </TableContainer>
-      )}
+          )}
+        </Table>
+        {(!data?.users || data?.users?.length === 0) && (
+          <Stack width="100%" padding={2}>
+            <CustomNoRowsOverlay description="No Users Available" />
+          </Stack>
+        )}
+      </TableContainer>
     </Stack>
   );
 };
 
 export default Users;
+
+// export default function Users() {
+//   const { data, isLoading } = useQuery({
+//     queryKey: ["users"],
+//     queryFn: async () => {
+//       return await AdminQuery.getAllUsers();
+//     }
+//   });
+
+//   console.log(data?.users);
+
+//   const columns = [
+//     {
+//       field: "email",
+//       headerName: "User Email",
+//       textAlign: "center",
+//       width: 300
+//     },
+//     {
+//       field: "userName",
+//       headerName: "UserName",
+//       textAlign: "center",
+//       width: 200
+//     },
+//     {
+//       field: "fullName",
+//       headerName: "FullName",
+//       textAlign: "center",
+//       width: 200
+//     },
+//     {
+//       field: "userType",
+//       headerName: "User Type",
+//       textAlign: "center",
+//       width: 200
+//     }
+//   ];
+
+//   return (
+//     <Stack spacing={2} alignItems="center">
+//       <AddEditUserModal />
+//       <Box sx={{ height: 400, width: "100%" }}>
+//         <DataGrid
+//           rows={data ? data?.users : []}
+//           sx={{ "--DataGrid-overlayHeight": "300px" }}
+//           disableColumnSelector
+//           disableDensitySelector
+//           columns={columns}
+//           slots={{ toolbar: GridToolbar, noRowsOverlay: CustomNoRowsOverlay }}
+//           slotProps={{
+//             toolbar: {
+//               showQuickFilter: true
+//             }
+//           }}
+//         />
+//       </Box>
+//     </Stack>
+//   );
+// }
