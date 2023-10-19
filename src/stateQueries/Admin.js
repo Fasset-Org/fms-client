@@ -30,6 +30,17 @@ const AdminQuery = {
 
     return resp?.data;
   },
+  editUser: async (formData) => {
+    const resp = await axiosInstance.put(`/admin/user/${formData.userId}`, formData);
+
+    return resp?.data;
+  },
+  deleteUser: async (id) => {
+    const resp = await axiosInstance.delete(`/admin/user/${id}`);
+
+    return resp?.data;
+  },
+
   getAllUsers: async () => {
     const resp = await axiosInstance.get("/admin/users");
 
