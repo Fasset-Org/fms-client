@@ -17,6 +17,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import WorkIcon from "@mui/icons-material/Work";
+import EdgesensorHighIcon from '@mui/icons-material/EdgesensorHigh';
 import LanguageIcon from "@mui/icons-material/Language";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import { Avatar, Badge, CssBaseline, Stack } from "@mui/material";
@@ -132,6 +133,13 @@ export default function Navigation({ currentTheme, setTheme }) {
       url: "/humanResource",
       userType: "admin",
       department: "humanResource"
+    },
+    {
+      title: "Asset Management",
+      icon: EdgesensorHighIcon,
+      url: "/assetmanagement",
+      userType: "admin",
+      department: "assetmanagement"
     },
     {
       title: "IT User Management",
