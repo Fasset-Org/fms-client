@@ -1,5 +1,4 @@
 import {
-  Button,
   LinearProgress,
   Paper,
   Stack,
@@ -10,7 +9,7 @@ import {
   TableFooter,
   TableHead,
   TablePagination,
-  TableRow
+  TableRow,
 } from "@mui/material";
 import React from "react";
 import AddEditUserModal from "../../components/Modals/AddEditUserModal";
@@ -18,13 +17,14 @@ import { useQuery } from "@tanstack/react-query";
 import AdminQuery from "../../stateQueries/Admin";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import BreadCrumbsHeader from "../../components/BreadCrumbsHeader";
+import { DeleteUserModal } from "../../components/Modals/DeleteUserModal";
 
 const Users = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
       return await AdminQuery.getAllUsers();
-    }
+    },
   });
 
   const [page, setPage] = React.useState(0);
@@ -50,7 +50,7 @@ const Users = () => {
         menus={[
           { name: "Dashboard", url: "/dashboard" },
           { name: "User Management", url: "/userManagement" },
-          { name: "Users", url: "/users" }
+          { name: "Users", url: "/users" },
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
@@ -101,8 +101,9 @@ const Users = () => {
                         // border={1}
                         justifyContent="center"
                       >
-                        {/* <Button variant="outlined">View</Button> */}
-                        <Button variant="contained">Edit</Button>
+                        <AddEditUserModal user={user} />
+                        <DeleteUserModal  id={user.id} />
+                        
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -119,9 +120,9 @@ const Users = () => {
                   page={page}
                   SelectProps={{
                     inputProps: {
-                      "aria-label": "rows per page"
+                      "aria-label": "rows per page",
                     },
-                    native: true
+                    native: true,
                   }}
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
