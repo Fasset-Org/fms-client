@@ -2,6 +2,7 @@ import { Grid, Stack } from "@mui/material";
 import React from "react";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import WorkIcon from "@mui/icons-material/Work";
+import EdgesensorHighIcon from '@mui/icons-material/EdgesensorHigh';
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
 import LanguageIcon from "@mui/icons-material/Language";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -26,6 +27,11 @@ const Dashboard = () => {
       title: "Human Resource",
       icon: WorkIcon,
       url: "/humanResource"
+    },
+    {
+      title: "Asset Management",
+      icon: EdgesensorHighIcon,
+      url: "/assetmanagement"
     },
     {
       title: "IT User Management",
