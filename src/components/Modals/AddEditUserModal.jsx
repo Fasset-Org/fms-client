@@ -8,6 +8,7 @@ import DialogContent from "@mui/material/DialogContent";
 // import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   CircularProgress,
@@ -15,7 +16,7 @@ import {
   InputLabel,
   LinearProgress,
   Slide,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
@@ -24,7 +25,7 @@ import AdminQuery from "../../stateQueries/Admin";
 import * as Yup from "yup";
 import AlertPopup from "../AlertPopup";
 import SelectFieldWrapper from "../FormComponents/SelectFieldWrapper";
-import AuthQuery from "../../stateQueries/Auth";
+/*import AuthQuery from "../../stateQueries/Auth";*/
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -40,7 +41,7 @@ function BootstrapDialogTitle(props) {
             position: "absolute",
             right: 8,
             top: 8,
-            color: (theme) => theme.palette.grey[500]
+            color: (theme) => theme.palette.grey[500],
           }}
         >
           <CloseIcon />
@@ -52,81 +53,81 @@ function BootstrapDialogTitle(props) {
 
 BootstrapDialogTitle.propTypes = {
   children: PropTypes.node,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddEditUserModal = () => {
+const AddEditUserModal = (props) => {
   const [open, setOpen] = React.useState(false);
   let departments = [];
-  let modules = [];
+  // let modules = [];
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const userTypes = [
     {
       value: "Super",
-      label: "Super"
+      label: "Super",
     },
     {
       value: "Admin",
-      label: "Admin"
+      label: "Admin",
     },
     {
       value: "User",
-      label: "User"
-    }
+      label: "User",
+    },
   ];
 
   const queryClient = useQueryClient();
 
-  const { data: userInfo } = useQuery({
+  /*const { data: userInfo } = useQuery({
     queryKey: ["userInfo"],
     queryFn: async () => {
       return await AuthQuery.isUserLoggedIn();
-    }
-  });
+    },
+  });*/
 
   const { data: departmentQuery, isLoading: departmentFetchLoading } = useQuery(
     {
       queryKey: ["departments"],
       queryFn: async () => {
         return await AdminQuery.getAllDepartments();
-      }
+      },
     }
   );
 
-  const { data: moduleQuery, isLoading: moduleFetchLoading } = useQuery({
-    queryKey: ["modules"],
-    queryFn: async () => {
-      return await AdminQuery.getAllModules();
-    }
-  });
+  // const { data: moduleQuery, isLoading: moduleFetchLoading } = useQuery({
+  //   queryKey: ["modules"],
+  //   queryFn: async () => {
+  //     return await AdminQuery.getAllModules();
+  //   },
+  // });
 
   if (departmentQuery?.departments) {
     departments = [
       ...departmentQuery?.departments?.map((department) => {
         return {
           value: department.id,
-          label: department.departmentName
+          label: department.departmentName,
         };
-      })
+      }),
     ];
   }
 
-  if (moduleQuery?.modules) {
-    modules = [
-      ...moduleQuery?.modules?.map((module) => {
-        return {
-          value: module.id,
-          label: module.moduleName
-        };
-      })
-    ];
-  }
+  // if (moduleQuery?.modules) {
+  //   modules = [
+  //     ...moduleQuery?.modules?.map((module) => {
+  //       return {
+  //         value: module.id,
+  //         label: module.moduleName,
+  //       };
+  //     }),
+  //   ];
+  // }
 
   const addUserQuery = useMutation({
     mutationFn: async (formData) => {
@@ -138,22 +139,41 @@ const AddEditUserModal = () => {
     },
     onError: (err) => {
       console.log(err);
-    }
+    },
+  });
+
+  const editUserQuery = useMutation({
+    mutationFn: async (payload) => {
+      return AdminQuery.editUser(payload);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("users");
+      setOpen(false);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
   });
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  if (departmentFetchLoading || moduleFetchLoading) {
+  if (departmentFetchLoading) {
     return <LinearProgress />;
   }
 
   return (
-    <>
-      <Button variant="contained" onClick={() => setOpen(true)}>
-        Add User
-      </Button>
+    <div>
+      {!props.user ? (
+        <Button variant="contained" onClick={() => setOpen(true)}>
+          Add User
+        </Button>
+      ) : (
+        <IconButton color="secondary" onClick={() => setOpen(true)}>
+          <EditIcon />
+        </IconButton>
+      )}
       {addUserQuery?.isSuccess && (
         <AlertPopup open={true} message={addUserQuery?.data?.message} />
       )}
@@ -161,6 +181,16 @@ const AddEditUserModal = () => {
         <AlertPopup
           open={true}
           message={addUserQuery.error?.response?.data?.message}
+        />
+      )}
+
+      {editUserQuery?.isSuccess && (
+        <AlertPopup open={true} message={editUserQuery?.data?.message} />
+      )}
+      {editUserQuery?.isError && (
+        <AlertPopup
+          open={true}
+          message={editUserQuery.error?.response?.data?.message}
         />
       )}
       <Dialog
@@ -180,11 +210,11 @@ const AddEditUserModal = () => {
         <DialogContent dividers>
           <Formik
             initialValues={{
-              userId: userInfo?.user?.id,
-              email: "",
-              userType: "",
-              departmentId: "",
-              moduleId: ""
+              userId: props.user?.id,
+              email: props.user?.email || "",
+              userType: props.user?.userType || "",
+              departmentId: props.user?.departmentId || "",
+              /*moduleId: userInfo?.user?.id,*/
             }}
             validationSchema={Yup.object().shape({
               email: Yup.string()
@@ -202,10 +232,14 @@ const AddEditUserModal = () => {
                 ),
               userType: Yup.string().required("User type required"),
               departmentId: Yup.string().required("Department required"),
-              moduleId: Yup.string().required("Module required")
+              // moduleId: Yup.string().required("Module required"),
             })}
             onSubmit={(values) => {
-              addUserQuery.mutate(values);
+              if (props.user) {
+                editUserQuery.mutate(values);
+              } else {
+                addUserQuery.mutate(values);
+              }
             }}
             enableReinitialize={true}
           >
@@ -233,14 +267,14 @@ const AddEditUserModal = () => {
                         options={departments}
                       />
                     </Grid>
-                    <Grid item xs={12} md={12}>
+                    {/* <Grid item xs={12} md={12}>
                       <InputLabel sx={{ mb: 1 }}>Module</InputLabel>
                       <SelectFieldWrapper
                         name="moduleId"
                         label="Module"
                         options={modules}
                       />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} md={12}>
                       <Box textAlign="end">
                         <Button
@@ -268,7 +302,7 @@ const AddEditUserModal = () => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 
