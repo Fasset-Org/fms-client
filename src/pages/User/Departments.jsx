@@ -93,6 +93,9 @@ const Departments = () => {
                         >
                           {/* <Button variant="outlined">View</Button> */}
                           <Button variant="contained">Edit</Button>
+                         
+
+                        
                         </Stack>
                       </TableCell>
                     </TableRow>
