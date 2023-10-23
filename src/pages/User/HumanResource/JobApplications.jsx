@@ -164,12 +164,12 @@ const JobApplications = () => {
                 >
                   Fullname
                 </TableCell>
-                <TableCell
+                {/* <TableCell
                   align="center"
                   sx={{ fontWeight: "bolder", fontSize: 12 }}
                 >
                   Email
-                </TableCell>
+                </TableCell> */}
                 <TableCell
                   align="center"
                   sx={{ fontWeight: "bolder", fontSize: 12 }}
@@ -191,11 +191,14 @@ const JobApplications = () => {
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
                   Contact Number
                 </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                  Date Submitted
+                </TableCell>
                 <TableCell
                   align="center"
                   sx={{ fontWeight: "bolder", fontSize: 12 }}
                 >
-                  Application Status
+                  Status
                 </TableCell>
                 <TableCell
                   align="center"
@@ -206,9 +209,11 @@ const JobApplications = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {applications?.map((application) => {
+              {applications?.map((application, i) => {
                 return (
-                  <TableRow key={application.id}>
+                  <TableRow
+                    key={application.id}
+                  >
                     <TableCell
                       align="center"
                       component="th"
@@ -217,14 +222,14 @@ const JobApplications = () => {
                     >
                       {application.fullname}
                     </TableCell>
-                    <TableCell
+                    {/* <TableCell
                       align="center"
                       component="th"
                       scope="row"
                       sx={{ fontSize: 12 }}
                     >
                       {application.email}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell
                       align="center"
                       component="th"
@@ -256,6 +261,14 @@ const JobApplications = () => {
                       sx={{ fontSize: 12 }}
                     >
                       {application.cellphone}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      component="th"
+                      scope="row"
+                      sx={{ fontSize: 12 }}
+                    >
+                      {application.createdAt}
                     </TableCell>
                     <TableCell
                       align="center"
@@ -312,7 +325,7 @@ const JobApplications = () => {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   // colSpan={3}
-                  count={data?.departments?.length || 0}
+                  count={data?.applications?.length || 0}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{
