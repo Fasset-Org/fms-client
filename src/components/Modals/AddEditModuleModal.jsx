@@ -80,7 +80,7 @@ const AddEditModuleModal = () => {
   };
 
   return (
-    <>
+    <div>
       <Button variant="contained" onClick={() => setOpen(true)}>
         Add Module
       </Button>
@@ -157,7 +157,7 @@ const AddEditModuleModal = () => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 
