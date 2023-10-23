@@ -109,7 +109,7 @@ const AddEditTenderModal = ({ tender }) => {
   };
 
   return (
-    <>
+    <div>
       {!tender ? (
         <Button variant="contained" onClick={() => setOpen(true)}>
           Add Tender
@@ -512,7 +512,7 @@ const AddEditTenderModal = ({ tender }) => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 
