@@ -33,6 +33,7 @@ import Downloads from "./pages/User/CSE/Downloads";
 import NoticeBoard from "./pages/User/CSE/NoticeBoard";
 import AnnualReports from "./pages/User/CSE/AnnualReports";
 import ResearchReports from "./pages/User/CSE/ResearchReports";
+import DownloadsDocuments from "./pages/User/CSE/DownloadsDocuments";
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -70,30 +71,16 @@ function App() {
                   path="/websiteManagement"
                   element={<WebsiteManagement />}
                 />
+                <Route path="/cse/banners" element={<Banners />} />
+                <Route path="/cse/board" element={<Board />} />
+                <Route path="/cse/committees" element={<Committees />} />
+                <Route path="/cse/downloads" element={<Downloads />} />
                 <Route
-                  path="/cse/banners"
-                  element={<Banners />}
+                  path="/cse/downloads/:titleId"
+                  element={<DownloadsDocuments />}
                 />
-                <Route
-                  path="/cse/board"
-                  element={<Board />}
-                />
-                <Route
-                  path="/cse/committees"
-                  element={<Committees />}
-                />
-                <Route
-                  path="/cse/downloads"
-                  element={<Downloads />}
-                />
-                <Route
-                  path="/cse/noticeBoard"
-                  element={<NoticeBoard />}
-                />
-                <Route
-                  path="/cse/annualReports"
-                  element={<AnnualReports />}
-                />
+                <Route path="/cse/noticeBoard" element={<NoticeBoard />} />
+                <Route path="/cse/annualReports" element={<AnnualReports />} />
                 <Route
                   path="/cse/researchReports"
                   element={<ResearchReports />}
