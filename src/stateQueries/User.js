@@ -163,6 +163,39 @@ const UserQuery = {
       const resp = await axiosInstance.post(`/cse/downloadsTitle`, formData);
 
       return resp?.data;
+    },
+    editDocumentTitle: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/cse/downloadsTitle/${formData.downloadsTitleId}`,
+        formData
+      );
+
+      return resp?.data;
+    },
+    getDocumentTitleById: async (id) => {
+      const resp = await axiosInstance.get(`/cse/documentTitle/${id}`);
+
+      return resp?.data;
+    },
+    getlAllDOcumentsTitle: async () => {
+      const resp = await axiosInstance.get(`/cse/downloadsTitle`);
+
+      return resp?.data;
+    },
+    addDocument: async (formData) => {
+      const resp = await axiosInstance.post(`/cse/addDocument`, formData);
+
+      return resp?.data;
+    },
+    getAllDocuments: async () => {
+      const resp = await axiosInstance(`/cse/documents`);
+
+      return resp?.data;
+    },
+    deleteDocument: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/deleteDocument/${id}`);
+
+      return resp?.data;
     }
   }
 };
