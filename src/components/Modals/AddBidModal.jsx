@@ -57,7 +57,7 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
   };
 
   return (
-    <>
+    <div>
       <Button
         variant="outlined"
         color="secondary"
@@ -133,7 +133,7 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 
