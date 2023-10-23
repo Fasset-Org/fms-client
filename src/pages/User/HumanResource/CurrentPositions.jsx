@@ -88,7 +88,7 @@ const CurrentPositions = () => {
                 Status
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                Action
+                Actions
               </TableCell>
             </TableRow>
           </TableHead>
