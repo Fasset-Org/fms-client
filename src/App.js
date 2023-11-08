@@ -33,6 +33,14 @@ import Downloads from "./pages/User/CSE/Downloads";
 import NoticeBoard from "./pages/User/CSE/NoticeBoard";
 import AnnualReports from "./pages/User/CSE/AnnualReports";
 import ResearchReports from "./pages/User/CSE/ResearchReports";
+import AssetManagement from "./pages/User/AssetManagement/AssetManagement";
+
+import Disposal from "./pages/User/AssetManagement/Disposal";
+import LicenseSubcription from "./pages/User/AssetManagement/LicenseSubcription";
+import SimcardCellphone from "./pages/User/AssetManagement/SimcardCellphone";
+import Reports from "./pages/User/AssetManagement/Reports";
+import Devices from "./pages/User/AssetManagement/Devices";
+
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -97,6 +105,36 @@ function App() {
                 <Route
                   path="/cse/researchReports"
                   element={<ResearchReports />}
+                />
+                {/* ASSET */}
+                
+                <Route
+                  path="/assetManagement"
+                  element={<AssetManagement />}
+                />
+                <Route
+                  path="/assetManagement/Devices"
+                  element={<Devices />}
+                />
+                <Route
+                  path="/assetManagement/Disposal"
+                  element={<Disposal />}
+                 
+                />
+                
+                <Route
+                  path="/assetManagement/LicenseSubcription"
+                  element={< LicenseSubcription/>}
+                />
+                <Route
+                  path="/assetManagement/SimcardCellphone"
+                  element={<SimcardCellphone />}
+                 
+                />
+                <Route
+                  path="/assetManagement/Reports"
+                  element={<Reports />}
+                 
                 />
                 {/* Human Resource Routes */}
                 <Route path="/humanResource" element={<HumanResource />} />
