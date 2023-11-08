@@ -31,7 +31,7 @@ const Dashboard = () => {
     {
       title: "Asset Management",
       icon: EdgesensorHighIcon,
-      url: "/assetmanagement"
+      url: "/assetManagement"
     },
     {
       title: "IT User Management",
