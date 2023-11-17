@@ -196,6 +196,52 @@ const UserQuery = {
       const resp = await axiosInstance.delete(`/cse/deleteDocument/${id}`);
 
       return resp?.data;
+    },
+
+    addGeneralNotice: async (formData) => {
+      const resp = await axiosInstance.post(`/cse/generalNotice`, formData);
+
+      return resp?.data;
+    },
+
+    editGeneralNotice: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/cse/generalNotice/${formData.generalNoticeId}`,
+        formData
+      );
+
+      return resp?.data;
+    },
+    deleteGeneralNotice: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/generalNotice/${id}`);
+
+      return resp?.data;
+    },
+
+    getAllGeneralNotices: async () => {
+      const resp = await axiosInstance.get("/cse/generalNotice");
+
+      return resp?.data;
+    },
+
+    addGrantWindow: async (formData) => {
+      const resp = await axiosInstance.post(`/cse/grantWindow`, formData);
+
+      return resp?.data;
+    },
+
+    editGrantWindow: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/cse/grantWindow/${formData.grantWindowId}`,
+        formData
+      );
+
+      return resp?.data;
+    },
+    deleteGrantWindow: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/grantWindow/${id}`);
+
+      return resp?.data;
     }
   }
 };
