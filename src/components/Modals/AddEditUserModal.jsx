@@ -59,14 +59,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddEditUserModal = ({user}) => {
+const AddEditUserModal = ({ user }) => {
   const [open, setOpen] = React.useState(false);
   let departments = [];
-  // let modules = [];
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  console.log(user)
+  console.log(user);
 
   const userTypes = [
     {
@@ -101,13 +100,6 @@ const AddEditUserModal = ({user}) => {
     }
   );
 
-  // const { data: moduleQuery, isLoading: moduleFetchLoading } = useQuery({
-  //   queryKey: ["modules"],
-  //   queryFn: async () => {
-  //     return await AdminQuery.getAllModules();
-  //   }
-  // });
-
   if (departmentQuery?.departments) {
     departments = [
       ...departmentQuery?.departments?.map((department) => {
@@ -118,17 +110,6 @@ const AddEditUserModal = ({user}) => {
       })
     ];
   }
-
-  // if (moduleQuery?.modules) {
-  //   modules = [
-  //     ...moduleQuery?.modules?.map((module) => {
-  //       return {
-  //         value: module.id,
-  //         label: module.moduleName
-  //       };
-  //     })
-  //   ];
-  // }
 
   const addUserQuery = useMutation({
     mutationFn: async (formData) => {
@@ -185,7 +166,7 @@ const AddEditUserModal = ({user}) => {
               userId: userInfo?.user?.id,
               email: user?.email || "",
               userType: "",
-              departmentId: "",
+              departmentId: ""
               // moduleId: ""
             }}
             validationSchema={Yup.object().shape({
@@ -203,8 +184,7 @@ const AddEditUserModal = ({user}) => {
                   }
                 ),
               userType: Yup.string().required("User type required"),
-              departmentId: Yup.string().required("Department required"),
-              // moduleId: Yup.string().required("Module required")
+              departmentId: Yup.string().required("Department required")
             })}
             onSubmit={(values) => {
               addUserQuery.mutate(values);
