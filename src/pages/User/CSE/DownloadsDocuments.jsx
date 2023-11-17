@@ -1,4 +1,4 @@
-import { LinearProgress, Paper, Stack, Typography } from "@mui/material";
+import { Grid, LinearProgress, Paper, Stack, Typography } from "@mui/material";
 import React from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import { useParams } from "react-router-dom";
@@ -52,26 +52,25 @@ const DownloadsDocuments = () => {
         key={document.id}
       >
         <AddTitleDocumemnts downloadsTitle={titleData?.documentTitle} />
-        {data?.documents?.length > 0 &&
-          data?.documents?.map((document) => {
-            return (
-              <Stack
-                width="80%"
-                minHeight={60}
-                direction="row"
-                component={Paper}
-              >
-                <Stack width="90%" justifyContent="center" padding={2}>
-                  <Typography fontWeight="bolder" fontSize={14}>
-                    {document.documentName}
-                  </Typography>
-                </Stack>
-                <Stack width="10%" justifyContent="center" alignItems="end">
-                  <DeleteDocumentModal id={document.id} />
-                </Stack>
-              </Stack>
-            );
-          })}
+        <Grid container spacing={2}>
+          {data?.documents?.length > 0 &&
+            data?.documents?.map((document) => {
+              return (
+                <Grid item xs={12} md={6}>
+                  <Stack minHeight={60} direction="row" component={Paper}>
+                    <Stack width="90%" justifyContent="center" padding={2}>
+                      <Typography fontWeight="bolder" fontSize={14}>
+                        {document.documentName}
+                      </Typography>
+                    </Stack>
+                    <Stack width="10%" justifyContent="center" alignItems="end">
+                      <DeleteDocumentModal id={document.id} />
+                    </Stack>
+                  </Stack>
+                </Grid>
+              );
+            })}
+        </Grid>
       </Stack>
     </Stack>
   );
