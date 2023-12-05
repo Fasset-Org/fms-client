@@ -188,7 +188,7 @@ const UserQuery = {
       return resp?.data;
     },
     getAllDocuments: async () => {
-      const resp = await axiosInstance(`/cse/documents`);
+      const resp = await axiosInstance.get(`/cse/documents`);
 
       return resp?.data;
     },
@@ -205,6 +205,7 @@ const UserQuery = {
     },
 
     editGeneralNotice: async (formData) => {
+      console.log(formData)
       const resp = await axiosInstance.put(
         `/cse/generalNotice/${formData.generalNoticeId}`,
         formData
@@ -219,7 +220,7 @@ const UserQuery = {
     },
 
     getAllGeneralNotices: async () => {
-      const resp = await axiosInstance.get("/cse/generalNotice");
+      const resp = await axiosInstance.get("/cse/generalNotices");
 
       return resp?.data;
     },
