@@ -16,7 +16,7 @@ import {
   Paper,
   Slide,
   Stack,
-  TextField,
+  Tooltip,
   Typography,
   useMediaQuery
 } from "@mui/material";
@@ -24,10 +24,11 @@ import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
 import TextAreaFieldWrapper from "../FormComponents/TextAreaFieldWrapper";
-import { DeleteQuestionModal } from "./DeleteQuestionModal";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
+import EditIcon from "@mui/icons-material/Edit";
+import { Delete } from "@mui/icons-material";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -62,19 +63,31 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddEditGeneralNoticeModal = ({ tender }) => {
+const AddEditGeneralNoticeModal = ({ notice }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [linksNedded, setLinksNeeded] = React.useState(true);
-  const [link, setLink] = React.useState("");
+  const queryClient = useQueryClient();
 
   const addGeneralNoticeQuery = useMutation({
     mutationFn: async (formData) => {
       return await UserQuery.CSEQuery.addGeneralNotice(formData);
     },
     onSuccess: (data) => {
-      console.log(data);
+      queryClient.invalidateQueries(["notices"]);
+    },
+    onError: (err) => {
+      console.log(err);
+    }
+  });
+
+  const editGeneralNoticeQuery = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.CSEQuery.editGeneralNotice(formData);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["notices"]);
     },
     onError: (err) => {
       console.log(err);
@@ -85,11 +98,19 @@ const AddEditGeneralNoticeModal = ({ tender }) => {
     setOpen(false);
   };
 
+  console.log(notice);
+
   return (
     <div>
-      <Button variant="outlined" onClick={() => setOpen(true)}>
-        Add Notice
-      </Button>
+      {notice ? (
+        <IconButton color="secondary" onClick={() => setOpen(true)}>
+          <EditIcon />
+        </IconButton>
+      ) : (
+        <Button variant="outlined" onClick={() => setOpen(true)}>
+          Add Notice
+        </Button>
+      )}
 
       {addGeneralNoticeQuery?.isSuccess && (
         <AlertPopup
@@ -100,9 +121,26 @@ const AddEditGeneralNoticeModal = ({ tender }) => {
       {addGeneralNoticeQuery?.isError && (
         <AlertPopup
           open={true}
-          severity='error'
+          severity="error"
           message={
             addGeneralNoticeQuery.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+
+      {editGeneralNoticeQuery?.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={editGeneralNoticeQuery?.data?.message}
+        />
+      )}
+      {editGeneralNoticeQuery?.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            editGeneralNoticeQuery.error?.response?.data?.message ||
             "Server Error"
           }
         />
@@ -120,21 +158,43 @@ const AddEditGeneralNoticeModal = ({ tender }) => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Add Notice
+          {notice ? "Edit Notice" : "Add Notice"}
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Formik
             initialValues={{
-              title: "",
-              content: "",
-              links: []
+              generalNoticeId: notice?.id || "",
+              title: notice?.title || "",
+              content: notice?.content || "",
+              url: "",
+              links: notice?.links || []
             }}
             validationSchema={Yup.object().shape({
               title: Yup.string().required("Title required"),
-              content: Yup.string().required("Content required")
+              content: Yup.string().required("Content required"),
+              url: Yup.string().test(
+                "url",
+                "Please provide valid url",
+                function (value) {
+                  if (value?.length > 0) {
+                    try {
+                      new URL(value);
+                      return true;
+                    } catch (err) {
+                      return false;
+                    }
+                  } else {
+                    return true;
+                  }
+                }
+              )
             })}
             onSubmit={(values) => {
-              addGeneralNoticeQuery.mutate(values);
+              if (notice) {
+                editGeneralNoticeQuery.mutate(values);
+              } else {
+                addGeneralNoticeQuery.mutate(values);
+              }
             }}
             enableReinitialize={true}
           >
@@ -170,18 +230,22 @@ const AddEditGeneralNoticeModal = ({ tender }) => {
                     {linksNedded && (
                       <Grid item xs={12} md={12}>
                         <Stack direction="row" spacing={2}>
-                          <TextField
-                            fullWidth
+                          <TextFieldWrapper
+                            name="url"
                             label="Link"
-                            sx={{ width: "80%" }}
-                            onClick={(e) => setLink(e.target.value)}
+                            sx={{
+                              width: "80%"
+                            }}
                           />
                           <Button
                             variant="contained"
                             sx={{ width: "20%" }}
                             onClick={() => {
-                              if (link !== "") {
-                                setFieldValue("links", [...values.links, link]);
+                              if (!errors?.url && values.url?.length > 0) {
+                                setFieldValue("links", [
+                                  ...values.links,
+                                  values.url
+                                ]);
                               }
                             }}
                           >
@@ -191,22 +255,50 @@ const AddEditGeneralNoticeModal = ({ tender }) => {
                       </Grid>
                     )}
 
-                    {values.links.length > 0 && (
-                      <Grid item xs={12} md={12}>
-                        <Stack
-                          direction="row"
-                          justifyContent="space-between"
-                          width="100%"
-                          alignItems="center"
-                          component={Paper}
-                          paddingX={2}
-                          minHeight={60}
-                        >
-                          <Typography>Text</Typography>
-                          <DeleteQuestionModal />
-                        </Stack>
-                      </Grid>
-                    )}
+                    {values.links.length > 0 &&
+                      values.links.map((link, i) => {
+                        return (
+                          <Grid item xs={12} md={12} key={i}>
+                            <Stack
+                              direction="row"
+                              justifyContent="space-between"
+                              width="100%"
+                              alignItems="center"
+                              component={Paper}
+                              paddingX={2}
+                              minHeight={60}
+                            >
+                              <Typography
+                                sx={{
+                                  width: "100%",
+                                  overflow: "hidden",
+                                  whiteSpace: "nowrap",
+                                  textOverflow: "ellipsis"
+                                }}
+                              >
+                                {link}
+                              </Typography>
+                              <Tooltip title="Delete Link">
+                                <IconButton
+                                  color="error"
+                                  size="small"
+                                  aria-label="logout"
+                                  onClick={() => {
+                                    setFieldValue(
+                                      "links",
+                                      values.links.filter((link, j) => {
+                                        return j !== i;
+                                      })
+                                    );
+                                  }}
+                                >
+                                  <Delete />
+                                </IconButton>
+                              </Tooltip>
+                            </Stack>
+                          </Grid>
+                        );
+                      })}
 
                     <Grid item xs={12} md={12}>
                       <Box textAlign="end">
@@ -221,15 +313,25 @@ const AddEditGeneralNoticeModal = ({ tender }) => {
                             color="error"
                             onClick={() => setOpen(false)}
                           >
-                            Cancel
+                            Close
                           </Button>
-                          <Button variant="contained" type="submit">
-                            {addGeneralNoticeQuery.isLoading ? (
-                              <LinearProgress color="secondary" />
-                            ) : (
-                              "Submit"
-                            )}
-                          </Button>
+                          {notice ? (
+                            <Button variant="contained" type="submit">
+                              {editGeneralNoticeQuery.isLoading ? (
+                                <LinearProgress color="secondary" />
+                              ) : (
+                                "Update"
+                              )}
+                            </Button>
+                          ) : (
+                            <Button variant="contained" type="submit">
+                              {addGeneralNoticeQuery.isLoading ? (
+                                <LinearProgress color="secondary" />
+                              ) : (
+                                "Submit"
+                              )}
+                            </Button>
+                          )}
                         </Stack>
                       </Box>
                     </Grid>
