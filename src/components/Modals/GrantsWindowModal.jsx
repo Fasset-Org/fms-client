@@ -13,6 +13,8 @@ import * as Yup from "yup";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import DateTimePickerWrapper from "../FormComponents/DateTimePickerWrapper";
 import SelectFieldWrapper from "../FormComponents/SelectFieldWrapper";
+import { useMutation } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -56,6 +58,18 @@ const GrantsWindowModal = ({ tender }) => {
     setOpen(false);
   };
 
+  const addGrantWindoQuery = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.CSEQuery.addGrantWindow(formData);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (err) => {
+      console.log(err);
+    }
+  });
+
   const windowTypes = [
     {
       value: "mandatory",
@@ -98,7 +112,9 @@ const GrantsWindowModal = ({ tender }) => {
               type: Yup.string().required("Grant type required"),
               closingDate: Yup.date().required("Closing date required")
             })}
-            onSubmit={(values) => {}}
+            onSubmit={(values) => {
+              addGrantWindoQuery.mutate(values);
+            }}
             enableReinitialize={true}
           >
             {({ values, errors, setFieldValue }) => {
@@ -138,7 +154,9 @@ const GrantsWindowModal = ({ tender }) => {
                           >
                             Cancel
                           </Button>
-                          <Button variant="contained" type="submit">Submit</Button>
+                          <Button variant="contained" type="submit">
+                            Submit
+                          </Button>
                         </Stack>
                       </Box>
                     </Grid>
