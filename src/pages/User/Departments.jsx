@@ -76,7 +76,7 @@ const Departments = () => {
               <TableBody>
                 {data?.departments.map((department) => {
                   return (
-                    <TableRow>
+                    <TableRow key={department.id}>
                       <TableCell align="center" component="th" scope="row">
                         {department.departmentName}
                       </TableCell>
