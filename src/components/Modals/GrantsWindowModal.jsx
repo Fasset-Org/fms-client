@@ -7,14 +7,25 @@ import DialogContent from "@mui/material/DialogContent";
 // import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Button, Grid, Slide, Stack, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  LinearProgress,
+  Slide,
+  Stack,
+  useMediaQuery
+} from "@mui/material";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import DateTimePickerWrapper from "../FormComponents/DateTimePickerWrapper";
 import SelectFieldWrapper from "../FormComponents/SelectFieldWrapper";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
+import EditIcon from "@mui/icons-material/Edit";
+import dayjs from "dayjs";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -49,10 +60,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const GrantsWindowModal = ({ tender }) => {
+const GrantsWindowModal = ({ grant }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  const queryClient = useQueryClient();
 
   const handleClose = () => {
     setOpen(false);
@@ -63,7 +76,19 @@ const GrantsWindowModal = ({ tender }) => {
       return await UserQuery.CSEQuery.addGrantWindow(formData);
     },
     onSuccess: (data) => {
-      console.log(data);
+      queryClient.invalidateQueries("grants");
+    },
+    onError: (err) => {
+      console.log(err);
+    }
+  });
+
+  const editGrantWindowQuery = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.CSEQuery.editGrantWindow(formData);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("grants");
     },
     onError: (err) => {
       console.log(err);
@@ -83,9 +108,47 @@ const GrantsWindowModal = ({ tender }) => {
 
   return (
     <div>
-      <Button variant="outlined" onClick={() => setOpen(true)}>
-        Add Grant
-      </Button>
+      {grant ? (
+        <IconButton color="secondary" onClick={() => setOpen(true)}>
+          <EditIcon />
+        </IconButton>
+      ) : (
+        <Button variant="outlined" onClick={() => setOpen(true)}>
+          Add Grant
+        </Button>
+      )}
+
+      {/* Add */}
+
+      {addGrantWindoQuery?.isSuccess && (
+        <AlertPopup open={true} message={addGrantWindoQuery?.data?.message} />
+      )}
+      {addGrantWindoQuery?.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            addGrantWindoQuery.error?.response?.data?.message || "Server Error"
+          }
+        />
+      )}
+
+      {/* Edit */}
+
+      {editGrantWindowQuery?.isSuccess && (
+        <AlertPopup open={true} message={editGrantWindowQuery?.data?.message} />
+      )}
+      {editGrantWindowQuery?.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            editGrantWindowQuery.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+
       <Dialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
@@ -103,21 +166,27 @@ const GrantsWindowModal = ({ tender }) => {
         <DialogContent dividers>
           <Formik
             initialValues={{
-              title: "",
-              type: "",
-              closingDate: ""
+              grantId: grant?.id || "",
+              title: grant?.title || "",
+              grantType: grant?.grantType || "",
+              closingDate: dayjs(grant?.closingDate) || ""
             }}
             validationSchema={Yup.object().shape({
               title: Yup.string().required("Title required"),
-              type: Yup.string().required("Grant type required"),
+              grantType: Yup.string().required("Grant type required"),
               closingDate: Yup.date().required("Closing date required")
             })}
             onSubmit={(values) => {
-              addGrantWindoQuery.mutate(values);
+              if (grant) {
+                editGrantWindowQuery.mutate(values);
+              } else {
+                addGrantWindoQuery.mutate(values);
+              }
             }}
             enableReinitialize={true}
           >
             {({ values, errors, setFieldValue }) => {
+              console.log(errors);
               return (
                 <Form>
                   <Grid container spacing={2}>
@@ -127,7 +196,7 @@ const GrantsWindowModal = ({ tender }) => {
 
                     <Grid item xs={12} md={12}>
                       <SelectFieldWrapper
-                        name="type"
+                        name="grantType"
                         label="Grant Type"
                         options={windowTypes}
                       />
@@ -152,11 +221,25 @@ const GrantsWindowModal = ({ tender }) => {
                             color="error"
                             onClick={() => setOpen(false)}
                           >
-                            Cancel
+                            Close
                           </Button>
-                          <Button variant="contained" type="submit">
-                            Submit
-                          </Button>
+                          {grant ? (
+                            <Button variant="contained" type="submit">
+                              {addGrantWindoQuery.isLoading ? (
+                                <LinearProgress color="secondary" />
+                              ) : (
+                                "Update"
+                              )}
+                            </Button>
+                          ) : (
+                            <Button variant="contained" type="submit">
+                              {addGrantWindoQuery.isLoading ? (
+                                <LinearProgress color="secondary" />
+                              ) : (
+                                "Submit"
+                              )}
+                            </Button>
+                          )}
                         </Stack>
                       </Box>
                     </Grid>
