@@ -233,7 +233,7 @@ const UserQuery = {
 
     editGrantWindow: async (formData) => {
       const resp = await axiosInstance.put(
-        `/cse/grantWindow/${formData.grantWindowId}`,
+        `/cse/grantWindow/${formData.grantId}`,
         formData
       );
 
@@ -243,7 +243,12 @@ const UserQuery = {
       const resp = await axiosInstance.delete(`/cse/grantWindow/${id}`);
 
       return resp?.data;
-    }
+    },
+    getAllGrantsWindows: async () => {
+      const resp = await axiosInstance.get("/cse/grantWindows");
+
+      return resp?.data;
+    },
   }
 };
 
