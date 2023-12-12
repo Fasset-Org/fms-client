@@ -1,5 +1,4 @@
 import {
-  IconButton,
   LinearProgress,
   Paper,
   Stack,
@@ -21,8 +20,6 @@ import TablePaginationActions from "@mui/material/TablePagination/TablePaginatio
 import CustomNoRowsOverlay from "../../CustomNoRowsOverlay";
 
 const Notices = () => {
-
-
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -92,17 +89,13 @@ const Notices = () => {
                   <TableCell align="center" component="th" scope="row">
                     {notice.title}
                   </TableCell>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    sx={{ width: 500 }}
-                  >
+                  <TableCell component="th" scope="row" sx={{ width: 500 }}>
                     <Typography
                       sx={{
                         overflow: "hidden",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
-                        width: 500,
+                        width: 500
                       }}
                     >
                       {notice.content}
@@ -122,9 +115,7 @@ const Notices = () => {
                       // border={1}
                       justifyContent="center"
                     >
-                      <IconButton color="secondary">
-                        <AddEditGeneralNoticeModal notice={notice} />
-                      </IconButton>
+                      <AddEditGeneralNoticeModal notice={notice} />
                     </Stack>
                   </TableCell>
                 </TableRow>
