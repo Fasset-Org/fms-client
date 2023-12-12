@@ -10,9 +10,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Button,
+  CircularProgress,
   Grid,
   InputLabel,
-  LinearProgress,
   Paper,
   Slide,
   Stack,
@@ -75,7 +75,7 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
       return await UserQuery.CSEQuery.addGeneralNotice(formData);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries(["notices"]);
+      queryClient.invalidateQueries("notices");
     },
     onError: (err) => {
       console.log(err);
@@ -318,7 +318,7 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
                           {notice ? (
                             <Button variant="contained" type="submit">
                               {editGeneralNoticeQuery.isLoading ? (
-                                <LinearProgress color="secondary" />
+                                <CircularProgress color="secondary" />
                               ) : (
                                 "Update"
                               )}
@@ -326,7 +326,7 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
                           ) : (
                             <Button variant="contained" type="submit">
                               {addGeneralNoticeQuery.isLoading ? (
-                                <LinearProgress color="secondary" />
+                                <CircularProgress color="secondary" />
                               ) : (
                                 "Submit"
                               )}
