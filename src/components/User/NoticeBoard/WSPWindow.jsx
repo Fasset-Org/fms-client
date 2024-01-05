@@ -19,7 +19,6 @@ import CustomNoRowsOverlay from "../../CustomNoRowsOverlay";
 import { useQuery } from "@tanstack/react-query";
 import UserQuery from "../../../stateQueries/User";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
-import ImageCrop from "../../ImageCrop";
 
 const WSPWindow = () => {
   const [page, setPage] = React.useState(0);
@@ -52,7 +51,6 @@ const WSPWindow = () => {
           WSP Window Notice
         </Typography>
         <GrantsWindowModal />
-        <ImageCrop />
       </Stack>
 
       <TableContainer component={Paper}>
