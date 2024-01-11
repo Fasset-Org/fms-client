@@ -1,9 +1,11 @@
 import React from "react";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/en-gb";
 import { FormControl, TextField } from "@mui/material";
 import { useField, useFormikContext } from "formik";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const DateSelectWrapper = ({ name, ...otherProps }) => {
   const [field, mata] = useField(name);
@@ -24,19 +26,21 @@ const DateSelectWrapper = ({ name, ...otherProps }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
       <FormControl fullWidth>
-        <DatePicker
-          name={name}
-          variant="inline"
-          inputFormat="DD/MM/YYYY"
-          {...configTextfield}
-          onChange={(date) => {
-            // console.log(date)
-            setFieldValue(name, date)
-          }}
-          inputVariant="outlined"
-          fullWidth
-          renderInput={(params) => <TextField {...params} />}
-        />
+        <DemoContainer components={["DatePicker"]}>
+          <DatePicker
+            name={name}
+            variant="inline"
+            inputFormat="DD/MM/YYYY"
+            {...configTextfield}
+            onChange={(date) => {
+              // console.log(date)
+              setFieldValue(name, date);
+            }}
+            inputVariant="outlined"
+            sx={{width: '100%'}}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </DemoContainer>
       </FormControl>
     </LocalizationProvider>
   );
