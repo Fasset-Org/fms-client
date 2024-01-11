@@ -5,8 +5,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Grid, InputLabel, Stack } from "@mui/material";
-import { Form, Formik } from "formik";
+import { Button, Grid, InputLabel, Stack, TextField } from "@mui/material";
+import { Field, Form, Formik } from "formik";
 import { Cancel, Forward } from "@mui/icons-material";
 import * as Yup from "yup";
 import DateSelectWrapper from "../FormComponents/DateSelectWrapper";
@@ -57,8 +57,8 @@ export default function AddEditAnnualReportsModal() {
         <DialogContent>
           <Formik
             initialValues={{
-              title: "",
-              fullname: "",
+              startDate: "",
+              endDate: "",
               file: null
             }}
             validationSchema={Yup.object().shape({
@@ -83,8 +83,34 @@ export default function AddEditAnnualReportsModal() {
                     <Grid item xs={12} md={6}>
                       <DateSelectWrapper name="endDate" label="End Date" />
                     </Grid>
-
-
+                    <Grid item xs={12} md={12}>
+                      <Field name="file">
+                        {({ field, form, meta }) => (
+                          <TextField
+                            type="file"
+                            label="Annual Report FIle"
+                            InputLabelProps={{
+                              shrink: true
+                            }}
+                            inputProps={{
+                              accept:
+                                ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            }}
+                            error={meta.touched && meta.error}
+                            helperText={
+                              meta.touched && meta.error && meta.error
+                            }
+                            fullWidth
+                            onChange={(event) => {
+                              form.setFieldValue(
+                                field.name,
+                                event.currentTarget.files[0]
+                              );
+                            }}
+                          />
+                        )}
+                      </Field>
+                    </Grid>
 
                     <Grid item xs={12} md={12}>
                       <Stack direction="row" justifyContent="end" spacing={2}>
