@@ -121,6 +121,9 @@ export default function AddEditBoardMemberModal() {
                             helperText={
                               meta.touched && meta.error && meta.error
                             }
+                            inputProps={{
+                              accept: "image/*"
+                            }}
                             fullWidth
                             onChange={(event) => {
                               setPhotoURL(
