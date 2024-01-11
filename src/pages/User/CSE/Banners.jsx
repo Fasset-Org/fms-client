@@ -1,8 +1,8 @@
 import { Stack } from "@mui/material";
 import React, { useState } from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
-import UploadBannerButton from "../../../components/crop/utils/UploadBannerButton";
 import ImageCropModal from "../../../components/crop/ImageCropModal";
+import UploadButton from "../../../components/crop/utils/UploadButton";
 
 const Banners = () => {
   const [photoURL, setPhotoURL] = React.useState("");
@@ -20,7 +20,7 @@ const Banners = () => {
         sx={{ mb: 2 }}
       />
       <Stack justifyContent="center" alignItems="center">
-        <UploadBannerButton setPhotoURL={setPhotoURL} setCropOpen={setCropOpen} />
+        <UploadButton setPhotoURL={setPhotoURL} setCropOpen={setCropOpen} title="Upload Banner" />
         {cropOpen && (
           <ImageCropModal
             photoURL={photoURL}
