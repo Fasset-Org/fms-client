@@ -5,8 +5,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Grid, Stack } from "@mui/material";
-import { Form, Formik } from "formik";
+import { Button, Grid, Stack, TextField } from "@mui/material";
+import { Field, Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import { Cancel, Forward } from "@mui/icons-material";
 import * as Yup from "yup";
@@ -90,6 +90,35 @@ export default function AddEditResearchReportsModal() {
 
                     <Grid item xs={12} md={12}>
                       <DateYearSelectWrapper name="year" label="Year" />
+                    </Grid>
+
+                    <Grid item xs={12} md={12}>
+                      <Field name="file">
+                        {({ field, form, meta }) => (
+                          <TextField
+                            type="file"
+                            label="Research Report FIle"
+                            InputLabelProps={{
+                              shrink: true
+                            }}
+                            inputProps={{
+                              accept:
+                                ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            }}
+                            error={meta.touched && meta.error}
+                            helperText={
+                              meta.touched && meta.error && meta.error
+                            }
+                            fullWidth
+                            onChange={(event) => {
+                              form.setFieldValue(
+                                field.name,
+                                event.currentTarget.files[0]
+                              );
+                            }}
+                          />
+                        )}
+                      </Field>
                     </Grid>
 
                     <Grid item xs={12} md={12}>
