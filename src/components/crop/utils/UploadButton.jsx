@@ -32,7 +32,7 @@ export default function UploadButton({
   return (
     <Button component="label" variant="contained" startIcon={<AddAPhotoIcon />}>
       {title}
-      <VisuallyHiddenInput type="file" onChange={handleChange} />
+      <VisuallyHiddenInput type="file" onChange={handleChange} accept="image/*" />
     </Button>
   );
 }
