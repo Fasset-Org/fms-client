@@ -13,6 +13,7 @@ import { Box, Slider } from "@mui/material";
 import { Cancel } from "@mui/icons-material";
 import CropIcon from "@mui/icons-material/Crop";
 import getCroppedImg from "./utils/cropImage";
+import CroppedImageModal from "./CroppedImageModal";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -23,15 +24,14 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export default function ImageCropModal({
-  photoURL,
-  cropOpen,
-  setCropOpen
-}) {
+export default function ImageCropModal({ photoURL, cropOpen, setCropOpen }) {
   const [crop, setCrop] = React.useState({ x: 0, y: 0 });
   const [zoom, setZoom] = React.useState(1);
   const [rotation, setRotation] = React.useState(0);
   const [croppedAreaPixels, setCroppedAreaPixels] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [url, setUrl] = React.useState(null);
+  const [file, setFile] = React.useState(null);
 
   const onCropComplete = (croppedArea, croppedArreaPixels) => {
     setCroppedAreaPixels(croppedArreaPixels);
@@ -49,8 +49,9 @@ export default function ImageCropModal({
         rotation
       );
 
-      console.log("file", file);
-      console.log("url", url);
+      setUrl(url);
+      setFile(file);
+      setOpen(!open);
     } catch (e) {
       console.log(e);
     }
@@ -62,11 +63,13 @@ export default function ImageCropModal({
 
   return (
     <React.Fragment>
+      {open && (
+          <CroppedImageModal {...{ url, file, open, setOpen, setCropOpen }} />
+        )}
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={cropOpen}
-        sx={{}}
         fullWidth={true}
         maxWidth={"sm"}
       >
