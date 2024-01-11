@@ -5,6 +5,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { Box, Button, DialogActions, TextField } from "@mui/material";
+import { Cancel } from "@mui/icons-material";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -15,20 +18,24 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export default function CroppedImageModal({photoURL, file, open, setOpen}) {
-  const handleClose = () => {};
+export default function CroppedImageModal({ url, file, open, setOpen }) {
+  const handleClose = () => {
+    setOpen(!open);
+  };
+
+  console.log(file, url, open, setOpen);
 
   return (
     <React.Fragment>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        open={false}
+        open={open}
         fullWidth={true}
         maxWidth="sm"
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Crop Banner Image
+          Save Banner Image
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -42,7 +49,56 @@ export default function CroppedImageModal({photoURL, file, open, setOpen}) {
         >
           <CloseIcon />
         </IconButton>
-        <DialogContent dividers></DialogContent>
+        <DialogContent
+          dividers
+          sx={{
+            position: "relative",
+            height: 400,
+            width: "auto",
+            minWidth: { sm: 500 }
+          }}
+        >
+          <Box
+            sx={{
+              border: 1,
+              borderColor: "lightgray",
+              mb: 2
+            }}
+          >
+            <img
+              src={URL.createObjectURL(file)}
+              alt=""
+              width="100%"
+              height="100%"
+              style={{ objectFit: "contain" }}
+            />
+          </Box>
+          <TextField type="number" label="Slide Number" fullWidth />
+        </DialogContent>
+
+        <DialogActions sx={{ flexDirection: "column", mx: 3, my: 2 }}>
+          <Box sx={{ width: "100%", mb: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                flexWrap: "wrap",
+                justifyContent: "end"
+              }}
+            >
+              <Button
+                variant="outlined"
+                startIcon={<Cancel />}
+                onClick={handleClose}
+              >
+                Back
+              </Button>
+              <Button variant="contained" startIcon={<ArrowForwardIcon />}>
+                Submit
+              </Button>
+            </Box>
+          </Box>
+        </DialogActions>
       </BootstrapDialog>
     </React.Fragment>
   );
