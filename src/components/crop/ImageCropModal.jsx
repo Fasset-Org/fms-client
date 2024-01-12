@@ -24,7 +24,12 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export default function ImageCropModal({ photoURL, cropOpen, setCropOpen }) {
+export default function ImageCropModal({
+  photoURL,
+  cropOpen,
+  setCropOpen,
+  originalFile
+}) {
   const [crop, setCrop] = React.useState({ x: 0, y: 0 });
   const [zoom, setZoom] = React.useState(1);
   const [rotation, setRotation] = React.useState(0);
@@ -46,9 +51,9 @@ export default function ImageCropModal({ photoURL, cropOpen, setCropOpen }) {
       const { file, url } = await getCroppedImg(
         photoURL,
         croppedAreaPixels,
-        rotation
+        rotation,
+        originalFile
       );
-
       setUrl(url);
       setFile(file);
       setOpen(!open);
@@ -64,8 +69,8 @@ export default function ImageCropModal({ photoURL, cropOpen, setCropOpen }) {
   return (
     <React.Fragment>
       {open && (
-          <CroppedImageModal {...{ url, file, open, setOpen, setCropOpen }} />
-        )}
+        <CroppedImageModal {...{ url, file, open, setOpen, setCropOpen }} />
+      )}
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
