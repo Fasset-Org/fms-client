@@ -205,7 +205,7 @@ const UserQuery = {
     },
 
     editGeneralNotice: async (formData) => {
-      console.log(formData)
+      console.log(formData);
       const resp = await axiosInstance.put(
         `/cse/generalNotice/${formData.generalNoticeId}`,
         formData
@@ -249,6 +249,24 @@ const UserQuery = {
 
       return resp?.data;
     },
+
+    addBannerImageFile: async (formData) => {
+      const resp = await axiosInstance.post("/cse/banner", formData);
+
+      return resp?.data;
+    },
+
+    getAllBannerImages: async () => {
+      const resp = await axiosInstance.get("/cse/banners");
+
+      return resp?.data;
+    },
+
+    deleteBannerImageFile: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/banner/${id}`);
+
+      return resp?.data;
+    }
   }
 };
 
