@@ -18,6 +18,7 @@ const VisuallyHiddenInput = styled("input")({
 export default function UploadButton({
   setPhotoURL,
   setCropOpen,
+  setOriginalFile,
   title
 }) {
   const handleChange = (e) => {
@@ -25,6 +26,7 @@ export default function UploadButton({
 
     if (file) {
       setPhotoURL(URL.createObjectURL(file));
+      setOriginalFile(file);
       setCropOpen(true);
     }
   };
@@ -32,7 +34,11 @@ export default function UploadButton({
   return (
     <Button component="label" variant="contained" startIcon={<AddAPhotoIcon />}>
       {title}
-      <VisuallyHiddenInput type="file" onChange={handleChange} accept="image/*" />
+      <VisuallyHiddenInput
+        type="file"
+        onChange={handleChange}
+        accept="image/*"
+      />
     </Button>
   );
 }
