@@ -5,9 +5,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Button, DialogActions, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, DialogActions } from "@mui/material";
 import { Cancel } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -18,15 +21,43 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export default function CroppedImageModal({ url, file, open, setOpen }) {
+export default function CroppedImageModal({
+  url,
+  file,
+  open,
+  setOpen,
+  setCropOpen
+}) {
+  const queryClient = useQueryClient();
+
   const handleClose = () => {
     setOpen(!open);
   };
 
-  console.log(file, url, open, setOpen);
+  const { mutate, isLoading, isSuccess, isError, error, data } = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.CSEQuery.addBannerImageFile(formData);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("banners");
+      setTimeout(() => {
+        setOpen(false);
+        setCropOpen(false);
+      }, 2000);
+    }
+  });
 
   return (
     <React.Fragment>
+      {isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={error?.response?.data?.message || "Server Error"}
+        />
+      )}
+      {/* Edit Tender Popups */}
+      {isSuccess && <AlertPopup open={true} message={data?.message} />}
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
@@ -73,7 +104,7 @@ export default function CroppedImageModal({ url, file, open, setOpen }) {
               style={{ objectFit: "contain" }}
             />
           </Box>
-          <TextField type="number" label="Slide Number" fullWidth />
+          {/* <TextField type="number" label="Slide Number" fullWidth /> */}
         </DialogContent>
 
         <DialogActions sx={{ flexDirection: "column", mx: 3, my: 2 }}>
@@ -93,8 +124,16 @@ export default function CroppedImageModal({ url, file, open, setOpen }) {
               >
                 Back
               </Button>
-              <Button variant="contained" startIcon={<ArrowForwardIcon />}>
-                Submit
+              <Button
+                variant="contained"
+                startIcon={<ArrowForwardIcon />}
+                onClick={() => {
+                  const formData = new FormData();
+                  formData.append("imageFile", file, file.name);
+                  mutate(formData);
+                }}
+              >
+                {isLoading ? <CircularProgress color="secondary" /> : "Submit"}
               </Button>
             </Box>
           </Box>
