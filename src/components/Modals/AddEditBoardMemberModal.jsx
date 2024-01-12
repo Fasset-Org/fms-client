@@ -93,6 +93,7 @@ export default function AddEditBoardMemberModal() {
             enableReinitialize
           >
             {({ values }) => {
+              console.log(values)
               return (
                 <Form>
                   <Grid container spacing={2}>
