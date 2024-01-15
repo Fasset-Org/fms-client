@@ -28,6 +28,7 @@ export default function GlobalImageCropModal({
   photoURL,
   cropOpen,
   setCropOpen,
+  originalFile,
   title
 }) {
   const [crop, setCrop] = React.useState({ x: 0, y: 0 });
@@ -49,7 +50,8 @@ export default function GlobalImageCropModal({
       const { file } = await getCroppedImg(
         photoURL,
         croppedAreaPixels,
-        rotation
+        rotation,
+        originalFile
       );
 
       setFieldValue("file", file);
