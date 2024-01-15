@@ -5,13 +5,23 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Grid, Stack, TextField } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  Stack,
+  TextField
+} from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import SelectFieldWrapper from "../FormComponents/SelectFieldWrapper";
 import { Cancel, Forward } from "@mui/icons-material";
 import GlobalImageCropModal from "../crop/GlobalImageCropModal";
 import * as Yup from "yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -22,10 +32,39 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export default function AddEditCommitteeMemberModal() {
+export default function AddEditCommitteeMemberModal({ committeeMember }) {
   const [open, setOpen] = React.useState(false);
   const [photoURL, setPhotoURL] = React.useState(null);
+  const [originalFile, setOriginalFile] = React.useState(null);
   const [cropOpen, setCropOpen] = React.useState(false);
+
+  const queryClient = useQueryClient();
+
+  const addComMemberMutation = useMutation({
+    mutationFn: async (formData) => {
+      return UserQuery.CSEQuery.addCommitteeMember(formData);
+    },
+
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("committeeMembers");
+        setOpen(false);
+      }, 2000);
+    }
+  });
+
+  const editComMemberMutation = useMutation({
+    mutationFn: async (formData) => {
+      return UserQuery.CSEQuery.editCommitteeMember(formData);
+    },
+
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("committeeMembers");
+        setOpen(false);
+      }, 2000);
+    }
+  });
 
   const handleToggleOpen = () => {
     setOpen(!open);
@@ -52,9 +91,43 @@ export default function AddEditCommitteeMemberModal() {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleToggleOpen}>
-        Add Committee Member
-      </Button>
+      {committeeMember ? (
+        <IconButton onClick={handleToggleOpen} color="primary">
+          <EditIcon />
+        </IconButton>
+      ) : (
+        <Button variant="contained" onClick={handleToggleOpen}>
+          Add Committee Member
+        </Button>
+      )}
+
+      {addComMemberMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            addComMemberMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {addComMemberMutation.isSuccess && (
+        <AlertPopup open={true} message={addComMemberMutation.data?.message} />
+      )}
+
+      {editComMemberMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            editComMemberMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {editComMemberMutation.isSuccess && (
+        <AlertPopup open={true} message={editComMemberMutation.data?.message} />
+      )}
 
       <BootstrapDialog
         onClose={handleToggleOpen}
@@ -80,16 +153,33 @@ export default function AddEditCommitteeMemberModal() {
         <DialogContent>
           <Formik
             initialValues={{
-              title: "",
-              fullname: "",
-              file: null
+              committeeMemberId: committeeMember?.id || "",
+              title: committeeMember?.title || "",
+              fullname: committeeMember?.fullname || "",
+              file: "dummy" || null
             }}
             validationSchema={Yup.object().shape({
               title: Yup.string().required("Title required"),
               fullname: Yup.string().required("Fullname required"),
               file: Yup.string().required("Please select image")
             })}
-            onSubmit={(values) => {}}
+            onSubmit={(values) => {
+              const formData = new FormData();
+
+              for (const [key, value] of Object.entries(values)) {
+                if (key === "file" && values.file?.name) {
+                  formData.append(key, value, value.name);
+                } else {
+                  formData.append(key, value);
+                }
+              }
+
+              if (committeeMember) {
+                editComMemberMutation.mutate(formData);
+              } else {
+                addComMemberMutation.mutate(formData);
+              }
+            }}
             enableReinitialize
           >
             {({ values }) => {
@@ -126,9 +216,9 @@ export default function AddEditCommitteeMemberModal() {
                             }}
                             fullWidth
                             onChange={(event) => {
-                              setPhotoURL(
-                                URL.createObjectURL(event.target.files[0])
-                              );
+                              const file = event.target.files[0];
+                              setPhotoURL(URL.createObjectURL(file));
+                              setOriginalFile(file);
                               setCropOpen(true);
                             }}
                           />
@@ -141,6 +231,7 @@ export default function AddEditCommitteeMemberModal() {
                             photoURL,
                             cropOpen,
                             setCropOpen,
+                            originalFile,
                             title: "Crop Image"
                           }}
                         />
@@ -157,13 +248,31 @@ export default function AddEditCommitteeMemberModal() {
                         >
                           Cancel
                         </Button>
-                        <Button
-                          variant="contained"
-                          startIcon={<Forward />}
-                          type="submit"
-                        >
-                          Submit
-                        </Button>
+                        {committeeMember ? (
+                          <Button
+                            variant="contained"
+                            startIcon={<Forward />}
+                            type="submit"
+                          >
+                            {editComMemberMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Update"
+                            )}
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            startIcon={<Forward />}
+                            type="submit"
+                          >
+                            {addComMemberMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Submit"
+                            )}
+                          </Button>
+                        )}
                       </Stack>
                     </Grid>
                   </Grid>
