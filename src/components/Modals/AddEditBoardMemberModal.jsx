@@ -5,13 +5,23 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Grid, Stack, TextField } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  Stack,
+  TextField
+} from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import SelectFieldWrapper from "../FormComponents/SelectFieldWrapper";
 import { Cancel, Forward } from "@mui/icons-material";
 import GlobalImageCropModal from "../crop/GlobalImageCropModal";
 import * as Yup from "yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -22,10 +32,37 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export default function AddEditBoardMemberModal() {
+export default function AddEditBoardMemberModal({ boardMember }) {
   const [open, setOpen] = React.useState(false);
   const [photoURL, setPhotoURL] = React.useState(null);
+  const [originalFile, setOriginalFile] = React.useState(null);
   const [cropOpen, setCropOpen] = React.useState(false);
+
+  const queryClient = useQueryClient();
+
+  const addBoardMemberMutation = useMutation({
+    mutationFn: async (formData) => {
+      return UserQuery.CSEQuery.addBoardMember(formData);
+    },
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("boardMembers");
+        setOpen(false);
+      }, 2000);
+    }
+  });
+
+  const editBoardMemberMutation = useMutation({
+    mutationFn: async (formData) => {
+      return UserQuery.CSEQuery.editBoardMember(formData);
+    },
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("boardMembers");
+        setOpen(false);
+      }, 2000);
+    }
+  });
 
   const handleToggleOpen = () => {
     setOpen(!open);
@@ -52,9 +89,49 @@ export default function AddEditBoardMemberModal() {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleToggleOpen}>
-        Add Board Member
-      </Button>
+      {boardMember ? (
+        <IconButton onClick={handleToggleOpen} color="primary">
+          <EditIcon />
+        </IconButton>
+      ) : (
+        <Button variant="contained" onClick={handleToggleOpen}>
+          Add Board Member
+        </Button>
+      )}
+
+      {addBoardMemberMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            addBoardMemberMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {addBoardMemberMutation.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={addBoardMemberMutation.data?.message}
+        />
+      )}
+
+      {editBoardMemberMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            editBoardMemberMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {editBoardMemberMutation.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={editBoardMemberMutation.data?.message}
+        />
+      )}
 
       <BootstrapDialog
         onClose={handleToggleOpen}
@@ -63,7 +140,7 @@ export default function AddEditBoardMemberModal() {
         fullWidth={true}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Add Board Member
+          {boardMember ? "Edit Board Member" : "Add Board Member"}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -80,20 +157,36 @@ export default function AddEditBoardMemberModal() {
         <DialogContent>
           <Formik
             initialValues={{
-              title: "",
-              fullname: "",
-              file: null
+              boardMemberId: boardMember?.id || "",
+              title: boardMember?.title || "",
+              fullname: boardMember?.fullname || "",
+              file: "dummy" || null
             }}
             validationSchema={Yup.object().shape({
               title: Yup.string().required("Title required"),
               fullname: Yup.string().required("Fullname required"),
               file: Yup.string().required("Please select image")
             })}
-            onSubmit={(values) => {}}
+            onSubmit={(values) => {
+              const formData = new FormData();
+
+              for (const [key, value] of Object.entries(values)) {
+                if (key === "file" && values.file?.name) {
+                  formData.append(key, value, value.name);
+                } else {
+                  formData.append(key, value);
+                }
+              }
+              if (boardMember) {
+                editBoardMemberMutation.mutate(formData);
+              } else {
+                addBoardMemberMutation.mutate(formData);
+              }
+            }}
             enableReinitialize
           >
-            {({ values }) => {
-              console.log(values)
+            {({ values, errors }) => {
+              console.log(values);
               return (
                 <Form>
                   <Grid container spacing={2}>
@@ -127,9 +220,9 @@ export default function AddEditBoardMemberModal() {
                             }}
                             fullWidth
                             onChange={(event) => {
-                              setPhotoURL(
-                                URL.createObjectURL(event.target.files[0])
-                              );
+                              const file = event.target.files[0];
+                              setPhotoURL(URL.createObjectURL(file));
+                              setOriginalFile(file);
                               setCropOpen(true);
                             }}
                           />
@@ -142,6 +235,7 @@ export default function AddEditBoardMemberModal() {
                             photoURL,
                             cropOpen,
                             setCropOpen,
+                            originalFile,
                             title: "Crop Image"
                           }}
                         />
@@ -158,13 +252,31 @@ export default function AddEditBoardMemberModal() {
                         >
                           Cancel
                         </Button>
-                        <Button
-                          variant="contained"
-                          startIcon={<Forward />}
-                          type="submit"
-                        >
-                          Submit
-                        </Button>
+                        {boardMember ? (
+                          <Button
+                            variant="contained"
+                            startIcon={<Forward />}
+                            type="submit"
+                          >
+                            {editBoardMemberMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Update"
+                            )}
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            startIcon={<Forward />}
+                            type="submit"
+                          >
+                            {addBoardMemberMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Submit"
+                            )}
+                          </Button>
+                        )}
                       </Stack>
                     </Grid>
                   </Grid>
