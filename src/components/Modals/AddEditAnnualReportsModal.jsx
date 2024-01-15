@@ -5,11 +5,21 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Grid, InputLabel, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  InputLabel,
+  Stack,
+  TextField
+} from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { Cancel, Forward } from "@mui/icons-material";
 import * as Yup from "yup";
 import DateSelectWrapper from "../FormComponents/DateSelectWrapper";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -23,15 +33,47 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function AddEditAnnualReportsModal() {
   const [open, setOpen] = React.useState(false);
 
+  const queryClient = useQueryClient();
+
   const handleToggleOpen = () => {
     setOpen(!open);
   };
+
+  const addAnnualReportMutation = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.CSEQuery.addAnnualReport(formData);
+    },
+
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("boardMembers");
+        setOpen(false);
+      }, 2000);
+    }
+  });
 
   return (
     <div>
       <Button variant="contained" onClick={handleToggleOpen}>
         Add Annual Report
       </Button>
+
+      {addAnnualReportMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            addAnnualReportMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {addAnnualReportMutation.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={addAnnualReportMutation.data?.message}
+        />
+      )}
 
       <BootstrapDialog
         onClose={handleToggleOpen}
@@ -66,7 +108,15 @@ export default function AddEditAnnualReportsModal() {
               fullname: Yup.string().required("Fullname required"),
               file: Yup.string().required("Please select image")
             })}
-            onSubmit={(values) => {}}
+            onSubmit={(values) => {
+              const formData = new FormData();
+
+              for (const [key, value] of Object.entries(values)) {
+                formData.append(key, value);
+              }
+
+              addAnnualReportMutation(formData);
+            }}
             enableReinitialize
           >
             {({ values }) => {
@@ -127,7 +177,11 @@ export default function AddEditAnnualReportsModal() {
                           startIcon={<Forward />}
                           type="submit"
                         >
-                          Submit
+                          {addAnnualReportMutation.isLoading ? (
+                            <CircularProgress color="secondary" />
+                          ) : (
+                            "Submit"
+                          )}
                         </Button>
                       </Stack>
                     </Grid>
