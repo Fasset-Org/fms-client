@@ -266,6 +266,99 @@ const UserQuery = {
       const resp = await axiosInstance.delete(`/cse/banner/${id}`);
 
       return resp?.data;
+    },
+    addBoardMember: async (formData) => {
+      const resp = await axiosInstance.post("/cse/boardMember", formData);
+
+      return resp?.data;
+    },
+    editBoardMember: async (formData) => {
+      const resp = await axiosInstance.put(`/cse/boardMember`, formData);
+
+      return resp?.data;
+    },
+
+    getAllBoardMembers: async () => {
+      const resp = await axiosInstance.get("/cse/boardMembers");
+
+      return resp?.data;
+    },
+
+    deleteBoardMember: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/boardMember/${id}`);
+
+      return resp?.data;
+    },
+
+    addCommitteeMember: async (formData) => {
+      const resp = await axiosInstance.post("/cse/committeeMember", formData);
+
+      return resp?.data;
+    },
+    editCommitteeMember: async (formData) => {
+      const resp = await axiosInstance.put(`/cse/committeeMember`, formData);
+
+      return resp?.data;
+    },
+
+    getAllCommitteeMembers: async () => {
+      const resp = await axiosInstance.get("/cse/committeeMembers");
+
+      return resp?.data;
+    },
+
+    deleteCommitteeMember: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/committeeMember/${id}`);
+
+      return resp?.data;
+    },
+
+    addAnnualReport: async (formData) => {
+      const resp = await axiosInstance.post("/cse/annualReport", formData);
+
+      return resp?.data;
+    },
+
+    editAnnualReport: async (formData) => {
+      const resp = await axiosInstance.put(`/cse/annualReport`, formData);
+
+      return resp?.data;
+    },
+
+    getAllAnnualeports: async () => {
+      const resp = await axiosInstance.get("/cse/annualReports");
+
+      return resp?.data;
+    },
+
+    deleteAnnualReport: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/annualReport/${id}`);
+
+      return resp?.data;
+    },
+
+    addResearchReport: async (formData) => {
+      const resp = await axiosInstance.post("/cse/researchReport", formData);
+
+      return resp?.data;
+    },
+
+    editResearchReport: async (formData) => {
+      const resp = await axiosInstance.put(`/cse/researchReport`, formData);
+
+      return resp?.data;
+    },
+
+    getAllResearcheports: async () => {
+      const resp = await axiosInstance.get("/cse/researchReport");
+
+      return resp?.data;
+    },
+
+    deleteResearchReport: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/researchReport/${id}`);
+
+      return resp?.data;
     }
   }
 };
