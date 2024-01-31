@@ -5,6 +5,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Button,
   CircularProgress,
@@ -20,6 +21,7 @@ import DateSelectWrapper from "../FormComponents/DateSelectWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
+import dayjs from "dayjs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -30,7 +32,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export default function AddEditAnnualReportsModal() {
+export default function AddEditAnnualReportsModal({ annualReport }) {
   const [open, setOpen] = React.useState(false);
 
   const queryClient = useQueryClient();
@@ -46,7 +48,20 @@ export default function AddEditAnnualReportsModal() {
 
     onSuccess: (data) => {
       setTimeout(() => {
-        queryClient.invalidateQueries("boardMembers");
+        queryClient.invalidateQueries("annualReports");
+        setOpen(false);
+      }, 2000);
+    }
+  });
+
+  const editAnnualReportMutation = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.CSEQuery.editAnnualReport(formData);
+    },
+
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("annualReports");
         setOpen(false);
       }, 2000);
     }
@@ -54,9 +69,15 @@ export default function AddEditAnnualReportsModal() {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleToggleOpen}>
-        Add Annual Report
-      </Button>
+      {annualReport ? (
+        <IconButton color="primary" onClick={handleToggleOpen}>
+          <EditIcon />
+        </IconButton>
+      ) : (
+        <Button variant="contained" onClick={handleToggleOpen}>
+          Add Annual Report
+        </Button>
+      )}
 
       {addAnnualReportMutation.isError && (
         <AlertPopup
@@ -75,6 +96,23 @@ export default function AddEditAnnualReportsModal() {
         />
       )}
 
+      {editAnnualReportMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            editAnnualReportMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {editAnnualReportMutation.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={editAnnualReportMutation.data?.message}
+        />
+      )}
+
       <BootstrapDialog
         onClose={handleToggleOpen}
         aria-labelledby="customized-dialog-title"
@@ -82,7 +120,7 @@ export default function AddEditAnnualReportsModal() {
         fullWidth={true}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Add Annual Report
+          {annualReport ? "Edit Annual Report" : "Add Annual Report"}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -99,13 +137,14 @@ export default function AddEditAnnualReportsModal() {
         <DialogContent>
           <Formik
             initialValues={{
-              startDate: "",
-              endDate: "",
-              file: null
+              annualReportId: annualReport?.id || "",
+              startDate: dayjs(annualReport?.startDate) || "",
+              endDate: dayjs(annualReport?.endDate) || "",
+              file: annualReport?.annualReportFileURL || null
             }}
             validationSchema={Yup.object().shape({
-              title: Yup.string().required("Title required"),
-              fullname: Yup.string().required("Fullname required"),
+              startDate: Yup.string().required("Title required"),
+              endDate: Yup.string().required("Fullname required"),
               file: Yup.string().required("Please select image")
             })}
             onSubmit={(values) => {
@@ -115,11 +154,15 @@ export default function AddEditAnnualReportsModal() {
                 formData.append(key, value);
               }
 
-              addAnnualReportMutation(formData);
+              if (annualReport) {
+                editAnnualReportMutation.mutate(formData);
+              } else {
+                addAnnualReportMutation.mutate(formData);
+              }
             }}
             enableReinitialize
           >
-            {({ values }) => {
+            {({ values, errors }) => {
               return (
                 <Form>
                   <Grid container spacing={2}>
@@ -172,17 +215,31 @@ export default function AddEditAnnualReportsModal() {
                         >
                           Cancel
                         </Button>
-                        <Button
-                          variant="contained"
-                          startIcon={<Forward />}
-                          type="submit"
-                        >
-                          {addAnnualReportMutation.isLoading ? (
-                            <CircularProgress color="secondary" />
-                          ) : (
-                            "Submit"
-                          )}
-                        </Button>
+                        {annualReport ? (
+                          <Button
+                            variant="contained"
+                            startIcon={<Forward />}
+                            type="submit"
+                          >
+                            {editAnnualReportMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Update"
+                            )}
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            startIcon={<Forward />}
+                            type="submit"
+                          >
+                            {addAnnualReportMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Submit"
+                            )}
+                          </Button>
+                        )}
                       </Stack>
                     </Grid>
                   </Grid>
