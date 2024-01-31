@@ -350,7 +350,7 @@ const UserQuery = {
     },
 
     getAllResearcheports: async () => {
-      const resp = await axiosInstance.get("/cse/researchReport");
+      const resp = await axiosInstance.get("/cse/researchReports");
 
       return resp?.data;
     },
