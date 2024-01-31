@@ -71,7 +71,7 @@ export const DeleteConfirmModal = ({ id, status }) => {
   return (
     <div>
       <Tooltip title="Delete">
-        <IconButton color="error" size="large" onClick={handleClickOpen}>
+        <IconButton color="error" onClick={handleClickOpen}>
           <DeleteForeverIcon />
         </IconButton>
       </Tooltip>
