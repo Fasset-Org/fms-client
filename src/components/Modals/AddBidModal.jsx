@@ -9,7 +9,7 @@ import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, Grid, Slide, useMediaQuery } from "@mui/material";
-import { Form, Formik } from "formik";
+import { Form, Formik, useFormikContext } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
 import dayjs from "dayjs";
@@ -47,10 +47,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddBidModal = ({ setFieldValue, bidders }) => {
+const AddBidModal = () => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const { values, setFieldValue } = useFormikContext();
 
   const handleClose = () => {
     setOpen(false);
@@ -90,10 +91,10 @@ const AddBidModal = ({ setFieldValue, bidders }) => {
               bidderName: Yup.string().required("Bidder name required"),
               bbeeLevel: Yup.string().required("B-BBEE Level required")
             })}
-            onSubmit={(values) => {
+            onSubmit={(formData) => {
               setFieldValue("bidders", [
-                ...bidders,
-                { ...values, datePosted: dayjs() }
+                ...values.bidders,
+                { ...formData, datePosted: dayjs() }
               ]);
               setOpen(false);
             }}
