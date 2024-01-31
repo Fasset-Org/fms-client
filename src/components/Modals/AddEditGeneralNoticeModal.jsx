@@ -12,12 +12,8 @@ import {
   Button,
   CircularProgress,
   Grid,
-  InputLabel,
-  Paper,
   Slide,
   Stack,
-  Tooltip,
-  Typography,
   useMediaQuery
 } from "@mui/material";
 import { Form, Formik } from "formik";
@@ -28,7 +24,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
 import EditIcon from "@mui/icons-material/Edit";
-import { Delete } from "@mui/icons-material";
+// import RichTextEditor from "../Editor";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -67,7 +63,6 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const [linksNedded, setLinksNeeded] = React.useState(true);
   const queryClient = useQueryClient();
 
   const addGeneralNoticeQuery = useMutation({
@@ -207,98 +202,8 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
                     </Grid>
                     <Grid item xs={12} md={12}>
                       <TextAreaFieldWrapper name="content" label="Content" />
+                      {/* <RichTextEditor /> */}
                     </Grid>
-                    <Grid item xs={12} md={12}>
-                      <InputLabel sx={{ mb: 2 }}>
-                        Do you have any links to attach?
-                      </InputLabel>
-                      <Stack spacing={2} direction="row">
-                        <Button
-                          variant={linksNedded && "contained"}
-                          onClick={() => setLinksNeeded(true)}
-                        >
-                          Yes
-                        </Button>
-                        <Button
-                          variant={!linksNedded && "contained"}
-                          onClick={() => setLinksNeeded(false)}
-                        >
-                          No
-                        </Button>
-                      </Stack>
-                    </Grid>
-                    {linksNedded && (
-                      <Grid item xs={12} md={12}>
-                        <Stack direction="row" spacing={2}>
-                          <TextFieldWrapper
-                            name="url"
-                            label="Link"
-                            sx={{
-                              width: "80%"
-                            }}
-                          />
-                          <Button
-                            variant="contained"
-                            sx={{ width: "20%" }}
-                            onClick={() => {
-                              if (!errors?.url && values.url?.length > 0) {
-                                setFieldValue("links", [
-                                  ...values.links,
-                                  values.url
-                                ]);
-                              }
-                            }}
-                          >
-                            Add
-                          </Button>
-                        </Stack>
-                      </Grid>
-                    )}
-
-                    {values.links.length > 0 &&
-                      values.links.map((link, i) => {
-                        return (
-                          <Grid item xs={12} md={12} key={i}>
-                            <Stack
-                              direction="row"
-                              justifyContent="space-between"
-                              width="100%"
-                              alignItems="center"
-                              component={Paper}
-                              paddingX={2}
-                              minHeight={60}
-                            >
-                              <Typography
-                                sx={{
-                                  width: "100%",
-                                  overflow: "hidden",
-                                  whiteSpace: "nowrap",
-                                  textOverflow: "ellipsis"
-                                }}
-                              >
-                                {link}
-                              </Typography>
-                              <Tooltip title="Delete Link">
-                                <IconButton
-                                  color="error"
-                                  size="small"
-                                  aria-label="logout"
-                                  onClick={() => {
-                                    setFieldValue(
-                                      "links",
-                                      values.links.filter((link, j) => {
-                                        return j !== i;
-                                      })
-                                    );
-                                  }}
-                                >
-                                  <Delete />
-                                </IconButton>
-                              </Tooltip>
-                            </Stack>
-                          </Grid>
-                        );
-                      })}
 
                     <Grid item xs={12} md={12}>
                       <Box textAlign="end">
