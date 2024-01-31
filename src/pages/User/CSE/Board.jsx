@@ -75,6 +75,9 @@ const Board = () => {
                   Fullname
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                  Position
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
                   Image
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
@@ -107,6 +110,10 @@ const Board = () => {
 
                     <TableCell component="th" scope="row" align="center">
                       {boardMember.fullname}
+                    </TableCell>
+
+                    <TableCell component="th" scope="row" align="center">
+                      {boardMember.position}
                     </TableCell>
 
                     <TableCell component="th" scope="row" align="center">
