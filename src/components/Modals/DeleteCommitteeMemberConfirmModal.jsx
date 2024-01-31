@@ -66,8 +66,8 @@ export const DeleteCommitteeMemberConfirmModal = ({ id }) => {
         />
       )}
       <Tooltip title="Delete">
-        <IconButton color="error" size="large" onClick={handleClickOpen}>
-          <DeleteForeverIcon fontSize="large" />
+        <IconButton color="error" onClick={handleClickOpen}>
+          <DeleteForeverIcon />
         </IconButton>
       </Tooltip>
 
