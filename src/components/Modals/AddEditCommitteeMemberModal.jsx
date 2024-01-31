@@ -156,11 +156,13 @@ export default function AddEditCommitteeMemberModal({ committeeMember }) {
               committeeMemberId: committeeMember?.id || "",
               title: committeeMember?.title || "",
               fullname: committeeMember?.fullname || "",
-              file: "dummy" || null
+              position: committeeMember?.position || "",
+              file: committeeMember?.imageFileURL || null
             }}
             validationSchema={Yup.object().shape({
               title: Yup.string().required("Title required"),
               fullname: Yup.string().required("Fullname required"),
+              position: Yup.string().required("Position required"),
               file: Yup.string().required("Please select image")
             })}
             onSubmit={(values) => {
@@ -196,6 +198,10 @@ export default function AddEditCommitteeMemberModal({ committeeMember }) {
 
                     <Grid item xs={12} md={12}>
                       <TextFieldWrapper name="fullname" label="Fullname" />
+                    </Grid>
+
+                    <Grid item xs={12} md={12}>
+                      <TextFieldWrapper name="position" label="Position" />
                     </Grid>
 
                     <Grid item xs={12} md={12}>
