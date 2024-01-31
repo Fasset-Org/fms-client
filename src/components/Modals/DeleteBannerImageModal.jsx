@@ -62,8 +62,8 @@ export const DeleteBannerImageModal = ({ id }) => {
         <AlertPopup open={true} message={deleteBannerQuery.data?.message} />
       )}
       <Tooltip title="Delete">
-        <IconButton color="error" size="large" onClick={handleClickOpen}>
-          <DeleteForeverIcon fontSize="large" />
+        <IconButton color="error"  onClick={handleClickOpen}>
+          <DeleteForeverIcon  />
         </IconButton>
       </Tooltip>
 
