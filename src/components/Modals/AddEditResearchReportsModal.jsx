@@ -5,12 +5,23 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Grid, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  Stack,
+  TextField
+} from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import { Cancel, Forward } from "@mui/icons-material";
 import * as Yup from "yup";
 import DateYearSelectWrapper from "../FormComponents/DateYearSelectWrapper";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import UserQuery from "../../stateQueries/User";
+import AlertPopup from "../AlertPopup";
+import EditIcon from "@mui/icons-material/Edit";
+import dayjs from "dayjs";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -21,8 +32,36 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export default function AddEditResearchReportsModal() {
+export default function AddEditResearchReportsModal({ researchReport }) {
   const [open, setOpen] = React.useState(false);
+
+  const queryClient = useQueryClient();
+
+  const addResearchReportMutation = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.CSEQuery.addResearchReport(formData);
+    },
+
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("researchReports");
+        setOpen(false);
+      }, 2000);
+    }
+  });
+
+  const editResearchReportMutation = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.CSEQuery.editResearchReport(formData);
+    },
+
+    onSuccess: (data) => {
+      setTimeout(() => {
+        queryClient.invalidateQueries("researchReports");
+        setOpen(false);
+      }, 2000);
+    }
+  });
 
   const handleToggleOpen = () => {
     setOpen(!open);
@@ -30,9 +69,49 @@ export default function AddEditResearchReportsModal() {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleToggleOpen}>
-        Add Research Report
-      </Button>
+      {researchReport ? (
+        <IconButton color="primary" onClick={handleToggleOpen}>
+          <EditIcon />
+        </IconButton>
+      ) : (
+        <Button variant="contained" onClick={handleToggleOpen}>
+          Add Research Report
+        </Button>
+      )}
+
+      {addResearchReportMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            addResearchReportMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {addResearchReportMutation.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={addResearchReportMutation.data?.message}
+        />
+      )}
+
+      {editResearchReportMutation.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            editResearchReportMutation.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {editResearchReportMutation.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={editResearchReportMutation.data?.message}
+        />
+      )}
 
       <BootstrapDialog
         onClose={handleToggleOpen}
@@ -41,7 +120,7 @@ export default function AddEditResearchReportsModal() {
         fullWidth={true}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Add Research Report
+          {researchReport ? "Edit Research Report" : "Add Research Report"}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -58,19 +137,35 @@ export default function AddEditResearchReportsModal() {
         <DialogContent>
           <Formik
             initialValues={{
-              title: "",
-              fullname: "",
-              file: null
+              researchReportId: researchReport?.id || "",
+              documentTitle: researchReport?.documentTitle || "",
+              documentDesc: researchReport?.documentDesc || "",
+              year: dayjs(researchReport?.year) || "",
+              file: researchReport?.researchReportFileURL || null
             }}
             validationSchema={Yup.object().shape({
-              title: Yup.string().required("Title required"),
-              fullname: Yup.string().required("Fullname required"),
-              file: Yup.string().required("Please select image")
+              documentTitle: Yup.string().required("Title required"),
+              documentDesc: Yup.string().required("Description required"),
+              year: Yup.string().required("Year required"),
+              file: Yup.string().required("Please select research report file")
             })}
-            onSubmit={(values) => {}}
+            onSubmit={(values) => {
+              const formData = new FormData();
+
+              for (const [key, value] of Object.entries(values)) {
+                formData.append(key, value);
+              }
+
+              if (researchReport) {
+                editResearchReportMutation.mutate(formData);
+              } else {
+                addResearchReportMutation.mutate(formData);
+              }
+            }}
             enableReinitialize
           >
-            {({ values }) => {
+            {({ values, errors }) => {
+              console.log(errors);
               return (
                 <Form>
                   <Grid container spacing={2}>
@@ -131,13 +226,31 @@ export default function AddEditResearchReportsModal() {
                         >
                           Cancel
                         </Button>
-                        <Button
-                          variant="contained"
-                          startIcon={<Forward />}
-                          type="submit"
-                        >
-                          Submit
-                        </Button>
+                        {researchReport ? (
+                          <Button
+                            variant="contained"
+                            startIcon={<Forward />}
+                            type="submit"
+                          >
+                            {editResearchReportMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Update"
+                            )}
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            startIcon={<Forward />}
+                            type="submit"
+                          >
+                            {addResearchReportMutation.isLoading ? (
+                              <CircularProgress color="secondary" />
+                            ) : (
+                              "Submit"
+                            )}
+                          </Button>
+                        )}
                       </Stack>
                     </Grid>
                   </Grid>
