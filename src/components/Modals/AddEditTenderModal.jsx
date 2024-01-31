@@ -383,16 +383,16 @@ const AddEditTenderModal = ({ tender }) => {
 
                                 <IconButton
                                   onClick={() => {
-                                    let newBidders = [];
-                                    values.bidders.forEach((option, idx) => {
-                                      if (
-                                        bidder.bidderName !== option.bidderName
-                                      ) {
-                                        newBidders.push(option);
+                                    const newBidders = values.bidders.filter(
+                                      (bid, j) => {
+                                        return (
+                                          bid.bidderName !== bidder.bidderName
+                                        );
                                       }
-                                    });
+                                    );
 
                                     console.log(newBidders);
+
                                     setFieldValue("bidders", newBidders);
                                   }}
                                 >
