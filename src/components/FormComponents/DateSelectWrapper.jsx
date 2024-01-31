@@ -1,6 +1,6 @@
 import React from "react";
 import "dayjs/locale/en-gb";
-import { FormControl, TextField } from "@mui/material";
+import { FormControl } from "@mui/material";
 import { useField, useFormikContext } from "formik";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -38,7 +38,6 @@ const DateSelectWrapper = ({ name, ...otherProps }) => {
             }}
             inputVariant="outlined"
             sx={{width: '100%'}}
-            renderInput={(params) => <TextField {...params} />}
           />
         </DemoContainer>
       </FormControl>
