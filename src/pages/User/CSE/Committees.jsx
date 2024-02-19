@@ -19,6 +19,7 @@ import UserQuery from "../../../stateQueries/User";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
 import { DeleteCommitteeMemberConfirmModal } from "../../../components/Modals/DeleteCommitteeMemberConfirmModal";
+import AddCommitteeModal from "../../../components/Modals/AddCommitteeModal";
 
 const Committees = () => {
   const [page, setPage] = React.useState(0);
@@ -57,7 +58,7 @@ const Committees = () => {
       />
 
       <Stack alignItems="center" spacing={2}>
-        <AddEditCommitteeMemberModal />
+        <AddCommitteeModal />
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead sx={{ backgroundColor: "background.paper" }}>
