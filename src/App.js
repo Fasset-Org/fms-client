@@ -34,6 +34,7 @@ import NoticeBoard from "./pages/User/CSE/NoticeBoard";
 import AnnualReports from "./pages/User/CSE/AnnualReports";
 import ResearchReports from "./pages/User/CSE/ResearchReports";
 import DownloadsDocuments from "./pages/User/CSE/DownloadsDocuments";
+import CommiteeList from "./pages/User/CSE/CommiteeList";
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -74,6 +75,10 @@ function App() {
                 <Route path="/cse/banners" element={<Banners />} />
                 <Route path="/cse/board" element={<Board />} />
                 <Route path="/cse/committees" element={<Committees />} />
+                <Route
+                  path="/cse/committeeMembers/:committeeId"
+                  element={<CommiteeList />}
+                />
                 <Route path="/cse/downloads" element={<Downloads />} />
                 <Route
                   path="/cse/downloads/:titleId"
