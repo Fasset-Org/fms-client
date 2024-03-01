@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Button,
   Chip,
@@ -28,6 +27,7 @@ import UserQuery from "../../../stateQueries/User";
 import { RejectApplicationModal } from "../../../components/Modals/RejectApplicationModal";
 import { ShortListModal } from "../../../components/Modals/ShortListModal";
 import { RejectAllApplicationModal } from "../../../components/Modals/RejectAllApplicationModal";
+import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
 
 const JobApplications = () => {
   const { positionId } = useParams();
@@ -153,166 +153,183 @@ const JobApplications = () => {
         </Button>
       </Stack>
 
-      {applications?.length > 0 ? (
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
-            <TableHead sx={{ backgroundColor: "background.paper" }}>
-              <TableRow>
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: "bolder", fontSize: 12 }}
-                >
-                  Fullname
-                </TableCell>
-                <TableCell
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead sx={{ backgroundColor: "background.paper" }}>
+            <TableRow>
+              <TableCell
+                align="center"
+                sx={{ fontWeight: "bolder", fontSize: 12 }}
+              >
+                Fullname
+              </TableCell>
+              {/* <TableCell
                   align="center"
                   sx={{ fontWeight: "bolder", fontSize: 12 }}
                 >
                   Email
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: "bolder", fontSize: 12 }}
-                >
-                  Gender
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: "bolder", fontSize: 12 }}
-                >
-                  Nationality
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: "bolder", fontSize: 12 }}
-                >
-                  Id/Passport Number
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Contact Number
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: "bolder", fontSize: 12 }}
-                >
-                  Application Status
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: "bolder", fontSize: 12 }}
-                >
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {applications?.map((application) => {
-                return (
-                  <TableRow key={application.id}>
-                    <TableCell
-                      align="center"
-                      component="th"
-                      scope="row"
-                      sx={{ fontSize: 12 }}
-                    >
-                      {application.fullname}
-                    </TableCell>
-                    <TableCell
+                </TableCell> */}
+              <TableCell
+                align="center"
+                sx={{ fontWeight: "bolder", fontSize: 12 }}
+              >
+                Gender
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{ fontWeight: "bolder", fontSize: 12 }}
+              >
+                Nationality
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{ fontWeight: "bolder", fontSize: 12 }}
+              >
+                Id/Passport Number
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Contact Number
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bolder" }}>
+                Date Submitted
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{ fontWeight: "bolder", fontSize: 12 }}
+              >
+                Status
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{ fontWeight: "bolder", fontSize: 12 }}
+              >
+                Action
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? applications?.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : applications
+            )?.map((application, i) => {
+              return (
+                <TableRow key={application.id}>
+                  <TableCell
+                    align="center"
+                    component="th"
+                    scope="row"
+                    sx={{ fontSize: 12 }}
+                  >
+                    {application.fullname}
+                  </TableCell>
+                  {/* <TableCell
                       align="center"
                       component="th"
                       scope="row"
                       sx={{ fontSize: 12 }}
                     >
                       {application.email}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      component="th"
-                      scope="row"
-                      sx={{ fontSize: 12 }}
-                    >
-                      {application.gender}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      component="th"
-                      scope="row"
-                      sx={{ fontSize: 12 }}
-                    >
-                      {application.nationality}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      component="th"
-                      scope="row"
-                      sx={{ fontSize: 12 }}
-                    >
-                      {application.idNumber}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      component="th"
-                      scope="row"
-                      sx={{ fontSize: 12 }}
-                    >
-                      {application.cellphone}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      component="th"
-                      scope="row"
-                      sx={{ fontSize: 12 }}
-                    >
-                      <Chip
-                        color={
-                          application.status === "submitted"
-                            ? "primary"
-                            : application.status === "shortlisted"
-                            ? "success"
-                            : "error"
-                        }
-                        label={
-                          application.status === "submitted"
-                            ? "submitted"
-                            : application.status === "shortlisted"
-                            ? "shortlisted"
-                            : "rejected"
-                        }
-                      />
-                    </TableCell>
+                    </TableCell> */}
+                  <TableCell
+                    align="center"
+                    component="th"
+                    scope="row"
+                    sx={{ fontSize: 12 }}
+                  >
+                    {application.gender}
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    component="th"
+                    scope="row"
+                    sx={{ fontSize: 12 }}
+                  >
+                    {application.nationality}
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    component="th"
+                    scope="row"
+                    sx={{ fontSize: 12 }}
+                  >
+                    {application.idNumber}
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    component="th"
+                    scope="row"
+                    sx={{ fontSize: 12 }}
+                  >
+                    {application.cellphone}
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    component="th"
+                    scope="row"
+                    sx={{ fontSize: 12 }}
+                  >
+                    {application.createdAt}
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    component="th"
+                    scope="row"
+                    sx={{ fontSize: 12 }}
+                  >
+                    <Chip
+                      color={
+                        application.status === "submitted"
+                          ? "primary"
+                          : application.status === "shortlisted"
+                          ? "success"
+                          : "error"
+                      }
+                      label={
+                        application.status === "submitted"
+                          ? "submitted"
+                          : application.status === "shortlisted"
+                          ? "shortlisted"
+                          : "rejected"
+                      }
+                    />
+                  </TableCell>
 
-                    <TableCell align="center">
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                        // border={1}
-                        justifyContent="center"
+                  <TableCell align="center">
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      // border={1}
+                      justifyContent="center"
+                    >
+                      <Button
+                        variant="outlined"
+                        sx={{ fontSize: 10, width: 70 }}
+                        onClick={() => {
+                          navigate(
+                            `/humanResource/jobApplications/${positionId}/viewApplication/${application.id}`
+                          );
+                        }}
                       >
-                        <Button
-                          variant="outlined"
-                          sx={{ fontSize: 10, width: 70 }}
-                          onClick={() => {
-                            navigate(
-                              `/humanResource/jobApplications/${positionId}/viewApplication/${application.id}`
-                            );
-                          }}
-                        >
-                          View
-                        </Button>
-                        <ShortListModal application={application} />
-                        <RejectApplicationModal application={application} />
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
+                        View
+                      </Button>
+                      <ShortListModal application={application} />
+                      <RejectApplicationModal application={application} />
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+          {applications?.length > 0 && (
             <TableFooter>
               <TableRow>
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
                   // colSpan={3}
-                  count={data?.departments?.length || 0}
+                  count={applications?.length || 0}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{
@@ -327,13 +344,14 @@ const JobApplications = () => {
                 />
               </TableRow>
             </TableFooter>
-          </Table>
-        </TableContainer>
-      ) : (
-        <Stack width="100%">
-          <Alert severity="info">No Applications Available</Alert>
-        </Stack>
-      )}
+          )}
+        </Table>
+        {(!applications || applications?.length === 0) && (
+          <Stack width="100%" padding={2}>
+            <CustomNoRowsOverlay description="No Application Made So far" />
+          </Stack>
+        )}
+      </TableContainer>
     </Stack>
   );
 };

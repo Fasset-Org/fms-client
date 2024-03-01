@@ -79,7 +79,7 @@ const AddQualificationModal = ({ setFieldValue, bidders }) => {
   };
 
   return (
-    <>
+    <div>
       <Button variant="outlined" color="warning" onClick={() => setOpen(true)}>
         Add
       </Button>
@@ -170,7 +170,7 @@ const AddQualificationModal = ({ setFieldValue, bidders }) => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 

@@ -39,7 +39,7 @@ export const RejectAllApplicationModal = ({ position }) => {
   };
 
   return (
-    <>
+    <div>
       <Button
         variant="contained"
         sx={{ fontSize: 11, height: 50, fontWeight: "bolder" }}
@@ -97,6 +97,6 @@ export const RejectAllApplicationModal = ({ position }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 };

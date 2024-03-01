@@ -73,9 +73,9 @@ const Modules = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data?.modules.map((module) => {
+                {data?.modules.map((module, i) => {
                   return (
-                    <TableRow>
+                    <TableRow key={i}>
                       <TableCell align="center" component="th" scope="row">
                         {module.moduleName}
                       </TableCell>

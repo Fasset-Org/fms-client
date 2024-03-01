@@ -36,8 +36,8 @@ const LoginUser = ({ currentTheme }) => {
     onSuccess: (data) => {
       localStorage.setItem("authToken", data?.user?.token);
       localStorage.setItem("refreshToken", data?.user?.refreshToken);
-      window.location.href = `https://fasset-cms.azurewebsites.net/`;
-      // window.location.href = `http://localhost:3000`;
+      // window.location.href = `https://fasset-cms.azurewebsites.net/`;
+      window.location.href = `http://localhost:3000`;
     },
     onError: (err) => {
       console.log(err);
@@ -51,28 +51,17 @@ const LoginUser = ({ currentTheme }) => {
   return (
     <Stack>
       {/* {isLoading && <LinearProgress />} */}
-      <Stack
-        height={300}
-        sx={{ backgroundColor: currentTheme === "light" && "primary.main" }}
-        alignItems="center"
-        padding={2}
-      >
-        <img
-          src={currentTheme === "light" ? whiteLogo : blueLogo}
-          alt=""
-          height="50%"
-          width="11%"
-        />
-      </Stack>
+
       <Stack justifyContent="center" alignItems="center">
+     
         <Card
           component={Stack}
           padding={2}
-          py={4}
-          width="35%"
+          marginY={10}
+          width="40%"
           justifyContent="center"
           alignItems="center"
-          sx={{ position: "relative", bottom: 100 }}
+          // sx={{ position: "relative", bottom: 100 }}
         >
           {authQuery.error && (
             <Alert color="error" sx={{ width: "100%" }}>
@@ -85,6 +74,23 @@ const LoginUser = ({ currentTheme }) => {
               {authQuery?.data?.message}
             </Alert>
           )}
+
+          <Stack
+            height={150}
+            // sx={{
+            //   backgroundColor: currentTheme === "light" && "primary.main",
+            //   border: 1
+            // }}
+            alignItems="center"
+            padding={2}
+          >
+            <img
+              src={currentTheme === "light" ? whiteLogo : blueLogo}
+              alt=""
+              height="100%"
+              width="100%"
+            />
+          </Stack>
 
           <Typography fontSize={20}>Welcome back</Typography>
           <Typography fontWeight="bolder" sx={{ color: "primary.main" }}>

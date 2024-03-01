@@ -163,6 +163,228 @@ const UserQuery = {
       const resp = await axiosInstance.post(`/cse/downloadsTitle`, formData);
 
       return resp?.data;
+    },
+    editDocumentTitle: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/cse/downloadsTitle/${formData.downloadsTitleId}`,
+        formData
+      );
+
+      return resp?.data;
+    },
+    getDocumentTitleById: async (id) => {
+      const resp = await axiosInstance.get(`/cse/documentTitle/${id}`);
+
+      return resp?.data;
+    },
+    getlAllDOcumentsTitle: async () => {
+      const resp = await axiosInstance.get(`/cse/downloadsTitle`);
+
+      return resp?.data;
+    },
+    addDocument: async (formData) => {
+      const resp = await axiosInstance.post(`/cse/addDocument`, formData);
+
+      return resp?.data;
+    },
+    getAllDocuments: async () => {
+      const resp = await axiosInstance.get(`/cse/documents`);
+
+      return resp?.data;
+    },
+    deleteDocument: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/deleteDocument/${id}`);
+
+      return resp?.data;
+    },
+
+    addGeneralNotice: async (formData) => {
+      const resp = await axiosInstance.post(`/cse/generalNotice`, formData);
+
+      return resp?.data;
+    },
+
+    editGeneralNotice: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/cse/generalNotice/${formData.generalNoticeId}`,
+        formData
+      );
+
+      return resp?.data;
+    },
+    deleteGeneralNotice: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/generalNotice/${id}`);
+
+      return resp?.data;
+    },
+
+    getAllGeneralNotices: async () => {
+      const resp = await axiosInstance.get("/cse/generalNotices");
+
+      return resp?.data;
+    },
+
+    addGrantWindow: async (formData) => {
+      const resp = await axiosInstance.post(`/cse/grantWindow`, formData);
+
+      return resp?.data;
+    },
+
+    editGrantWindow: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/cse/grantWindow/${formData.grantId}`,
+        formData
+      );
+
+      return resp?.data;
+    },
+    deleteGrantWindow: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/grantWindow/${id}`);
+
+      return resp?.data;
+    },
+    getAllGrantsWindows: async () => {
+      const resp = await axiosInstance.get("/cse/grantWindows");
+
+      return resp?.data;
+    },
+
+    addBannerImageFile: async (formData) => {
+      const resp = await axiosInstance.post("/cse/banner", formData);
+
+      return resp?.data;
+    },
+
+    getAllBannerImages: async () => {
+      const resp = await axiosInstance.get("/cse/banners");
+
+      return resp?.data;
+    },
+
+    deleteBannerImageFile: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/banner/${id}`);
+
+      return resp?.data;
+    },
+    addBoardMember: async (formData) => {
+      const resp = await axiosInstance.post("/cse/boardMember", formData);
+
+      return resp?.data;
+    },
+    editBoardMember: async (formData) => {
+      const resp = await axiosInstance.put(`/cse/boardMember`, formData);
+
+      return resp?.data;
+    },
+
+    getAllBoardMembers: async () => {
+      const resp = await axiosInstance.get("/cse/boardMembers");
+
+      return resp?.data;
+    },
+
+    addCommitteName: async (formData) => {
+      const resp = await axiosInstance.post("/cse/committee", formData);
+
+      return resp?.data;
+    },
+
+    editCommiteeName: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/cse/committee/:${formData.id}`,
+        formData
+      );
+
+      return resp?.data;
+    },
+
+    getAllCommiteeNames: async () => {
+      const resp = await axiosInstance.get("/cse/committees");
+
+      return resp?.data;
+    },
+
+    deleteCommiteeName: async (id) => {
+      const resp = await axiosInstance.delete(id);
+
+      return resp?.data;
+    },
+
+    deleteBoardMember: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/boardMember/${id}`);
+
+      return resp?.data;
+    },
+
+    addCommitteeMember: async (formData) => {
+      const resp = await axiosInstance.post("/cse/committeeMember", formData);
+
+      return resp?.data;
+    },
+    editCommitteeMember: async (formData) => {
+      const resp = await axiosInstance.put(`/cse/committeeMember`, formData);
+
+      return resp?.data;
+    },
+
+    getAllCommitteeMembers: async (id) => {
+      const resp = await axiosInstance.get(`/cse/committeeMembers/${id}`);
+
+      return resp?.data;
+    },
+
+    deleteCommitteeMember: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/committeeMember/${id}`);
+
+      return resp?.data;
+    },
+
+    addAnnualReport: async (formData) => {
+      const resp = await axiosInstance.post("/cse/annualReport", formData);
+
+      return resp?.data;
+    },
+
+    editAnnualReport: async (formData) => {
+      const resp = await axiosInstance.put(`/cse/annualReport`, formData);
+
+      return resp?.data;
+    },
+
+    getAllAnnualeports: async () => {
+      const resp = await axiosInstance.get("/cse/annualReports");
+
+      return resp?.data;
+    },
+
+    deleteAnnualReport: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/annualReport/${id}`);
+
+      return resp?.data;
+    },
+
+    addResearchReport: async (formData) => {
+      const resp = await axiosInstance.post("/cse/researchReport", formData);
+
+      return resp?.data;
+    },
+
+    editResearchReport: async (formData) => {
+      const resp = await axiosInstance.put(`/cse/researchReport`, formData);
+
+      return resp?.data;
+    },
+
+    getAllResearcheports: async () => {
+      const resp = await axiosInstance.get("/cse/researchReports");
+
+      return resp?.data;
+    },
+
+    deleteResearchReport: async (id) => {
+      const resp = await axiosInstance.delete(`/cse/researchReport/${id}`);
+
+      return resp?.data;
     }
   }
 };

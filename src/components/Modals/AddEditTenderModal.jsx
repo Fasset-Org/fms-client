@@ -109,7 +109,7 @@ const AddEditTenderModal = ({ tender }) => {
   };
 
   return (
-    <>
+    <div>
       {!tender ? (
         <Button variant="contained" onClick={() => setOpen(true)}>
           Add Tender
@@ -301,6 +301,10 @@ const AddEditTenderModal = ({ tender }) => {
                             InputLabelProps={{
                               shrink: true
                             }}
+                            inputProps={{
+                              accept:
+                                ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            }}
                             error={meta.touched && meta.error}
                             helperText={
                               meta.touched && meta.error && meta.error
@@ -379,16 +383,16 @@ const AddEditTenderModal = ({ tender }) => {
 
                                 <IconButton
                                   onClick={() => {
-                                    let newBidders = [];
-                                    values.bidders.forEach((option, idx) => {
-                                      if (
-                                        bidder.bidderName !== option.bidderName
-                                      ) {
-                                        newBidders.push(option);
+                                    const newBidders = values.bidders.filter(
+                                      (bid, j) => {
+                                        return (
+                                          bid.bidderName !== bidder.bidderName
+                                        );
                                       }
-                                    });
+                                    );
 
                                     console.log(newBidders);
+
                                     setFieldValue("bidders", newBidders);
                                   }}
                                 >
@@ -512,7 +516,7 @@ const AddEditTenderModal = ({ tender }) => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 

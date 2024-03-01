@@ -20,7 +20,7 @@ const BreadCrumbsHeader = ({ title, menus, ...otherProps }) => {
   return (
     <Stack
       component={Paper}
-      height={100}
+      height="fit-content"
       padding={2}
       spacing={2}
       {...otherProps}

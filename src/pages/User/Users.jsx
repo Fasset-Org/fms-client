@@ -86,7 +86,7 @@ const Users = () => {
               : data?.users
             )?.map((user) => {
               return (
-                <TableRow>
+                <TableRow key={user.id}>
                   <TableCell align="center" component="th" scope="row">
                     {user.email}
                   </TableCell>

@@ -79,7 +79,7 @@ const AddEditDepartment = () => {
   };
 
   return (
-    <>
+    <div>
       {adminQuery?.isSuccess && (
         <AlertPopup open={true} message={adminQuery?.data?.message} />
       )}
@@ -163,7 +163,7 @@ const AddEditDepartment = () => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 

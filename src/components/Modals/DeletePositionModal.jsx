@@ -41,7 +41,7 @@ export const DeletePositionModal = ({ id }) => {
   };
 
   return (
-    <>
+    <div>
       <Tooltip title="Delete Question">
         <IconButton
           color="error"
@@ -100,6 +100,6 @@ export const DeletePositionModal = ({ id }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 };

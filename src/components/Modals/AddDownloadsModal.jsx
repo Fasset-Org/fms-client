@@ -14,10 +14,9 @@ import {
   InputLabel,
   Slide,
   Stack,
-  TextField,
   useMediaQuery
 } from "@mui/material";
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
 import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -57,7 +56,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const AddEditDownloadsModal = ({ downloadsTitle }) => {
+const AddactionDownloadsModal = ({ downloadsTitle }) => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -65,6 +64,19 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
   const addDocumentTitleQuery = useMutation({
     mutationFn: async (formData) => {
       return await UserQuery.CSEQuery.addDocumentTitle(formData);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries("downloads");
+      setOpen(false);
+    },
+    onError: (err) => {
+      console.log(err);
+    }
+  });
+
+  const editDocumentTitleQuery = useMutation({
+    mutationFn: async (formData) => {
+      return await UserQuery.CSEQuery.editDocumentTitle(formData);
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries("downloads");
@@ -87,9 +99,46 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
           message={addDocumentTitleQuery?.data?.message}
         />
       )}
-      <Button variant="contained" onClick={() => setOpen(true)}>
-        Add Downloads Title
-      </Button>
+      {addDocumentTitleQuery.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            addDocumentTitleQuery.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {editDocumentTitleQuery?.isSuccess && (
+        <AlertPopup
+          open={true}
+          message={editDocumentTitleQuery?.data?.message}
+        />
+      )}
+      {editDocumentTitleQuery.isError && (
+        <AlertPopup
+          open={true}
+          severity="error"
+          message={
+            editDocumentTitleQuery.error?.response?.data?.message ||
+            "Server Error"
+          }
+        />
+      )}
+      {downloadsTitle ? (
+        <Button
+          variant="outlined"
+          sx={{ fontSize: 10 }}
+          color="success"
+          onClick={() => setOpen(true)}
+        >
+          Edit
+        </Button>
+      ) : (
+        <Button variant="contained" onClick={() => setOpen(true)}>
+          Add Downloads Title
+        </Button>
+      )}
       <Dialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
@@ -102,23 +151,25 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Add Downloads Title
+          {downloadsTitle ? "Edit Downloads Title" : "Add Downloads Title"}
         </BootstrapDialogTitle>
         <DialogContent dividers>
           <Formik
             initialValues={{
-              title: "",
-              documentName: "",
-              documentFile: ""
+              downloadsTitleId: downloadsTitle?.id || "",
+              title: downloadsTitle?.title || ""
             }}
             validationSchema={Yup.object().shape({
-              title: Yup.string().required("Downloads title required"),
-              documentName: downloadsTitle &&Yup.string().required("Document name required"),
-              documentFile: downloadsTitle && Yup.string().required("Please attach a file")
+              title: Yup.string().required("Downloads title required")
             })}
             onSubmit={(values) => {
-              addDocumentTitleQuery.mutate(values);
+              if (downloadsTitle) {
+                editDocumentTitleQuery.mutate(values);
+              } else {
+                addDocumentTitleQuery.mutate(values);
+              }
             }}
+            enableReinitialize
           >
             {() => {
               return (
@@ -128,60 +179,7 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
                       <InputLabel sx={{ mb: 1 }}>Downloads Title</InputLabel>
                       <TextFieldWrapper name="title" label="Downloads Title" />
                     </Grid>
-                    {downloadsTitle && (
-                      <>
-                        <Grid item xs={6} md={6}>
-                          <TextFieldWrapper
-                            name="documentName"
-                            label="Document Name"
-                          />
-                        </Grid>
-                        <Grid item xs={4} md={4}>
-                          <Field name="documentFile">
-                            {({ field, form, meta }) => (
-                              <TextField
-                                type="file"
-                                label="File"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
-                                error={meta.touched && meta.error}
-                                helperText={
-                                  meta.touched && meta.error && meta.error
-                                }
-                                fullWidth
-                                onChange={(event) => {
-                                  form.setFieldValue(
-                                    field.name,
-                                    event.currentTarget.files[0]
-                                  );
-                                }}
-                              />
-                            )}
-                          </Field>
-                        </Grid>
-                        <Grid item xs={2} md={2}>
-                          <Stack
-                            width="100%"
-                            height="100%"
-                            justifyContent="center"
-                            alignItems="center"
-                          >
-                            <Button
-                              variant="contained"
-                              type="submit"
-                              sx={{ width: "100%", height: "80%" }}
-                            >
-                              {addDocumentTitleQuery.isLoading ? (
-                                <CircularProgress color="secondary" />
-                              ) : (
-                                "Save"
-                              )}
-                            </Button>
-                          </Stack>
-                        </Grid>
-                      </>
-                    )}
+
                     <Grid item xs={12} md={12}>
                       <Stack direction="row" justifyContent="end">
                         <Button
@@ -213,4 +211,4 @@ const AddEditDownloadsModal = ({ downloadsTitle }) => {
   );
 };
 
-export default AddEditDownloadsModal;
+export default AddactionDownloadsModal;

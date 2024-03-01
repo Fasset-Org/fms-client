@@ -75,7 +75,7 @@ const AddPositionQuestion = ({ positionId }) => {
   };
 
   return (
-    <>
+    <div>
       <Button
         variant="outlined"
         color="secondary"
@@ -187,7 +187,7 @@ const AddPositionQuestion = ({ positionId }) => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 

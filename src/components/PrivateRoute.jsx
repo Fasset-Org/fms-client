@@ -49,14 +49,14 @@ const PrivateRoute = () => {
   }
 
   if (error?.response?.status === 401) {
-    window.location.href = `https://fasset-cms.azurewebsites.net/login`;
-    // window.location.href = `http://localhost:3000/login`;
+    // window.location.href = `https://fasset-cms.azurewebsites.net/login`;
+    window.location.href = `http://localhost:3000/login`;
   }
 
   if (isSuccess && data) return <Outlet />;
   else {
-    window.location.href = `https://fasset-cms.azurewebsites.net/login`;
-    // window.location.href = `http://localhost:3000/login`;
+    // window.location.href = `https://fasset-cms.azurewebsites.net/login`;
+    window.location.href = `http://localhost:3000/login`;
   }
 };
 

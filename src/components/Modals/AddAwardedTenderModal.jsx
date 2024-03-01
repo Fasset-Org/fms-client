@@ -68,7 +68,7 @@ const AddAwardedTender = ({ setFieldValue, bidders }) => {
   }
 
   return (
-    <>
+    <div>
       <Button
         variant="outlined"
         color="secondary"
@@ -152,7 +152,7 @@ const AddAwardedTender = ({ setFieldValue, bidders }) => {
           </Button>
         </DialogActions> */}
       </Dialog>
-    </>
+    </div>
   );
 };
 

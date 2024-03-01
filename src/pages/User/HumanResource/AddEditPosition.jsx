@@ -235,6 +235,10 @@ const AddEditPosition = () => {
                             helperText={
                               meta.touched && meta.error && meta.error
                             }
+                            inputProps={{
+                              accept:
+                                ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            }}
                             fullWidth
                             onChange={(event) => {
                               form.setFieldValue(
