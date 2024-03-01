@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import UserQuery from "../../../stateQueries/User";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import CustomNoRowsOverlay from "../../CustomNoRowsOverlay";
+import { DeleteNoticeModal } from "../../Modals/DeleteNoticeModal";
 
 const Notices = () => {
   const [page, setPage] = React.useState(0);
@@ -92,14 +93,13 @@ const Notices = () => {
                   <TableCell component="th" scope="row" sx={{ width: 500 }}>
                     <Typography
                       sx={{
-                        overflow: "hidden",
-                        whiteSpace: "nowrap",
-                        textOverflow: "ellipsis",
-                        width: 500
+                        // overflow: "hidden",
+                        // whiteSpace: "nowrap",
+                        // textOverflow: "ellipsis",
+                        // width: 500
                       }}
-                    >
-                      {notice.content}
-                    </Typography>
+                      dangerouslySetInnerHTML={{ __html: notice.content }}
+                    ></Typography>
                   </TableCell>
                   <TableCell align="center" component="th" scope="row">
                     {`${new Date(notice.createdAt).toDateString()}`}
@@ -116,6 +116,7 @@ const Notices = () => {
                       justifyContent="center"
                     >
                       <AddEditGeneralNoticeModal notice={notice} />
+                      <DeleteNoticeModal id={notice.id} />
                     </Stack>
                   </TableCell>
                 </TableRow>
