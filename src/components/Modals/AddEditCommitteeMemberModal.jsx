@@ -32,7 +32,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-export default function AddEditCommitteeMemberModal({ committeeMember }) {
+export default function AddEditCommitteeMemberModal({
+  committeeMember,
+  committeeId
+}) {
   const [open, setOpen] = React.useState(false);
   const [photoURL, setPhotoURL] = React.useState(null);
   const [originalFile, setOriginalFile] = React.useState(null);
@@ -65,6 +68,8 @@ export default function AddEditCommitteeMemberModal({ committeeMember }) {
       }, 2000);
     }
   });
+
+  console.log(committeeMember)
 
   const handleToggleOpen = () => {
     setOpen(!open);
@@ -153,6 +158,8 @@ export default function AddEditCommitteeMemberModal({ committeeMember }) {
         <DialogContent>
           <Formik
             initialValues={{
+              committeeNameId:
+                committeeMember?.committeeNameId || committeeId || "",
               committeeMemberId: committeeMember?.id || "",
               title: committeeMember?.title || "",
               fullname: committeeMember?.fullname || "",
@@ -162,8 +169,8 @@ export default function AddEditCommitteeMemberModal({ committeeMember }) {
             validationSchema={Yup.object().shape({
               title: Yup.string().required("Title required"),
               fullname: Yup.string().required("Fullname required"),
-              position: Yup.string().required("Position required"),
-              file: Yup.string().required("Please select image")
+              position: Yup.string().required("Position required")
+              // file: Yup.string().required("Please select image")
             })}
             onSubmit={(values) => {
               const formData = new FormData();
