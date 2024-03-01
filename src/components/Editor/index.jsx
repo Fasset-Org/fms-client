@@ -1,35 +1,47 @@
 import React from "react";
-import { EditorState, convertToRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
-import { useFormikContext } from "formik";
-// import draftToHtml from "draftjs-to-html";
-import { Stack } from "@mui/material";
+import { ContentState, EditorState, convertToRaw } from "draft-js";
+
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import draftToHtml from "draftjs-to-html";
+import { useFormikContext } from "formik";
+import htmlToDraft from "html-to-draftjs";
 
 const RichTextEditor = () => {
-  const [editorState, setEditorState] = React.useState(() =>
-    EditorState.createEmpty()
-  );
+  let content = "";
+  const { setFieldValue, values } = useFormikContext();
+  content = values?.content;
 
-  const { setFieldValue } = useFormikContext();
+  const [editorState, setEditorState] = React.useState(() => {
+    if (content.length > 0) {
+      const contentBlocks = htmlToDraft(content);
+      const contentState = ContentState.createFromBlockArray(
+        contentBlocks.contentBlocks,
+        contentBlocks.entityMap
+      );
+      return EditorState.createWithContent(contentState);
+    }
+    return EditorState.createEmpty();
+  });
 
-  // const html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+  const html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
 
-  const handleChange = (editorState) => {
+  const onEditorStateChange = (editorState) => {
     setEditorState(editorState);
-    // setFieldValue("data", html);
+    setFieldValue("content", html);
   };
 
   return (
-    <Stack direction="row">
+    <div>
       <Editor
         toolbarClassName="toolbarClassName"
         wrapperClassName="wrapperClassName"
         editorClassName="editorClassName"
+        onEditorStateChange={onEditorStateChange}
         editorState={editorState}
-        onEditorStateChange={handleChange}
+        editorStyle={{ height: 200 }}
       />
-    </Stack>
+    </div>
   );
 };
 
