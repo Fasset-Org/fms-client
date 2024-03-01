@@ -1,4 +1,5 @@
 import {
+  Button,
   LinearProgress,
   Paper,
   Stack,
@@ -13,17 +14,17 @@ import {
 } from "@mui/material";
 import React from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
-import AddEditCommitteeMemberModal from "../../../components/Modals/AddEditCommitteeMemberModal";
 import { useQuery } from "@tanstack/react-query";
 import UserQuery from "../../../stateQueries/User";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
-import { DeleteCommitteeMemberConfirmModal } from "../../../components/Modals/DeleteCommitteeMemberConfirmModal";
 import AddCommitteeModal from "../../../components/Modals/AddCommitteeModal";
+import { useNavigate } from "react-router-dom";
 
 const Committees = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const navigate = useNavigate();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -35,9 +36,9 @@ const Committees = () => {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ["committeeMembers"],
+    queryKey: ["committeeNames"],
     queryFn: async () => {
-      return UserQuery.CSEQuery.getAllCommitteeMembers();
+      return UserQuery.CSEQuery.getAllCommiteeNames();
     }
   });
 
@@ -70,16 +71,7 @@ const Committees = () => {
                   No#
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Title
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Fullname
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Position
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bolder" }}>
-                  Image
+                  Committee Name
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "bolder" }}>
                   Date Created
@@ -94,35 +86,20 @@ const Committees = () => {
             </TableHead>
             <TableBody>
               {(rowsPerPage > 0
-                ? data?.committeeMembers?.slice(
+                ? data?.committees?.slice(
                     page * rowsPerPage,
                     page * rowsPerPage + rowsPerPage
                   )
-                : data?.committeeMembers
+                : data?.committees
               )?.map((boardMember, i) => {
                 return (
                   <TableRow key={boardMember.id}>
                     <TableCell align="center" component="th" scope="row">
                       {i + 1}
                     </TableCell>
-                    <TableCell component="th" scope="row" align="center">
-                      {boardMember.title}
-                    </TableCell>
 
                     <TableCell component="th" scope="row" align="center">
-                      {boardMember.fullname}
-                    </TableCell>
-
-                    <TableCell component="th" scope="row" align="center">
-                      {boardMember.position}
-                    </TableCell>
-
-                    <TableCell component="th" scope="row" align="center">
-                      <img
-                        src={`http://localhost:8001/uploads/board-members/${boardMember.imageFileURL}`}
-                        alt=""
-                        height={100}
-                      />
+                      {boardMember.committeeName}
                     </TableCell>
                     <TableCell align="center" component="th" scope="row">
                       {`${new Date(boardMember.createdAt).toDateString()}`}
@@ -138,19 +115,28 @@ const Committees = () => {
                         // border={1}
                         justifyContent="center"
                       >
-                        <AddEditCommitteeMemberModal
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => {
+                            navigate(`/cse/committeeMembers/${boardMember.id}`);
+                          }}
+                        >
+                          View Members
+                        </Button>
+                        {/* <AddEditCommitteeMemberModal
                           committeeMember={boardMember}
                         />
                         <DeleteCommitteeMemberConfirmModal
                           id={boardMember.id}
-                        />
+                        /> */}
                       </Stack>
                     </TableCell>
                   </TableRow>
                 );
               })}
             </TableBody>
-            {data?.committeeMembers?.length > 0 && (
+            {data?.committees?.length > 0 && (
               <TableFooter>
                 <TableRow>
                   <TablePagination
@@ -161,7 +147,7 @@ const Committees = () => {
                       { label: "All", value: -1 }
                     ]}
                     // colSpan={3}
-                    count={data?.committeeMembers?.length || 0}
+                    count={data?.committees?.length || 0}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     SelectProps={{
@@ -178,8 +164,7 @@ const Committees = () => {
               </TableFooter>
             )}
           </Table>
-          {(!data?.committeeMembers ||
-            data?.committeeMembers?.length === 0) && (
+          {(!data?.committees || data?.committees?.length === 0) && (
             <Stack width="100%" padding={2}>
               <CustomNoRowsOverlay description="No Committee Members Uploaded" />
             </Stack>
