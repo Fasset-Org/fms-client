@@ -16,15 +16,13 @@ import {
   Stack,
   useMediaQuery
 } from "@mui/material";
-import { Form, Formik } from "formik";
-import TextFieldWrapper from "../FormComponents/TextFieldWrapper";
-import * as Yup from "yup";
-import TextAreaFieldWrapper from "../FormComponents/TextAreaFieldWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
 import EditIcon from "@mui/icons-material/Edit";
-// import RichTextEditor from "../Editor";
+import RichTextEditor from "../Editor";
+import { Form, Formik } from "formik";
+import * as Yup from "yup";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -70,7 +68,10 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
       return await UserQuery.CSEQuery.addGeneralNotice(formData);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries("notices");
+      setTimeout(() => {
+        queryClient.invalidateQueries("notices");
+        setOpen(false);
+      }, 2000);
     },
     onError: (err) => {
       console.log(err);
@@ -82,7 +83,10 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
       return await UserQuery.CSEQuery.editGeneralNotice(formData);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries(["notices"]);
+      setTimeout(() => {
+        queryClient.invalidateQueries("notices");
+        setOpen(false);
+      }, 2000);
     },
     onError: (err) => {
       console.log(err);
@@ -92,8 +96,6 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  console.log(notice);
 
   return (
     <div>
@@ -159,30 +161,10 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
           <Formik
             initialValues={{
               generalNoticeId: notice?.id || "",
-              title: notice?.title || "",
-              content: notice?.content || "",
-              url: "",
-              links: notice?.links || []
+              content: notice?.content || ""
             }}
             validationSchema={Yup.object().shape({
-              title: Yup.string().required("Title required"),
-              content: Yup.string().required("Content required"),
-              url: Yup.string().test(
-                "url",
-                "Please provide valid url",
-                function (value) {
-                  if (value?.length > 0) {
-                    try {
-                      new URL(value);
-                      return true;
-                    } catch (err) {
-                      return false;
-                    }
-                  } else {
-                    return true;
-                  }
-                }
-              )
+              content: Yup.string().required("Please type your content")
             })}
             onSubmit={(values) => {
               if (notice) {
@@ -191,21 +173,17 @@ const AddEditGeneralNoticeModal = ({ notice }) => {
                 addGeneralNoticeQuery.mutate(values);
               }
             }}
-            enableReinitialize={true}
+            enableReinitialize
           >
-            {({ values, errors, setFieldValue }) => {
+            {({ values }) => {
               return (
-                <Form encType="multipart/form-data">
+                <Form>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
-                      <TextFieldWrapper name="title" label="Title" />
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                      <TextAreaFieldWrapper name="content" label="Content" />
-                      {/* <RichTextEditor /> */}
+                      <RichTextEditor />
                     </Grid>
 
-                    <Grid item xs={12} md={12}>
+                    <Grid item xs={12} md={12} mt={0}>
                       <Box textAlign="end">
                         <Stack
                           spacing={2}
