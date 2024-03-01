@@ -31,12 +31,12 @@ export default function AddCommitteeModal({ committeeMember }) {
 
   const addComMemberMutation = useMutation({
     mutationFn: async (formData) => {
-      return UserQuery.CSEQuery.addCommitteeMember(formData);
+      return UserQuery.CSEQuery.addCommitteName(formData);
     },
 
     onSuccess: (data) => {
       setTimeout(() => {
-        queryClient.invalidateQueries("committeeMembers");
+        queryClient.invalidateQueries("committeeNames");
         setOpen(false);
       }, 2000);
     }
@@ -44,12 +44,12 @@ export default function AddCommitteeModal({ committeeMember }) {
 
   const editComMemberMutation = useMutation({
     mutationFn: async (formData) => {
-      return UserQuery.CSEQuery.editCommitteeMember(formData);
+      return UserQuery.CSEQuery.editCommiteeName(formData);
     },
 
     onSuccess: (data) => {
       setTimeout(() => {
-        queryClient.invalidateQueries("committeeMembers");
+        queryClient.invalidateQueries("committeeNames");
         setOpen(false);
       }, 2000);
     }
