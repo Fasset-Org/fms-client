@@ -19,10 +19,13 @@ import AddEditCommitteeMemberModal from "../../../components/Modals/AddEditCommi
 import { DeleteCommitteeMemberConfirmModal } from "../../../components/Modals/DeleteCommitteeMemberConfirmModal";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
+import { useParams } from "react-router-dom";
 
 const CommiteeList = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const { committeeId } = useParams();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -36,8 +39,9 @@ const CommiteeList = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["committeeMembers"],
     queryFn: async () => {
-      return UserQuery.CSEQuery.getAllCommitteeMembers();
-    }
+      return UserQuery.CSEQuery.getAllCommitteeMembers(committeeId);
+    },
+    enabled: !!committeeId
   });
 
   if (isLoading) {
@@ -57,7 +61,7 @@ const CommiteeList = () => {
       />
 
       <Stack alignItems="center" spacing={2}>
-        <AddEditCommitteeMemberModal />
+        <AddEditCommitteeMemberModal committeeId={committeeId && committeeId} />
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead sx={{ backgroundColor: "background.paper" }}>
@@ -117,11 +121,15 @@ const CommiteeList = () => {
                     </TableCell>
 
                     <TableCell component="th" scope="row" align="center">
-                      <img
-                        src={`http://localhost:8001/uploads/board-members/${boardMember.imageFileURL}`}
-                        alt=""
-                        height={100}
-                      />
+                      {boardMember.imageFileURL === "" ? (
+                        <hr />
+                      ) : (
+                        <img
+                          src={`http://localhost:8001/uploads/board-members/${boardMember.imageFileURL}`}
+                          alt=""
+                          height={100}
+                        />
+                      )}
                     </TableCell>
                     <TableCell align="center" component="th" scope="row">
                       {`${new Date(boardMember.createdAt).toDateString()}`}
