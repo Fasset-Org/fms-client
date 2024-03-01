@@ -205,7 +205,6 @@ const UserQuery = {
     },
 
     editGeneralNotice: async (formData) => {
-      console.log(formData);
       const resp = await axiosInstance.put(
         `/cse/generalNotice/${formData.generalNoticeId}`,
         formData
@@ -284,6 +283,33 @@ const UserQuery = {
       return resp?.data;
     },
 
+    addCommitteName: async (formData) => {
+      const resp = await axiosInstance.post("/cse/committee", formData);
+
+      return resp?.data;
+    },
+
+    editCommiteeName: async (formData) => {
+      const resp = await axiosInstance.put(
+        `/cse/committee/:${formData.id}`,
+        formData
+      );
+
+      return resp?.data;
+    },
+
+    getAllCommiteeNames: async () => {
+      const resp = await axiosInstance.get("/cse/committees");
+
+      return resp?.data;
+    },
+
+    deleteCommiteeName: async (id) => {
+      const resp = await axiosInstance.delete(id);
+
+      return resp?.data;
+    },
+
     deleteBoardMember: async (id) => {
       const resp = await axiosInstance.delete(`/cse/boardMember/${id}`);
 
@@ -301,8 +327,8 @@ const UserQuery = {
       return resp?.data;
     },
 
-    getAllCommitteeMembers: async () => {
-      const resp = await axiosInstance.get("/cse/committeeMembers");
+    getAllCommitteeMembers: async (id) => {
+      const resp = await axiosInstance.get(`/cse/committeeMembers/${id}`);
 
       return resp?.data;
     },
