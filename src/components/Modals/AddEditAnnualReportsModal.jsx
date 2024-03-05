@@ -187,7 +187,7 @@ export default function AddEditAnnualReportsModal({ annualReport }) {
                             }}
                             inputProps={{
                               accept:
-                                ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,application/vnd.ms-excel"
                             }}
                             error={meta.touched && meta.error}
                             helperText={
