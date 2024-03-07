@@ -35,6 +35,7 @@ import AnnualReports from "./pages/User/CSE/AnnualReports";
 import ResearchReports from "./pages/User/CSE/ResearchReports";
 import DownloadsDocuments from "./pages/User/CSE/DownloadsDocuments";
 import CommiteeList from "./pages/User/CSE/CommiteeList";
+import OurTeam from "./pages/User/HumanResource/OurTeam";
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -99,6 +100,10 @@ function App() {
                 <Route
                   path="/humanResource/previousPositions"
                   element={<PreviousPositions />}
+                />
+                <Route
+                  path="/humanResource/ourTeam"
+                  element={<OurTeam />}
                 />
                 <Route
                   path="/humanResource/jobApplications/:positionId"
