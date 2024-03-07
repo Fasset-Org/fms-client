@@ -3,6 +3,7 @@ import React from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
+import Groups2Icon from '@mui/icons-material/Groups2';
 import DashboardCard from "../../../components/DashboardCard";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
@@ -19,6 +20,11 @@ const HumanResource = () => {
       title: "Previous Positions",
       icon: ArrowCircleUpIcon,
       url: "/humanResource/previousPositions"
+    },
+    {
+      title: "Our Team",
+      icon: Groups2Icon,
+      url: "/humanResource/ourTeam"
     },
   ];
   return (
