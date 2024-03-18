@@ -6,46 +6,37 @@ import {
   InputLabel,
   LinearProgress,
   MenuItem,
-  Paper,
   Select,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow
+  Stack
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
-import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import UserQuery from "../../../stateQueries/User";
-import { RejectApplicationModal } from "../../../components/Modals/RejectApplicationModal";
-import { ShortListModal } from "../../../components/Modals/ShortListModal";
 import { RejectAllApplicationModal } from "../../../components/Modals/RejectAllApplicationModal";
-import CustomNoRowsOverlay from "../../../components/CustomNoRowsOverlay";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import CustomNoRowsGridOverlay from "../../../components/CustomNoRowsGridOverlay";
+import { ShortListModal } from "../../../components/Modals/ShortListModal";
+import { RejectApplicationModal } from "../../../components/Modals/RejectApplicationModal";
 
 const JobApplications = () => {
   const { positionId } = useParams();
   const navigate = useNavigate();
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [page, setPage] = React.useState(0);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [applications, setApplications] = useState([]);
   const [selectValue, setSelectValue] = useState("");
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
   const filterOptions = [
     {
@@ -76,6 +67,8 @@ const JobApplications = () => {
     enabled: !!positionId
   });
 
+  console.log(data?.applications);
+
   const { data: applicationData, isLoading: loading } = useQuery({
     queryKey: ["position"],
     queryFn: async () => {
@@ -83,6 +76,99 @@ const JobApplications = () => {
     },
     enabled: !!positionId
   });
+
+  console.log(applicationData?.position?.PositionQuestions[0]?.question);
+
+  let positionQuestions = [];
+
+  if (applicationData?.position?.PositionQuestions?.length > 0) {
+    for (const question of applicationData?.position?.PositionQuestions) {
+      positionQuestions.push({
+        field: question.question,
+        headerName: question.question,
+        editable: true
+      });
+    }
+  }
+
+  const ActionButtons = ({ params }) => {
+    return (
+      <Stack
+        direction="row"
+        spacing={2}
+        // border={1}
+        justifyContent="center"
+      >
+        <Button
+          variant="outlined"
+          sx={{ fontSize: 10, width: 70 }}
+          onClick={() => {
+            navigate(
+              `/humanResource/jobApplications/${positionId}/viewApplication/${params.row.id}`
+            );
+          }}
+        >
+          View
+        </Button>
+        <ShortListModal application={params.row} />
+        <RejectApplicationModal application={params.row} />
+      </Stack>
+    );
+  };
+
+  const columns = [
+    { field: "idNumber", headerName: "ID" },
+    {
+      field: "fullname",
+      headerName: "Full Name",
+      editable: true
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      editable: true
+    },
+    {
+      field: "gender",
+      headerName: "Gender",
+      editable: true
+    },
+    {
+      field: "nationality",
+      headerName: "Nationality",
+      editable: true
+    },
+    ...positionQuestions,
+    {
+      field: "status",
+      headerName: "Status",
+      sortable: false,
+      renderCell: (params) => (
+        <Chip
+          color={
+            params.row.status === "submitted"
+              ? "primary"
+              : params.row.status === "shortlisted"
+              ? "success"
+              : "error"
+          }
+          label={
+            params.row.status === "submitted"
+              ? "submitted"
+              : params.row.status === "shortlisted"
+              ? "shortlisted"
+              : "rejected"
+          }
+        />
+      )
+    },
+    {
+      // field: "action",
+      headerName: "Action",
+      sortable: false,
+      renderCell: (params) => <ActionButtons params={params} />
+    }
+  ];
 
   const handleFilter = (filterValue) => {
     setApplications(data?.applications);
@@ -144,16 +230,43 @@ const JobApplications = () => {
         </Box>
 
         <RejectAllApplicationModal position={applicationData.position} />
-
-        <Button
-          variant="contained"
-          sx={{ fontSize: 11, height: 50, fontWeight: "bolder", width: 180 }}
-        >
-          Export
-        </Button>
       </Stack>
 
-      <TableContainer component={Paper}>
+      <Box sx={{ height: 400, width: "100%", overflowX: "auto" }}>
+        <DataGrid
+          rows={data?.applications}
+          columns={columns}
+          autoHeight
+          autoHeightMax={400}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5
+              }
+            }
+          }}
+          pageSizeOptions={[5]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          slots={{
+            noRowsOverlay: CustomNoRowsGridOverlay,
+            toolbar: GridToolbar
+          }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true
+            }
+          }}
+          sx={{
+            // "--DataGrid-overlayHeight": "300px",
+            height: 400,
+            width: "100%",
+            overflowX: "auto"
+          }}
+        />
+      </Box>
+
+      {/* <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead sx={{ backgroundColor: "background.paper" }}>
             <TableRow>
@@ -163,12 +276,7 @@ const JobApplications = () => {
               >
                 Fullname
               </TableCell>
-              {/* <TableCell
-                  align="center"
-                  sx={{ fontWeight: "bolder", fontSize: 12 }}
-                >
-                  Email
-                </TableCell> */}
+            
               <TableCell
                 align="center"
                 sx={{ fontWeight: "bolder", fontSize: 12 }}
@@ -225,14 +333,7 @@ const JobApplications = () => {
                   >
                     {application.fullname}
                   </TableCell>
-                  {/* <TableCell
-                      align="center"
-                      component="th"
-                      scope="row"
-                      sx={{ fontSize: 12 }}
-                    >
-                      {application.email}
-                    </TableCell> */}
+                  
                   <TableCell
                     align="center"
                     component="th"
@@ -351,7 +452,7 @@ const JobApplications = () => {
             <CustomNoRowsOverlay description="No Application Made So far" />
           </Stack>
         )}
-      </TableContainer>
+      </TableContainer> */}
     </Stack>
   );
 };
