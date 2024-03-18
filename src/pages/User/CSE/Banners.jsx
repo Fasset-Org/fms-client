@@ -65,17 +65,15 @@ const Banners = () => {
           {...{ setCropOpen, setPhotoURL, setOriginalFile }}
           title="Upload Banner"
         />
-        {cropOpen &&
-          photoURL &&
-          originalFile && (
-            <ImageCropModal
-              photoURL={photoURL}
-              cropOpen={cropOpen}
-              setCropOpen={setCropOpen}
-              setPhotoURL={setPhotoURL}
-              originalFile={originalFile}
-            />
-          )}
+        {cropOpen && photoURL && originalFile && (
+          <ImageCropModal
+            photoURL={photoURL}
+            cropOpen={cropOpen}
+            setCropOpen={setCropOpen}
+            setPhotoURL={setPhotoURL}
+            originalFile={originalFile}
+          />
+        )}
 
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
@@ -116,7 +114,7 @@ const Banners = () => {
                     </TableCell>
                     <TableCell component="th" scope="row" align="center">
                       <img
-                        src={`http://102.37.217.58:5000/uploads/banners/${banner.bannerImageURL}`}
+                        src={`${process.env.REACT_APP_API_URL}/uploads/banners/${banner.bannerImageURL}`}
                         alt=""
                         height={100}
                       />
