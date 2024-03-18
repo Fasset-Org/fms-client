@@ -125,7 +125,7 @@ const CommiteeList = () => {
                         <hr />
                       ) : (
                         <img
-                          src={`http://102.37.217.58:5000/uploads/board-members/${boardMember.imageFileURL}`}
+                          src={`${process.env.REACT_APP_API_URL}/uploads/board-members/${boardMember.imageFileURL}`}
                           alt=""
                           height={100}
                         />
