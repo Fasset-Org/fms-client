@@ -30,6 +30,8 @@ const ViewApplication = () => {
     enabled: !!positionId && !!applicationId
   });
 
+  console.log(data)
+
   if (isLoading) {
     return <LinearProgress />;
   }
