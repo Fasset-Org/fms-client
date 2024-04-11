@@ -278,7 +278,7 @@ const JobApplications = () => {
             "& .warning": {
               // border: 1,
               // borderColor: "warning.main",
-              color: 'warning.main'
+              // color: 'warning.main'
             }
           }}
           getRowClassName={(params) => {
