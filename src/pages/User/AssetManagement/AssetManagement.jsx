@@ -4,9 +4,9 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import DashboardCard from "../../../components/DashboardCard";
 import LaptopChromebookIcon from '@mui/icons-material/LaptopChromebook';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+//import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
-import FolderIcon from '@mui/icons-material/Folder';
+//import FolderIcon from '@mui/icons-material/Folder';
 import PanToolAltIcon from '@mui/icons-material/PanToolAlt';
 
 
@@ -21,17 +21,17 @@ const AssetManagement = () => {
       url: "/assetManagement/devices"
     },
     {
-      title: "License/Subcription",
+      title: "License/Subscription",
       icon: PanToolAltIcon,
-      url: "/assetManagement/licensesubcription"
+      url: "/assetManagement/licensesubscription"
     },
     {
-      title: "Simcards/Cellphone",
+      title: "Simcards",
       icon: PhoneIphoneIcon,
-      url: "/assetManagement/simcardscellphone"
+      url: "/assetManagement/simcards"
     },
     
-    {
+    /*{
       title: "Disposal",
       icon: DeleteForeverIcon,
       url: "/assetManagement/disposal"
@@ -40,7 +40,7 @@ const AssetManagement = () => {
       title: "Reports",
       icon: FolderIcon,
       url: "/assetManagement/reports"
-    },
+    },*/
 
     
   ];
@@ -50,7 +50,7 @@ const AssetManagement = () => {
         title="Welcome back Tiyisela Themba Makamu"
         menus={[
           { name: "Dashboard", url: "/dashboard" },
-          { name: "Asset Management", url: "/assetmanagement" }
+          { name: "Asset Management", url: "/assetManagement" }
         ]}
         sx={{ mb: 2 }}
       />
