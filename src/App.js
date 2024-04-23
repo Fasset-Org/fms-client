@@ -36,10 +36,11 @@ import ResearchReports from "./pages/User/CSE/ResearchReports";
 import AssetManagement from "./pages/User/AssetManagement/AssetManagement";
 
 import Disposal from "./pages/User/AssetManagement/Disposal";
-import LicenseSubcription from "./pages/User/AssetManagement/LicenseSubcription";
-import SimcardCellphone from "./pages/User/AssetManagement/SimcardCellphone";
+
 import Reports from "./pages/User/AssetManagement/Reports";
 import Devices from "./pages/User/AssetManagement/Devices";
+import LicenseSubscription from "./pages/User/AssetManagement/LicenceSubscription";
+import Simcards from "./pages/User/AssetManagement/Simcards";
 
 
 function App() {
@@ -123,12 +124,12 @@ function App() {
                 />
                 
                 <Route
-                  path="/assetManagement/LicenseSubcription"
-                  element={< LicenseSubcription/>}
+                  path="/assetManagement/LicenseSubscription"
+                  element={< LicenseSubscription/>}
                 />
                 <Route
-                  path="/assetManagement/SimcardCellphone"
-                  element={<SimcardCellphone />}
+                  path="/assetManagement/Simcards"
+                  element={<Simcards />}
                  
                 />
                 <Route
