@@ -45,6 +45,7 @@ const Banners = () => {
     }
   });
 
+
   if (isLoading) {
     return <LinearProgress />;
   }

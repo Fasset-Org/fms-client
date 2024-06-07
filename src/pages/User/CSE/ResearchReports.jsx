@@ -115,7 +115,7 @@ const ResearchReports = () => {
                     </TableCell>
                     <TableCell component="th" scope="row" align="center">
                       <Link
-                        href={`${process.env.REACT_APP_API_URL}/cse/downloadResearchReportDocument?fileName=${annualReport.researchReportFileURL}`}
+                        href={`${process.env.REACT_APP_API_URL}/api/dev/cse/downloadResearchReportDocument?fileName=${annualReport.researchReportFileURL}`}
                       >
                         {annualReport.researchReportFileURL}
                       </Link>

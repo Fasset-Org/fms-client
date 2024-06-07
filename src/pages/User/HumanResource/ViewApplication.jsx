@@ -158,7 +158,7 @@ const ViewApplication = () => {
                       fullWidth
                     >
                       <a
-                        href={`${process.env.REACT_APP_API_URL}/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.idDocumentName}`}
+                        href={`${process.env.REACT_APP_API_URL}/api/dev/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.idDocumentName}`}
                         download
                         target="_blank"
                         rel="noreferrer"
@@ -183,7 +183,7 @@ const ViewApplication = () => {
                       fullWidth
                     >
                       <a
-                        href={`${process.env.REACT_APP_API_URL}/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.matricDocumentName}`}
+                        href={`${process.env.REACT_APP_API_URL}/api/dev/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.matricDocumentName}`}
                         download
                         target="_blank"
                         rel="noreferrer"
@@ -208,7 +208,7 @@ const ViewApplication = () => {
                       fullWidth
                     >
                       <a
-                        href={`${process.env.REACT_APP_API_URL}/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.qualificationDocumentName}`}
+                        href={`${process.env.REACT_APP_API_URL}/api/dev/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.qualificationDocumentName}`}
                         download
                         target="_blank"
                         rel="noreferrer"
@@ -233,7 +233,7 @@ const ViewApplication = () => {
                       fullWidth
                     >
                       <a
-                        href={`${process.env.REACT_APP_API_URL}/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.resumeDocumentName}`}
+                        href={`${process.env.REACT_APP_API_URL}/api/dev/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.resumeDocumentName}`}
                         download
                         target="_blank"
                         rel="noreferrer"
