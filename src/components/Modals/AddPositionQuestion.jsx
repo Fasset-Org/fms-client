@@ -22,6 +22,7 @@ import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import UserQuery from "../../stateQueries/User";
 import AlertPopup from "../AlertPopup";
+import SelectFieldWrapper from "../FormComponents/SelectFieldWrapper";
 
 function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
@@ -61,6 +62,22 @@ const AddPositionQuestion = ({ positionId }) => {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  const questionTypeOptions = [
+    {
+      value: "yes/no",
+      label: "Yes/No"
+    },
+    {
+      value: "input/text",
+      label: "Input/Text"
+    },
+    {
+      value: "numeric",
+      label: "Numeric"
+    }
+  ];
+
   const addPositionQuestionMutation = useMutation({
     mutationFn: async (formData) => {
       return await UserQuery.HumanResourceQuery.addPositionQuestion(formData);
@@ -120,12 +137,14 @@ const AddPositionQuestion = ({ positionId }) => {
             initialValues={{
               positionId: positionId || "",
               question: "",
-              expectedAnswer: ""
+              expectedAnswer: "",
+              type: ""
             }}
             validationSchema={Yup.object().shape({
               positionId: Yup.string().required("Position id required"),
               question: Yup.string().required("Question required"),
-              expectedAnswer: Yup.string().required("Expected answer required")
+              // expectedAnswer: Yup.string().required("Expected answer required"),
+              type: Yup.string().required("Please select question type")
             })}
             onSubmit={(values, { resetForm }) => {
               addPositionQuestionMutation.mutate(values);
@@ -141,6 +160,13 @@ const AddPositionQuestion = ({ positionId }) => {
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12}>
                       <TextFieldWrapper name="question" label="Question?" />
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                      <SelectFieldWrapper
+                        name="type"
+                        label="Question Type"
+                        options={questionTypeOptions}
+                      />
                     </Grid>
                     <Grid item xs={12} md={12}>
                       <InputLabel

@@ -118,7 +118,7 @@ const Board = () => {
 
                     <TableCell component="th" scope="row" align="center">
                       <img
-                        src={`http://localhost:8001/uploads/board-members/${boardMember.imageFileURL}`}
+                        src={`${process.env.REACT_APP_PUBLIC_URL}/uploads/board-members/${boardMember.imageFileURL}`}
                         alt=""
                         height={100}
                       />

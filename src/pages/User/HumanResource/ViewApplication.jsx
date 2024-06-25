@@ -1,4 +1,7 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button,
   Grid,
   LinearProgress,
@@ -15,9 +18,15 @@ import { Form, Formik } from "formik";
 import TextFieldWrapper from "../../../components/FormComponents/TextFieldWrapper";
 import { ShortListModal } from "../../../components/Modals/ShortListModal";
 import { RejectApplicationModal } from "../../../components/Modals/RejectApplicationModal";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const ViewApplication = () => {
   const { positionId, applicationId } = useParams();
+  const [expanded, setExpanded] = React.useState(null);
+
+  const handleChange = (panel) => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ["application"],
@@ -29,6 +38,8 @@ const ViewApplication = () => {
     },
     enabled: !!positionId && !!applicationId
   });
+
+  console.log(data);
 
   if (isLoading) {
     return <LinearProgress />;
@@ -45,16 +56,18 @@ const ViewApplication = () => {
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
-      <Stack component={Paper} width="70%" m="auto" padding={2}>
+      <Stack component={Paper} width="70%" m="auto" padding={2} spacing={2}>
         <Typography textAlign="center" mb={2} fontSize={20}>
-          {data?.application.fullname}'s application
+          {data?.application.firstName} {data?.application?.lastName}'s
+          application
         </Typography>
         <Formik
           initialValues={{
-            fullname: data?.application.fullname || "",
+            firstName: data?.application?.firstName || "",
+            lastName: data?.application?.lastName || "",
             email: data?.application.email || "",
             nationality: data?.application.nationality || "",
-            uidNumber: data?.application.idNumber || "",
+            idNumber: data?.application.idNumber || "",
             gender: data?.application.gender || "",
             cellphone: data?.application.cellphone || "",
             idDcumentName: data?.application.idDocumentName,
@@ -72,8 +85,17 @@ const ViewApplication = () => {
                   <Grid item xs={12} md={12}>
                     <TextFieldWrapper
                       fullWidth
-                      label="FullName"
-                      name="fullname"
+                      label="First Name"
+                      name="firstName"
+                      disabled
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} md={12}>
+                    <TextFieldWrapper
+                      fullWidth
+                      label="Last Name"
+                      name="lastName"
                       disabled
                     />
                   </Grid>
@@ -89,7 +111,7 @@ const ViewApplication = () => {
 
                   <Grid item xs={12} md={12}>
                     <TextFieldWrapper
-                      fullWidth
+                      // fullWidth
                       label="Nationality"
                       name="nationality"
                       disabled
@@ -136,7 +158,7 @@ const ViewApplication = () => {
                       fullWidth
                     >
                       <a
-                        href={`${process.env.REACT_APP_API_URL}/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.idDocumentName}`}
+                        href={`${process.env.REACT_APP_API_URL}/api/dev/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.idDocumentName}`}
                         download
                         target="_blank"
                         rel="noreferrer"
@@ -161,7 +183,7 @@ const ViewApplication = () => {
                       fullWidth
                     >
                       <a
-                        href={`${process.env.REACT_APP_API_URL}/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.matricDocumentName}`}
+                        href={`${process.env.REACT_APP_API_URL}/api/dev/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.matricDocumentName}`}
                         download
                         target="_blank"
                         rel="noreferrer"
@@ -186,7 +208,7 @@ const ViewApplication = () => {
                       fullWidth
                     >
                       <a
-                        href={`${process.env.REACT_APP_API_URL}/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.qualificationDocumentName}`}
+                        href={`${process.env.REACT_APP_API_URL}/api/dev/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.qualificationDocumentName}`}
                         download
                         target="_blank"
                         rel="noreferrer"
@@ -211,7 +233,7 @@ const ViewApplication = () => {
                       fullWidth
                     >
                       <a
-                        href={`${process.env.REACT_APP_API_URL}/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.resumeDocumentName}`}
+                        href={`${process.env.REACT_APP_API_URL}/api/dev/humanResource/downloadApplicationDocument?email=${data?.application.email}&positionId=${data?.application.positionId}&filename=${data?.application?.resumeDocumentName}`}
                         download
                         target="_blank"
                         rel="noreferrer"
@@ -221,28 +243,73 @@ const ViewApplication = () => {
                       </a>
                     </Button>
                   </Grid>
-                  <Grid item xs={12} md={12}>
-                    <Stack
-                      direction="row"
-                      justifyContent="center"
-                      alignItems="center"
-                      spacing={2}
-                    >
-                      <ShortListModal
-                        application={data?.application}
-                        width={200}
-                      />
-                      <RejectApplicationModal
-                        application={data?.application}
-                        width={200}
-                      />
-                    </Stack>
-                  </Grid>
                 </Grid>
               </Form>
             );
           }}
         </Formik>
+
+        <Stack spacing={2}>
+          <Paper sx={{ padding: 2 }}>
+            <Stack spacing={2}>
+              {data?.application?.ApplicationAnswers?.map(
+                (applicationAnswer, i) => {
+                  return (
+                    <Accordion
+                      expanded={expanded === i}
+                      onChange={handleChange(i)}
+                      TransitionProps={{ unmountOnExit: true }}
+                      key={i}
+                    >
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1d-content"
+                        id="panel1d-header"
+                      >
+                        <Stack
+                          direction="row"
+                          justifyContent="space-between"
+                          width="100%"
+                          alignItems="center"
+                        >
+                          <Typography>
+                            {applicationAnswer.PositionQuestion.question}
+                          </Typography>
+                          {/* <DeleteQuestionModal id={question.id} /> */}
+                        </Stack>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Typography>
+                          {`Expected : ${
+                            applicationAnswer.PositionQuestion.expectedAnswer
+                              ? applicationAnswer.PositionQuestion
+                                  .expectedAnswer
+                              : "Not Provided"
+                          }`}
+                        </Typography>
+                        <Typography>{`Answer : ${
+                          applicationAnswer.answer
+                            ? applicationAnswer.answer
+                            : "No Answer"
+                        }`}</Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  );
+                }
+              )}
+            </Stack>
+          </Paper>
+        </Stack>
+        <Stack
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          spacing={2}
+          width="100%"
+        >
+          <ShortListModal application={data?.application} width={200} />
+          <RejectApplicationModal application={data?.application} width={200} />
+        </Stack>
       </Stack>
     </Stack>
   );
