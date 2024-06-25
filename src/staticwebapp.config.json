@@ -1,5 +1,6 @@
 {
   "routes": [
+    { "route": "/logo-sm.png", "serve": "/logo-sm.png" },
     {
       "route": "/static/*",
       "headers": {
