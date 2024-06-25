@@ -302,8 +302,8 @@ const AddEditTenderModal = ({ tender }) => {
                               shrink: true
                             }}
                             inputProps={{
-                              accept:
-                                ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                              // accept:
+                              //   ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             }}
                             error={meta.touched && meta.error}
                             helperText={
