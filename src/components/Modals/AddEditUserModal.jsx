@@ -165,6 +165,7 @@ const AddEditUserModal = ({ user }) => {
             initialValues={{
               userId: userInfo?.user?.id,
               email: user?.email || "",
+              fullName: "",
               userType: "",
               departmentId: ""
               // moduleId: ""
@@ -184,6 +185,7 @@ const AddEditUserModal = ({ user }) => {
                   }
                 ),
               userType: Yup.string().required("User type required"),
+              fullName: Yup.string().required("FullName required"),
               departmentId: Yup.string().required("Department required")
             })}
             onSubmit={(values) => {
@@ -195,6 +197,10 @@ const AddEditUserModal = ({ user }) => {
               return (
                 <Form>
                   <Grid container spacing={2}>
+                  <Grid item xs={12} md={12}>
+                      <InputLabel sx={{ mb: 1 }}>Email</InputLabel>
+                      <TextFieldWrapper name="fullName" label="FullName" />
+                    </Grid>
                     <Grid item xs={12} md={12}>
                       <InputLabel sx={{ mb: 1 }}>Email</InputLabel>
                       <TextFieldWrapper name="email" label="Email" />
