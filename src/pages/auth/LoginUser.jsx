@@ -85,7 +85,7 @@ const LoginUser = ({ currentTheme }) => {
             padding={2}
           >
             <img
-              src={currentTheme === "light" ? whiteLogo : blueLogo}
+              src={currentTheme === "dark" ? whiteLogo : blueLogo}
               alt=""
               height="100%"
               width="100%"
