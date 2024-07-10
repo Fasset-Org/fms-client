@@ -19,14 +19,15 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import WorkIcon from "@mui/icons-material/Work";
 import LanguageIcon from "@mui/icons-material/Language";
 import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
-import { Avatar, Badge, CssBaseline, Stack } from "@mui/material";
+import { Avatar, CssBaseline, Stack } from "@mui/material";
 import logo from "../../assets/images/blue_bg_only_logo.png";
 import { Outlet, useNavigate } from "react-router-dom";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import NightlightIcon from "@mui/icons-material/Nightlight";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useQuery } from "@tanstack/react-query";
 import AuthQuery from "../../stateQueries/Auth";
+import { SignOutButton } from "../SignOutButton";
 
 const drawerWidth = 240;
 
@@ -117,28 +118,28 @@ export default function Navigation({ currentTheme, setTheme }) {
       icon: LanguageIcon,
       url: "/websiteManagement",
       userType: "admin",
-      department: "cse"
+      department: "Communication & Stakeholder Engagement (CSE)"
     },
     {
       title: "Supply Chain",
       icon: ProductionQuantityLimitsIcon,
       url: "/scm",
       userType: "admin",
-      department: "scm"
+      department: "Supply Chain Management"
     },
     {
       title: "Human Resource",
       icon: WorkIcon,
       url: "/humanResource",
       userType: "admin",
-      department: "humanResource"
+      department: "Human Resource"
     },
     {
       title: "IT User Management",
       icon: ManageAccountsIcon,
       url: "/userManagement",
       userType: "Super",
-      department: "IT"
+      department: "Information Communication Technology(ICT)"
     }
   ];
 
@@ -251,14 +252,16 @@ export default function Navigation({ currentTheme, setTheme }) {
                 />
               )}
 
-              <Badge badgeContent={4} color="error">
+              {/* <Badge badgeContent={4} color="error">
                 <NotificationsIcon
                   fontSize="medium"
                   sx={{ color: "#FFFFFF" }}
                 />
-              </Badge>
+              </Badge> */}
 
-              <Avatar>T</Avatar>
+              <SignOutButton />
+
+              {/* <Avatar>T</Avatar> */}
             </Stack>
           </Stack>
         </Stack>

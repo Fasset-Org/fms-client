@@ -10,11 +10,20 @@ import {
 import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import AuthQuery from "../stateQueries/Auth";
 
 const BreadCrumbsHeader = ({ title, menus, ...otherProps }) => {
   const navigate = useNavigate();
   const BreadLink = styled(Link)({
     textDecoration: "none"
+  });
+
+  const { data } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: async () => {
+      return await AuthQuery.isUserLoggedIn();
+    }
   });
 
   return (
@@ -26,7 +35,9 @@ const BreadCrumbsHeader = ({ title, menus, ...otherProps }) => {
       {...otherProps}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography fontSize={15}>{title}</Typography>
+        <Typography
+          fontSize={15}
+        >{`You are logged in with user type ${data?.user?.userType} for ${data?.user?.department?.departmentName} department`}</Typography>
         {menus.length > 1 && (
           <Button
             variant="outlined"

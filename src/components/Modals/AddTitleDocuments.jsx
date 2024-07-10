@@ -170,7 +170,7 @@ const AddTitleDocumemnts = ({ downloadsTitle }) => {
                             }}
                             InputProps={{
                               inputProps: {
-                                accept: ".doc, .docx, .pdf"
+                                // accept: ".doc, .docx, .pdf"
                               }
                             }}
                             error={meta.touched && meta.error}
