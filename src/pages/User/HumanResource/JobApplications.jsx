@@ -131,7 +131,7 @@ const JobApplications = () => {
   };
 
   const columns = [
-    { field: "idNumber", headerName: "ID" },
+    { field: "idNumber", headerName: "ID/Passport Number" },
     {
       field: "firstName",
       headerName: "First Name",
