@@ -290,10 +290,10 @@ const EditPosition = () => {
                             InputLabelProps={{
                               shrink: true
                             }}
-                            inputProps={{
-                              accept:
-                                ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            }}
+                            // inputProps={{
+                            //   accept:
+                            //     ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            // }}
                             error={meta.touched && meta.error}
                             helperText={
                               meta.touched && meta.error && meta.error
