@@ -10,7 +10,7 @@ import { DeleteDocumentModal } from "../../../components/Modals/DeleteDocumentMo
 const DownloadsDocuments = () => {
   const { titleId } = useParams();
 
-  const { data: titleData } = useQuery({
+  const { data: titleData, isLoading } = useQuery({
     queryKey: ["documentTitle"],
     queryFn: async () => {
       return await UserQuery.CSEQuery.getDocumentTitleById(titleId);
@@ -18,12 +18,12 @@ const DownloadsDocuments = () => {
     enabled: !!titleId
   });
 
-  const { data, isLoading } = useQuery({
-    queryFn: async () => {
-      return await UserQuery.CSEQuery.getAllDocuments();
-    },
-    queryKey: ["documents"]
-  });
+  // const { data, isLoading } = useQuery({
+  //   queryFn: async () => {
+  //     return await UserQuery.CSEQuery.getAllDocuments();
+  //   },
+  //   queryKey: ["documents"]
+  // });
 
   if (isLoading) {
     return <LinearProgress />;
@@ -53,8 +53,8 @@ const DownloadsDocuments = () => {
       >
         <AddTitleDocumemnts downloadsTitle={titleData?.documentTitle} />
         <Grid container spacing={2}>
-          {data?.documents?.length > 0 &&
-            data?.documents?.map((document) => {
+          {titleData?.title?.Documents?.length > 0 &&
+            titleData?.title?.Documents?.documents?.map((document) => {
               return (
                 <Grid item xs={12} md={6}>
                   <Stack minHeight={60} direction="row" component={Paper}>
