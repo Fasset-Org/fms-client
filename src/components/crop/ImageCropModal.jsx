@@ -108,7 +108,7 @@ export default function ImageCropModal({
             crop={crop}
             zoom={zoom}
             rotation={rotation}
-            aspect={3 / 1}
+            aspect={4 / 8}
             onZoomChange={setZoom}
             onRotationChange={setRotation}
             onCropChange={setCrop}
