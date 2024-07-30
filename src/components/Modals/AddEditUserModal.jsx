@@ -198,7 +198,7 @@ const AddEditUserModal = ({ user }) => {
                 <Form>
                   <Grid container spacing={2}>
                   <Grid item xs={12} md={12}>
-                      <InputLabel sx={{ mb: 1 }}>Email</InputLabel>
+                      <InputLabel sx={{ mb: 1 }}>FullName</InputLabel>
                       <TextFieldWrapper name="fullName" label="FullName" />
                     </Grid>
                     <Grid item xs={12} md={12}>
