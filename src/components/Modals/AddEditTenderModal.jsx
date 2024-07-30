@@ -301,10 +301,12 @@ const AddEditTenderModal = ({ tender }) => {
                             InputLabelProps={{
                               shrink: true
                             }}
-                            inputProps={{
-                              // accept:
-                              //   ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            }}
+                            inputProps={
+                              {
+                                // accept:
+                                //   ".doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                              }
+                            }
                             error={meta.touched && meta.error}
                             helperText={
                               meta.touched && meta.error && meta.error
@@ -384,7 +386,7 @@ const AddEditTenderModal = ({ tender }) => {
                                 <IconButton
                                   onClick={() => {
                                     const newBidders = values.bidders.filter(
-                                      (bid, j) => {
+                                      (bid) => {
                                         return (
                                           bid.bidderName !== bidder.bidderName
                                         );
