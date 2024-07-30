@@ -54,7 +54,7 @@ const DownloadsDocuments = () => {
         <AddTitleDocumemnts downloadsTitle={titleData?.documentTitle} />
         <Grid container spacing={2}>
           {titleData?.title?.Documents?.length > 0 &&
-            titleData?.title?.Documents?.documents?.map((document) => {
+            titleData?.title?.Documents?.map((document) => {
               return (
                 <Grid item xs={12} md={6}>
                   <Stack minHeight={60} direction="row" component={Paper}>
