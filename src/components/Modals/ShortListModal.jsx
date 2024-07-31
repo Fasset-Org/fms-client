@@ -111,7 +111,7 @@ export const ShortListModal = ({ application, width }) => {
               component="span"
               sx={{ color: "warning.main", fontWeight: "bolder" }}
             >
-              {application.fullname}'s
+              {application.firstName}'s
             </Typography>
             &nbsp; application?
           </Typography>
