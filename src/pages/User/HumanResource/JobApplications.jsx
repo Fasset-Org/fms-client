@@ -1,4 +1,11 @@
-import { Box, Button, Chip, LinearProgress, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  LinearProgress,
+  Stack,
+  Typography
+} from "@mui/material";
 import React from "react";
 import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,26 +21,6 @@ const JobApplications = () => {
   const { positionId } = useParams();
   const navigate = useNavigate();
 
-  // const [selectValue, setSelectValue] = useState("");
-
-  // const filterOptions = [
-  //   {
-  //     value: "",
-  //     label: "None"
-  //   },
-  //   {
-  //     value: "submitted",
-  //     label: "Submitted"
-  //   },
-  //   {
-  //     value: "shortlisted",
-  //     label: "ShortListed"
-  //   },
-  //   {
-  //     value: "rejected",
-  //     label: "Rejected"
-  //   }
-  // ];
 
   const { data, isLoading } = useQuery({
     queryKey: ["applications"],
@@ -72,7 +59,9 @@ const JobApplications = () => {
 
     // console.log(question)
 
-    return answer >= question?.answer || answer === question?.answer ? true : false;
+    return answer >= question?.answer || answer === question?.answer
+      ? true
+      : false;
   };
 
   let positionQuestions = [];
@@ -102,7 +91,7 @@ const JobApplications = () => {
     }
   }
 
-  console.log(applications);
+  console.log(data?.applications)
 
   const ActionButtons = ({ params }) => {
     return (
@@ -190,7 +179,7 @@ const JobApplications = () => {
       sortable: false,
       width: 260,
       headerAlign: "center",
-      cellAlign: 'center',
+      cellAlign: "center",
       renderCell: (params) => <ActionButtons params={params} />
     }
   ];
@@ -211,7 +200,18 @@ const JobApplications = () => {
         ]}
         sx={{ mb: 2, width: "100%" }}
       />
-      <Stack direction="row" width="100%" alignItems="center" spacing={2}>
+      <Stack
+        direction="row"
+        width="100%"
+        alignItems="center"
+        spacing={2}
+        justifyContent="space-between"
+      >
+        <Typography
+          sx={{ fontSize: 20, fontWeight: "bolder", color: "primary.main" }}
+        >
+          {applicationData?.position?.jobTitle} {"Applications"}
+        </Typography>
         {/* <Box width="80%">
           <FormControl fullWidth>
             <InputLabel id="select">Select Filter</InputLabel>
@@ -286,8 +286,10 @@ const JobApplications = () => {
 
             let bool = false;
 
-            for(const applicationAnswer of applicationAnswers){
-              if(!compareAnswer(applicationAnswer.answer, applicationAnswer.id)){
+            for (const applicationAnswer of applicationAnswers) {
+              if (
+                !compareAnswer(applicationAnswer.answer, applicationAnswer.id)
+              ) {
                 bool = true;
               }
             }
