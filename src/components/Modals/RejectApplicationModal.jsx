@@ -41,6 +41,8 @@ export const RejectApplicationModal = ({ application, width }) => {
     }
   });
 
+  console.log(application);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -106,7 +108,7 @@ export const RejectApplicationModal = ({ application, width }) => {
               component="span"
               sx={{ color: "warning.main", fontWeight: "bolder" }}
             >
-              {application.fullname}'s
+              {application.firstName}'s
             </Typography>
             &nbsp; application?
           </Typography>
