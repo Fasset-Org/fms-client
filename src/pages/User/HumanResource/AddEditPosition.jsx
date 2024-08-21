@@ -144,7 +144,7 @@ const AddEditPosition = () => {
                 .email("Invalid email format")
                 .required("Email required"),
               emailForQueries: Yup.string()
-                .email("Invalid email format")
+                // .email("Invalid email format")
                 .required("Email required"),
               jobSpecDocumentName: Yup.string().required(
                 "Please upload the job description document"
