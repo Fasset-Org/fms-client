@@ -11,7 +11,7 @@ import BreadCrumbsHeader from "../../../components/BreadCrumbsHeader";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import UserQuery from "../../../stateQueries/User";
-import { RejectAllApplicationModal } from "../../../components/Modals/RejectAllApplicationModal";
+// import { RejectAllApplicationModal } from "../../../components/Modals/RejectAllApplicationModal";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CustomNoRowsGridOverlay from "../../../components/CustomNoRowsGridOverlay";
 import { ShortListModal } from "../../../components/Modals/ShortListModal";
@@ -20,7 +20,6 @@ import { RejectApplicationModal } from "../../../components/Modals/RejectApplica
 const JobApplications = () => {
   const { positionId } = useParams();
   const navigate = useNavigate();
-
 
   const { data, isLoading } = useQuery({
     queryKey: ["applications"],
@@ -91,8 +90,6 @@ const JobApplications = () => {
     }
   }
 
-  console.log(data?.applications)
-
   const ActionButtons = ({ params }) => {
     return (
       <Stack
@@ -149,7 +146,7 @@ const JobApplications = () => {
       editable: true,
       hide: true
     },
-    ...positionQuestions,
+    // ...positionQuestions,
     {
       field: "status",
       headerName: "Status",
@@ -237,23 +234,23 @@ const JobApplications = () => {
           </FormControl>
         </Box> */}
 
-        <RejectAllApplicationModal position={applicationData.position} />
+        {/* <RejectAllApplicationModal position={applicationData.position} /> */}
       </Stack>
 
       <Box sx={{ height: 400, width: "100%" }}>
         <DataGrid
-          rows={applications.length > 0 && applications}
+          rows={data?.applications.length > 0 && data?.applications}
           columns={columns}
           autoHeight
           autoHeightMax={400}
           initialState={{
             pagination: {
               paginationModel: {
-                pageSize: 5
+                pageSize: 100
               }
             }
           }}
-          pageSizeOptions={[5]}
+          pageSizeOptions={[100]}
           checkboxSelection
           disableRowSelectionOnClick
           slots={{
