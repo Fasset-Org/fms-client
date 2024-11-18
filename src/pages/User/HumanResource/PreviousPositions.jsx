@@ -131,6 +131,17 @@ const PreviousPositions = () => {
                         // border={1}
                         justifyContent="center"
                       >
+                        <Button
+                          variant="outlined"
+                          sx={{ fontSize: 10 }}
+                          onClick={() => {
+                            navigate(
+                              `/humanResource/jobApplications/${position.id}`
+                            );
+                          }}
+                        >
+                          View Applications
+                        </Button>
                         <IconButton
                           color="secondary"
                           onClick={() =>
